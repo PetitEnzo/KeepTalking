@@ -1,0 +1,84 @@
+graph TB
+    subgraph "Client Layer"
+        A[Utilisateur]
+        B[Navigateur Web]
+        C[Application iOS]
+        D[Application Android]
+    end
+
+    subgraph "Application Layer - Expo App"
+        E[Expo Router<br/>Navigation]
+        F[React Native<br/>Components]
+        G[NativeWind<br/>Styling]
+        H[Contexts<br/>State Management]
+    end
+
+    subgraph "Service Layer"
+        I[Supabase Client]
+        J[AsyncStorage<br/>Local Cache]
+        K[Secure Store<br/>Tokens]
+    end
+
+    subgraph "Supabase Backend"
+        L[Auth Service<br/>Authentication]
+        M[PostgreSQL<br/>Database]
+        N[Storage<br/>Files & Media]
+        O[Row Level Security<br/>RLS Policies]
+    end
+
+    subgraph "Database Tables"
+        P[(profiles)]
+        Q[(lessons)]
+        R[(exercises)]
+        S[(progress)]
+    end
+
+    A -->|Accès via| B
+    A -->|Accès via| C
+    A -->|Accès via| D
+
+    B --> E
+    C --> E
+    D --> E
+
+    E --> F
+    F --> G
+    F --> H
+
+    H --> I
+    F --> I
+
+    I --> J
+    I --> K
+
+    I -->|API Calls| L
+    I -->|Queries| M
+    I -->|Upload/Download| N
+
+    L --> O
+    M --> O
+
+    O --> P
+    O --> Q
+    O --> R
+    O --> S
+
+    style A fill:#e1f5ff
+    style B fill:#fff4e6
+    style C fill:#fff4e6
+    style D fill:#fff4e6
+    style E fill:#e8f5e9
+    style F fill:#e8f5e9
+    style G fill:#e8f5e9
+    style H fill:#e8f5e9
+    style I fill:#f3e5f5
+    style J fill:#f3e5f5
+    style K fill:#f3e5f5
+    style L fill:#fce4ec
+    style M fill:#fce4ec
+    style N fill:#fce4ec
+    style O fill:#fce4ec
+    style P fill:#fff9c4
+    style Q fill:#fff9c4
+    style R fill:#fff9c4
+    style S fill:#fff9c4

@@ -1,0 +1,379 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../services/supabase';
+
+type LessonLevel = 'beginner' | 'intermediate' | 'advanced';
+
+interface Lesson {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  level: LessonLevel;
+  emoji: string;
+  completed?: boolean;
+}
+
+const lessons: Lesson[] = [
+  // Débutant
+  {
+    id: '1',
+    title: 'Introduction au LFPC',
+    description: 'Découvrez les bases du Langage Français Parlé Complété',
+    duration: '2 min',
+    level: 'beginner',
+    emoji: '👋',
+  },
+  {
+    id: '2',
+    title: 'Les 8 configurations de main',
+    description: 'Apprenez les 8 formes de main essentielles',
+    duration: '15 min',
+    level: 'beginner',
+    emoji: '✋',
+  },
+  {
+    id: '3',
+    title: 'Les 5 positions autour du visage',
+    description: 'Maîtrisez les 5 emplacements clés',
+    duration: '12 min',
+    level: 'beginner',
+    emoji: '👤',
+  },
+  {
+    id: '4',
+    title: 'Vos premiers mots en LFPC',
+    description: 'Pratiquez des mots simples du quotidien',
+    duration: '20 min',
+    level: 'beginner',
+    emoji: '💬',
+  },
+  // Intermédiaire
+  {
+    id: '5',
+    title: 'Combinaisons avancées',
+    description: 'Associez configurations et positions',
+    duration: '18 min',
+    level: 'intermediate',
+    emoji: '🔄',
+  },
+  {
+    id: '6',
+    title: 'Phrases courantes',
+    description: 'Construisez des phrases complètes',
+    duration: '25 min',
+    level: 'intermediate',
+    emoji: '💭',
+  },
+  {
+    id: '7',
+    title: 'Fluidité et rythme',
+    description: 'Améliorez votre vitesse d\'exécution',
+    duration: '20 min',
+    level: 'intermediate',
+    emoji: '⚡',
+  },
+  // Avancé
+  {
+    id: '8',
+    title: 'Conversations complexes',
+    description: 'Dialogues élaborés et nuancés',
+    duration: '30 min',
+    level: 'advanced',
+    emoji: '🗣️',
+  },
+  {
+    id: '9',
+    title: 'Expressions idiomatiques',
+    description: 'Expressions et tournures spécifiques',
+    duration: '25 min',
+    level: 'advanced',
+    emoji: '🎭',
+  },
+];
+
+export default function LessonsScreen() {
+  const { user } = useAuth();
+  const [selectedLevel, setSelectedLevel] = useState<LessonLevel>('beginner');
+  const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(new Set());
+  const [failedLessonIds, setFailedLessonIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    loadCompletedLessons();
+  }, [user]);
+
+  const loadCompletedLessons = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('user_lesson_progress')
+        .select('lesson_id, passed')
+        .eq('user_id', user.id)
+        .eq('completed', true);
+
+      if (!error && data) {
+        const passed = new Set<string>();
+        const failed = new Set<string>();
+        
+        data.forEach(item => {
+          if (item.passed) {
+            passed.add(item.lesson_id);
+          } else {
+            failed.add(item.lesson_id);
+          }
+        });
+        
+        setCompletedLessonIds(passed);
+        setFailedLessonIds(failed);
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des leçons terminées:', error);
+    }
+  };
+
+  const filteredLessons = lessons.filter(lesson => lesson.level === selectedLevel);
+
+  const getLevelLabel = (level: LessonLevel) => {
+    switch (level) {
+      case 'beginner': return 'Débutant';
+      case 'intermediate': return 'Intermédiaire';
+      case 'advanced': return 'Avancé';
+    }
+  };
+
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.title}>📚 Mes Leçons</Text>
+        <Text style={styles.subtitle}>
+          Progressez à votre rythme avec nos leçons interactives
+        </Text>
+
+        {/* Filtres de niveau */}
+        <View style={styles.filterContainer}>
+          {(['beginner', 'intermediate', 'advanced'] as LessonLevel[]).map((level) => (
+            <Pressable
+              key={level}
+              onPress={() => setSelectedLevel(level)}
+              style={[
+                styles.filterButton,
+                selectedLevel === level && styles.filterButtonActive
+              ]}
+            >
+              <Text style={[
+                styles.filterButtonText,
+                selectedLevel === level && styles.filterButtonTextActive
+              ]}>
+                {getLevelLabel(level)}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+
+        {/* Liste des leçons */}
+        <View style={styles.lessonsContainer}>
+          {filteredLessons.map((lesson) => (
+            <Pressable
+              key={lesson.id}
+              style={({ pressed }) => [
+                styles.lessonCard,
+                pressed && styles.lessonCardPressed,
+                completedLessonIds.has(lesson.id) && styles.lessonCardCompleted,
+                failedLessonIds.has(lesson.id) && styles.lessonCardFailed
+              ]}
+              onPress={() => {
+                router.push(`/(tabs)/lesson/${lesson.id}`);
+              }}
+            >
+              {completedLessonIds.has(lesson.id) && (
+                <View style={styles.completedBadge}>
+                  <Text style={styles.completedBadgeText}>✓</Text>
+                </View>
+              )}
+              {failedLessonIds.has(lesson.id) && (
+                <View style={styles.failedBadge}>
+                  <Text style={styles.failedBadgeText}>✕</Text>
+                </View>
+              )}
+              
+              <View style={styles.lessonHeader}>
+                <Text style={styles.lessonEmoji}>{lesson.emoji}</Text>
+                <View style={styles.lessonBadge}>
+                  <Text style={styles.lessonBadgeText}>{lesson.duration}</Text>
+                </View>
+              </View>
+              
+              <Text style={styles.lessonTitle}>{lesson.title}</Text>
+              <Text style={styles.lessonDescription}>{lesson.description}</Text>
+              
+              <View style={styles.lessonFooter}>
+                <Text style={styles.lessonLevel}>
+                  {getLevelLabel(lesson.level)}
+                </Text>
+                <Text style={styles.lessonAction}>
+                  {completedLessonIds.has(lesson.id) ? 'Revoir →' : failedLessonIds.has(lesson.id) ? 'Réessayer →' : 'Commencer →'}
+                </Text>
+              </View>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+  },
+  content: {
+    padding: 24,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#0F172A',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#64748B',
+    marginBottom: 32,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 32,
+  },
+  filterButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
+  },
+  filterButtonActive: {
+    backgroundColor: '#2563EB',
+    borderColor: '#2563EB',
+  },
+  filterButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  filterButtonTextActive: {
+    color: '#FFFFFF',
+  },
+  lessonsContainer: {
+    gap: 16,
+  },
+  lessonCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+    position: 'relative',
+  },
+  lessonCardPressed: {
+    opacity: 0.8,
+  },
+  lessonCardCompleted: {
+    borderWidth: 2,
+    borderColor: '#10B981',
+  },
+  lessonCardFailed: {
+    borderWidth: 2,
+    borderColor: '#EF4444',
+  },
+  completedBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: '#10B981',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  completedBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  failedBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: '#EF4444',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  failedBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  lessonHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  lessonEmoji: {
+    fontSize: 40,
+  },
+  lessonBadge: {
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  lessonBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#2563EB',
+  },
+  lessonTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#0F172A',
+    marginBottom: 8,
+  },
+  lessonDescription: {
+    fontSize: 14,
+    color: '#64748B',
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  lessonFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  lessonLevel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#94A3B8',
+    textTransform: 'uppercase',
+  },
+  lessonAction: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2563EB',
+  },
+});
