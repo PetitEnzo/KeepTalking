@@ -150,6 +150,14 @@ export default function TabsLayout() {
             </Pressable>
 
             <Pressable 
+              onPress={() => navigateTo('/(tabs)/basics')}
+              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+            >
+              <Text style={styles.navIcon}>📖</Text>
+              <Text style={styles.navText}>Les bases du code</Text>
+            </Pressable>
+
+            <Pressable 
               onPress={() => navigateTo('/(tabs)/chat')}
               style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
             >

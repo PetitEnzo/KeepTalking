@@ -30,7 +30,7 @@ const lessons: Lesson[] = [
     id: '2',
     title: 'Les 8 configurations de main',
     description: 'Apprenez les 8 formes de main essentielles',
-    duration: '15 min',
+    duration: '3 min',
     level: 'beginner',
     emoji: '✋',
   },
@@ -38,7 +38,7 @@ const lessons: Lesson[] = [
     id: '3',
     title: 'Les 5 positions autour du visage',
     description: 'Maîtrisez les 5 emplacements clés',
-    duration: '12 min',
+    duration: '3 min',
     level: 'beginner',
     emoji: '👤',
   },
@@ -46,7 +46,7 @@ const lessons: Lesson[] = [
     id: '4',
     title: 'Vos premiers mots en LFPC',
     description: 'Pratiquez des mots simples du quotidien',
-    duration: '20 min',
+    duration: '5 min',
     level: 'beginner',
     emoji: '💬',
   },
@@ -55,7 +55,7 @@ const lessons: Lesson[] = [
     id: '5',
     title: 'Combinaisons avancées',
     description: 'Associez configurations et positions',
-    duration: '18 min',
+    duration: '10 min',
     level: 'intermediate',
     emoji: '🔄',
   },
@@ -103,6 +103,16 @@ export default function LessonsScreen() {
   useEffect(() => {
     loadCompletedLessons();
   }, [user]);
+
+  // Basculer automatiquement sur intermediate si toutes les leçons débutant sont complétées
+  useEffect(() => {
+    const beginnerLessons = lessons.filter(l => l.level === 'beginner');
+    const allBeginnerCompleted = beginnerLessons.every(lesson => completedLessonIds.has(lesson.id));
+    
+    if (allBeginnerCompleted && beginnerLessons.length > 0 && selectedLevel === 'beginner') {
+      setSelectedLevel('intermediate');
+    }
+  }, [completedLessonIds]);
 
   const loadCompletedLessons = async () => {
     if (!user) return;
@@ -172,6 +182,61 @@ export default function LessonsScreen() {
             </Pressable>
           ))}
         </View>
+
+        {/* Bandeau de félicitations pour avoir complété les leçons débutant */}
+        {selectedLevel === 'beginner' &&
+         completedLessonIds.has('1') && 
+         completedLessonIds.has('2') && 
+         completedLessonIds.has('3') && 
+         completedLessonIds.has('4') && (
+          <View style={styles.congratsBanner}>
+            <Text style={styles.congratsEmoji}>🎉</Text>
+            <View style={styles.congratsContent}>
+              <Text style={styles.congratsTitle}>Félicitations !</Text>
+              <Text style={styles.congratsText}>
+                Vous avez terminé toutes les leçons débutant ! Vous êtes maintenant prêt à passer aux leçons intermédiaires.
+              </Text>
+              <Text style={styles.congratsHint}>
+                💡 N'hésitez pas à revenir sur ces leçons quand vous en avez besoin pour réviser les bases.
+              </Text>
+              <Pressable 
+                style={styles.congratsButton}
+                onPress={() => setSelectedLevel('intermediate')}
+              >
+                <Text style={styles.congratsButtonText}>
+                  Découvrir les leçons intermédiaires →
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
+
+        {/* Bandeau de félicitations pour avoir complété les leçons intermédiaires */}
+        {selectedLevel === 'intermediate' &&
+         completedLessonIds.has('5') && 
+         completedLessonIds.has('6') && 
+         completedLessonIds.has('7') && (
+          <View style={styles.congratsBanner}>
+            <Text style={styles.congratsEmoji}>🎉</Text>
+            <View style={styles.congratsContent}>
+              <Text style={styles.congratsTitle}>Bravo !</Text>
+              <Text style={styles.congratsText}>
+                Vous avez terminé toutes les leçons intermédiaires ! Vous maîtrisez maintenant les bases du LFPC. Prêt pour le niveau avancé ?
+              </Text>
+              <Text style={styles.congratsHint}>
+                💡 Les leçons intermédiaires restent disponibles pour vous entraîner quand vous le souhaitez.
+              </Text>
+              <Pressable 
+                style={styles.congratsButton}
+                onPress={() => setSelectedLevel('advanced')}
+              >
+                <Text style={styles.congratsButtonText}>
+                  Découvrir les leçons avancées →
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
 
         {/* Liste des leçons */}
         <View style={styles.lessonsContainer}>
@@ -375,5 +440,53 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#2563EB',
+  },
+  congratsBanner: {
+    backgroundColor: '#F0FDF4',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    borderWidth: 2,
+    borderColor: '#86EFAC',
+    flexDirection: 'row',
+    gap: 16,
+    alignItems: 'flex-start',
+  },
+  congratsEmoji: {
+    fontSize: 48,
+  },
+  congratsContent: {
+    flex: 1,
+  },
+  congratsTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#166534',
+    marginBottom: 8,
+  },
+  congratsText: {
+    fontSize: 14,
+    color: '#15803D',
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  congratsHint: {
+    fontSize: 13,
+    color: '#16A34A',
+    lineHeight: 18,
+    marginBottom: 16,
+    fontStyle: 'italic',
+  },
+  congratsButton: {
+    backgroundColor: '#22C55E',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  congratsButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });

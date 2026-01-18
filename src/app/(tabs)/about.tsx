@@ -49,7 +49,8 @@ export default function AboutTabScreen() {
             • Sessions courtes adaptées à tous les emplois du temps{'\n'}
             • Assistant intelligent pour pratiquer{'\n'}
             • Suivi de vos progrès en temps réel{'\n'}
-            • Accessible 24/7 depuis n'importe quel appareil
+            • Accessible 24/7 depuis n'importe quel appareil{'\n'}
+            • Gratuit et accessible à tous
           </Text>
         </View>
 

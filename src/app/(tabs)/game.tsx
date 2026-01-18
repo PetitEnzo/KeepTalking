@@ -134,8 +134,60 @@ export default function GameScreen() {
           setBestScore(finalScore);
         }
       }
+
+      // Mettre à jour le streak après chaque partie
+      await updateStreak();
     } catch (error) {
       console.error('Erreur sauvegarde score:', error);
+    }
+  };
+
+  const updateStreak = async () => {
+    if (!user) return;
+
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const { data: profileData } = await supabase
+        .from('users_profiles')
+        .select('last_activity_date, current_streak')
+        .eq('id', user.id)
+        .single();
+
+      const lastActivity = profileData?.last_activity_date;
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+      let newStreak = profileData?.current_streak || 0;
+      
+      // Si la dernière activité était hier, on incrémente
+      if (lastActivity === yesterdayStr) {
+        newStreak += 1;
+      } 
+      // Si la dernière activité n'était pas aujourd'hui, on recommence à 1
+      else if (lastActivity !== today) {
+        newStreak = 1;
+      }
+      // Si c'est déjà aujourd'hui, on ne change rien
+
+      console.log('📊 Mise à jour streak (jeu):', { lastActivity, today, yesterdayStr, newStreak });
+
+      const { error: streakError } = await supabase
+        .from('users_profiles')
+        .upsert({
+          id: user.id,
+          username: user.user_metadata?.username || user.email?.split('@')[0] || 'user',
+          last_activity_date: today,
+          current_streak: newStreak,
+        });
+
+      if (streakError) {
+        console.error('❌ Erreur streak:', streakError);
+      } else {
+        console.log('✅ Streak mis à jour:', newStreak);
+      }
+    } catch (error) {
+      console.error('❌ Exception streak:', error);
     }
   };
 

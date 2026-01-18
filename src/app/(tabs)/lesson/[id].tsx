@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Image } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useAuth } from '../../../contexts/AuthContext';
 import { supabase } from '../../../services/supabase';
 
 interface LessonSection {
-  type: 'text' | 'quiz' | 'info' | 'practice' | 'image';
+  type: 'text' | 'quiz' | 'info' | 'practice' | 'image' | 'multipart_quiz';
   title?: string;
   content?: string;
   question?: string;
@@ -16,6 +16,12 @@ interface LessonSection {
   explanation?: string;
   imageKey?: string;
   imageUrl?: string;
+  // Pour multipart_quiz
+  configurationOptions?: string[]; // imageKeys des configurations
+  configurationImageUrls?: string[]; // URLs des configurations
+  positionOptions?: string[]; // descriptions des positions
+  correctConfiguration?: number; // index de la bonne configuration
+  correctPosition?: number; // index de la bonne position
 }
 
 const lessonContent: { [key: string]: { title: string; sections: LessonSection[] } } = {
@@ -178,13 +184,351 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       },
     ],
   },
+  '3': {
+    title: 'Les 5 positions autour du visage',
+    sections: [
+      {
+        type: 'text',
+        title: 'Les 5 positions pour les voyelles',
+        content: 'En LFPC, les voyelles sont représentées par 5 positions différentes de la main autour du visage.\n\nChaque position correspond à un groupe de voyelles qui se ressemblent visuellement sur les lèvres.',
+      },
+      {
+        type: 'image',
+        title: 'Pourquoi 5 positions ?',
+        imageKey: 'voyelles_all',
+        imageUrl: 'LOCAL_ASSET',
+        content: 'Les 5 positions permettent de distinguer clairement toutes les voyelles françaises. Combinées aux 8 configurations de main, elles permettent de coder toutes les syllabes de la langue française.',
+      },
+      {
+        type: 'quiz',
+        question: 'Combien de positions autour du visage existe-t-il en LFPC ?',
+        options: ['3 positions', '5 positions', '8 positions', '10 positions'],
+        correctAnswer: 1,
+        explanation: 'Il existe exactement 5 positions autour du visage en LFPC, chacune représentant un groupe de voyelles.',
+      },
+      {
+        type: 'image',
+        title: 'Position 1',
+        imageKey: '1',
+        imageUrl: 'LOAD_FROM_POSITIONS',
+        content: 'Position 1 - Chargement depuis hand_positions...',
+      },
+      {
+        type: 'image',
+        title: 'Position 2',
+        imageKey: '2',
+        imageUrl: 'LOAD_FROM_POSITIONS',
+        content: 'Position 2 - Chargement depuis hand_positions...',
+      },
+      {
+        type: 'quiz',
+        question: 'Quelle position utilise-t-on pour les voyelles VOYELLES_POSITION_2 ?\n\nEXAMPLES_POSITION_2',
+        options: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4'],
+        correctAnswer: 1,
+        explanation: 'La position 2 est utilisée pour les voyelles incluant O.',
+      },
+      {
+        type: 'image',
+        title: 'Position 3',
+        imageKey: '3',
+        imageUrl: 'LOAD_FROM_POSITIONS',
+        content: 'Position 3 - Chargement depuis hand_positions...',
+      },
+      {
+        type: 'image',
+        title: 'Position 4',
+        imageKey: '4',
+        imageUrl: 'LOAD_FROM_POSITIONS',
+        content: 'Position 4 - Chargement depuis hand_positions...',
+      },
+      {
+        type: 'quiz',
+        question: 'Quelle position utilise-t-on pour les voyelles VOYELLES_POSITION_4 ?\n\nEXAMPLES_POSITION_4',
+        options: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4'],
+        correctAnswer: 3,
+        explanation: 'La position 4 est utilisée pour les voyelles incluant I.',
+      },
+      {
+        type: 'image',
+        title: 'Position 5',
+        imageKey: '5',
+        imageUrl: 'LOAD_FROM_POSITIONS',
+        content: 'Position 5 - Chargement depuis hand_positions...',
+      },
+      {
+        type: 'info',
+        title: 'Astuce pour mémoriser',
+        content: 'Pour retenir les positions, imaginez un parcours autour de votre visage.\n\nAvec de la pratique, vos mains se placeront automatiquement à la bonne position !',
+      },
+      {
+        type: 'practice',
+        title: 'Entraînez-vous !',
+        content: 'Maintenant que vous connaissez les 5 positions autour du visage, entraînez-vous à les placer correctement.\n\nFélicitations pour avoir terminé cette leçon ! 🎉',
+      },
+    ],
+  },
+  '4': {
+    title: 'Vos premiers mots en LFPC',
+    sections: [
+      {
+        type: 'text',
+        title: 'Coder vos premiers mots',
+        content: 'Maintenant que vous connaissez les 8 configurations de main et les 5 positions autour du visage, vous êtes prêt à coder vos premiers mots en LFPC !\n\nChaque syllabe se code en combinant une configuration (consonne) et une position (voyelle).',
+      },
+      {
+        type: 'info',
+        title: 'Comment coder une syllabe ?',
+        content: 'Pour coder une syllabe, suivez ces 3 étapes :\n\n1. Identifiez la consonne → Choisissez la configuration de main\n2. Identifiez la voyelle → Choisissez la position autour du visage\n3. Combinez les deux en parlant naturellement',
+      },
+      {
+        type: 'text',
+        title: 'Mot 1 : PAPA',
+        content: 'Le mot "PAPA" se compose de deux syllabes identiques : PA + PA.\n\nPour coder chaque syllabe "PA", vous devez combiner :\n- La configuration pour la consonne P\n- La position pour la voyelle A',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder la syllabe "PA" dans "PAPA", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'L'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 1,
+        correctPosition: 1,
+        explanation: 'Pour "PA" : Configuration J (pour P, D, J) + Position 2 (Main à l\'écart du visage pour A, O, E).',
+      },
+      {
+        type: 'text',
+        title: 'Mot 2 : MAMAN',
+        content: 'Le mot "MAMAN" se compose de deux syllabes : MA + MAN.\n\nPour la syllabe "MA", vous devez combiner :\n- La configuration pour la consonne M\n- La position pour la voyelle A',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder la syllabe "MA" dans "MAMAN", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'L'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 0,
+        correctPosition: 1,
+        explanation: 'Pour "MA" : Configuration M (pour M, T, F) + Position 2 (Main à l\'écart du visage pour A, O, E).',
+      },
+      {
+        type: 'text',
+        title: 'La syllabe "MAN"',
+        content: 'Pour la deuxième partie du mot "MAMAN", la syllabe "MAN" se code :\n\n- Consonne M → Configuration M (M, T, F)\n- Voyelle AN → Position à côté de la bouche\n\nAN est une voyelle nasale qui se code avec la position à côté de la bouche.',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder la syllabe "MAN" dans "MAMAN", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'L'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 0,
+        correctPosition: 2,
+        explanation: 'Pour "MAN" : Configuration M (pour M, T, F) + Position 3 (Main à côté de la bouche pour I, ON, AN).',
+      },
+      {
+        type: 'text',
+        title: 'Mot 3 : BÉBÉ',
+        content: 'Le mot "BÉBÉ" se compose de deux syllabes identiques : BÉ + BÉ.\n\nPour coder chaque syllabe "BÉ", vous devez combiner :\n- La configuration pour la consonne B\n- La position pour la voyelle É',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder la syllabe "BÉ" dans "BÉBÉ", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'L'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 2,
+        correctPosition: 4,
+        explanation: 'Pour "BÉ" : Configuration B (pour B, N, UI) + Position 5 (Main au niveau du cou pour TU, É, UN).',
+      },
+      {
+        type: 'text',
+        title: 'Mot 4 : MOTO',
+        content: 'Le mot "MOTO" se compose de deux syllabes : MO + TO.\n\nPour la syllabe "MO", vous devez combiner :\n- La configuration pour la consonne M\n- La position pour la voyelle O',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder la syllabe "MO" dans "MOTO", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'L'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 0,
+        correctPosition: 3,
+        explanation: 'Pour "MO" : Configuration M (pour M, T, F) + Position 4 (Main au niveau du menton pour È, OU, O).',
+      },
+      {
+        type: 'info',
+        title: 'Astuce pour les mots',
+        content: 'Pour bien coder un mot :\n\n1. Décomposez-le en syllabes\n2. Pour chaque syllabe, identifiez consonne + voyelle\n3. Parlez naturellement en ajoutant les gestes\n4. Pratiquez lentement au début, puis accélérez\n\nLa fluidité viendra avec la pratique !',
+      },
+      {
+        type: 'practice',
+        title: 'À vous de jouer !',
+        content: 'Entraînez-vous à coder ces mots simples :\n\n- PAPA (PA + PA)\n- MAMAN (MA + MAN)\n- BÉBÉ (BÉ + BÉ)\n- MOTO (MO + TO)\n\nCommencez lentement, décomposez chaque syllabe, et parlez en même temps que vous codez.\n\nFélicitations ! Vous savez maintenant coder vos premiers mots en LFPC ! 🎉',
+      },
+    ],
+  },
+  '5': {
+    title: 'Combinaisons avancées',
+    sections: [
+      {
+        type: 'text',
+        title: 'Bienvenue au niveau intermédiaire !',
+        content: 'Vous maîtrisez les bases du LFPC : les 8 configurations de main et les 5 positions autour du visage. Il est temps de passer à la vitesse supérieure avec les combinaisons avancées !\n\nDans ce cours, vous allez apprendre à enchaîner plusieurs syllabes rapidement et avec précision.',
+      },
+      {
+        type: 'info',
+        title: 'Pré-requis',
+        content: '✓ Connaître les 8 configurations de main\n✓ Maîtriser les 5 positions autour du visage\n✓ Savoir coder des mots simples (PAPA, MAMAN, etc.)\n✓ Comprendre le principe syllabe = consonne + voyelle',
+      },
+      {
+        type: 'info',
+        title: 'Ce que vous allez savoir faire',
+        content: 'Enchaîner plusieurs syllabes rapidement\nÉviter les erreurs de coarticulation\nCoder des mots plus complexes avec précision\nIdentifier et corriger les ambiguïtés\nUtiliser une méthode reproductible pour tout mot',
+      },
+      {
+        type: 'text',
+        title: 'Rappel : Les 5 positions',
+        content: 'Petit rappel des positions que vous connaissez :\n\n1️⃣ Main sous l\'œil → IN, EU\n2️⃣ Main à l\'écart du visage → A, O, E\n3️⃣ Main à côté de la bouche → I, ON, AN\n4️⃣ Main au niveau du menton → È, OU, O\n5️⃣ Main au niveau du cou → U, É, UN',
+      },
+      {
+        type: 'text',
+        title: 'Nouvelle notion : L\'enchaînement avancé',
+        content: 'Un enchaînement avancé, c\'est quand vous codez plusieurs syllabes à la suite dans un mot ou une phrase.\n\n3 règles d\'or :\n\n1. Précision : Chaque position doit être claire, même en vitesse\n2. Fluidité : Passez d\'une position à l\'autre sans à-coups\n3. Synchronisation : La main bouge EN MÊME TEMPS que vous prononcez',
+      },
+      {
+        type: 'image',
+        title: 'Méthode en 4 étapes',
+        imageKey: 'word/chocolat.jpg',
+        content: '1. DÉCOUPER → Séparez le mot en syllabes\n\n2. CODER → Identifiez config + position pour chaque syllabe\n\n3. ENCHAÎNER → Pratiquez l\'enchaînement lentement\n\n4. VÉRIFIER → Accélérez et vérifiez la précision\n\nExemple : CHOCOLAT\n→ CHO-CO-LAT\n→ CH(config 4)+O(pos 4) / CO(config 5)+O(pos 4) / LA(config 4)+A(pos 2)',
+      },
+      {
+        type: 'text',
+        title: 'Exercice 1 : BONJOUR (facile)',
+        content: 'Commençons avec un mot que vous connaissez : BONJOUR\n\nDécomposition : BON-JOU-R\n\nBON :\n- B → Configuration B\n- ON → Position à côté de la bouche (voyelle nasale)\n\nJOU :\n- J → Configuration J (P, D, J)\n- OU → Position au niveau du menton\n\nR :\n- R → Configuration R (seule, consonne finale)',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "BON" dans "BONJOUR", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'L'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 2,
+        correctPosition: 2,
+        explanation: 'Pour "BON" : Configuration B (pour B, N, UI) + Position 3 (Main à côté de la bouche pour ON).\n\nErreur fréquente : Confondre ON et AN (même position, mais prononciation différente).',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "JOU" dans "BONJOUR", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'L'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 1,
+        correctPosition: 3,
+        explanation: 'Pour "JOU" : Configuration J (pour P, D, J) + Position 4 (Main au niveau du menton pour OU).\n\nAstuces : OU se prononce comme dans "mou", "fou".',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "R" dans "BONJOUR", sélectionnez la configuration :',
+        configurationOptions: ['M', 'J', 'B', 'R'],
+        correctConfiguration: 3,
+        explanation: 'Pour "R" : Configuration R (pour S, R, Z).\n\nR est une consonne finale, sans voyelle après.',
+      },
+      {
+        type: 'text',
+        title: 'Exercice 2 : MERCI (moyen)',
+        content: 'Passons à un mot plus rapide : MERCI\n\nDécomposition : ME-R-CI\n\nME :\n- M → Configuration M\n- E → Position au niveau du menton\n\nR :\n- R → Configuration R (consonne seule)\n\nCI :\n- S → Configuration S (pour S, R)\n- I → Position à côté de la bouche',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "ME" dans "MERCI", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'R'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 0,
+        correctPosition: 3,
+        explanation: 'Pour "ME" : Configuration M + Position 4 (Main au niveau du menton pour E).\n\nAttention : E se prononce comme dans "le", "de".',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "R" dans "MERCI", sélectionnez la configuration :',
+        configurationOptions: ['M', 'J', 'B', 'R'],
+        correctConfiguration: 3,
+        explanation: 'Pour "R" : Configuration R (pour S, R, Z).\n\nR est une consonne seule, sans voyelle après.',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "CI" dans "MERCI", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'R'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 3,
+        correctPosition: 2,
+        explanation: 'Pour "CI" : Configuration R (pour S, R, Z) + Position 3 (Main à côté de la bouche pour I).\n\nCI se prononce "si" comme dans "merci". La configuration R regroupe les consonnes S, R et Z.',
+      },
+      {
+        type: 'text',
+        title: 'Exercice 3 : DEMAIN (moyen)',
+        content: 'Un mot avec une voyelle nasale : DEMAIN\n\nDécomposition : DE-MAIN\n\nDE :\n- D → Configuration J (D, P, J)\n- E → Position à l\'écart du visage\n\nMAIN :\n- M → Configuration M\n- AIN → Position sous l\'œil (voyelle nasale IN)',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "DE" dans "DEMAIN", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'R'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 1,
+        correctPosition: 1,
+        explanation: 'Pour "DE" : Configuration J (pour P, D, J) + Position 2 (Main à l\'écart du visage pour E).\n\nE se prononce comme dans "le", "de".',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "MAIN" dans "DEMAIN", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'L'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 0,
+        correctPosition: 0,
+        explanation: 'Pour "MAIN" : Configuration M + Position 1 (Main sous l\'œil pour IN/AIN).\n\nPiège : Ne pas confondre AIN (pos 1) avec AN (pos 3).',
+      },
+      {
+        type: 'text',
+        title: 'Exercice 4 : AUJOURD\'HUI (difficile)',
+        content: 'Un mot long avec plusieurs syllabes : AUJOURD\'HUI\n\nDécomposition : AU-JOUR-D\'HUI\n\nAU :\n- Voyelle AU → Position à l\'écart du visage (pas de consonne initiale)\n\nJOUR :\n- J → Configuration J\n- OU → Position au niveau du menton\n- R → Configuration R\n\nHUI :\n- H muet (pas de geste)\n- UI → Configuration B + Position sous l\'œil',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "JOUR" dans "AUJOURD\'HUI", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'L'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 1,
+        correctPosition: 3,
+        explanation: 'Pour "JOUR" : Configuration J + Position 4 (Main au niveau du menton pour OU).\n\nDans les mots longs, gardez un rythme régulier et ne précipitez pas les transitions.',
+      },
+      {
+        type: 'text',
+        title: 'Exercice 5 : PEUT-ÊTRE (difficile)',
+        content: 'Un mot avec une liaison délicate : PEUT-ÊTRE\n\nDécomposition : PEUT-Ê-TRE\n\nPEUT :\n- P → Configuration J\n- EU → Position sous l\'œil\n- T → Configuration M (M, T, F)\n\nÊTRE :\n- Ê → Position au niveau du cou\n- T → Configuration M\n- R → Configuration R\n- E → Position à l\'écart',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "PEUT" dans "PEUT-ÊTRE", quelle configuration pour P et quelle position pour EU ?',
+        configurationOptions: ['M', 'J', 'B', 'L'],
+        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        correctConfiguration: 1,
+        correctPosition: 0,
+        explanation: 'Pour "PEUT" : Configuration J (pour P) + Position 1 (Main sous l\'œil pour EU).\n\nAttention : EU et É sont différents ! EU = position 1, É = position 5.',
+      },
+      {
+        type: 'info',
+        title: 'Récapitulatif',
+        content: 'Les combinaisons avancées = enchaîner plusieurs syllabes avec précision\n\nMéthode : Découper → Coder → Enchaîner → Vérifier\n\nRègles d\'or : Précision, Fluidité, Synchronisation\n\nPièges à éviter : Confondre les voyelles nasales (AN/ON/IN), négliger les consonnes finales, aller trop vite\n\nPratiquez lentement puis accélérez progressivement',
+      },
+      {
+        type: 'practice',
+        title: 'Mission : Entraînement autonome',
+        content: 'Votre mission (10 minutes) :\n\nChoisissez 3 mots de votre quotidien (prénom, ville, métier...) et :\n\n1. Décomposez-les en syllabes\n2. Identifiez les configurations et positions\n3. Pratiquez l\'enchaînement lentement\n4. Accélérez progressivement\n\nExemples de mots à essayer :\n- TÉLÉPHONE\n- ORDINATEUR\n- RESTAURANT\n- PHARMACIE\n\nFélicitations ! Vous maîtrisez maintenant les combinaisons avancées en LFPC ! ',
+      },
+    ],
+  },
 };
 
 export default function LessonScreen() {
   const { id } = useLocalSearchParams();
   const { user } = useAuth();
+  const scrollViewRef = useRef<ScrollView>(null);
   const [currentSection, setCurrentSection] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [selectedConfiguration, setSelectedConfiguration] = useState<number | null>(null);
+  const [selectedPosition, setSelectedPosition] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [score, setScore] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
@@ -199,38 +543,71 @@ export default function LessonScreen() {
   const loadHandSignImages = async () => {
     if (!lesson) return;
 
-    console.log('🖼️ Chargement des images depuis hand_signs...');
+    console.log('🖼️ Chargement des images...');
     console.log('Leçon ID:', id);
 
     try {
-      // Charger toutes les images depuis hand_signs
-      const { data: handSigns, error } = await supabase
+      // Créer un map des images par clé
+      const imageMap: { [key: string]: string } = {};
+      
+      // Charger les images depuis hand_signs pour les leçons 1 et 2
+      const { data: handSigns, error: handSignsError } = await supabase
         .from('hand_signs')
         .select('*')
         .eq('type', 'consonne');
 
-      console.log('📊 Résultat hand_signs:', { count: handSigns?.length, error });
+      console.log('📊 Résultat hand_signs:', { count: handSigns?.length, error: handSignsError });
 
-      if (error) {
-        console.error('❌ Erreur chargement images:', error);
-        setLessonWithImages(lesson);
-        return;
+      if (!handSignsError && handSigns) {
+        handSigns.forEach((sign: any) => {
+          console.log(`  - ${sign.key}: ${sign.image_url}`);
+          imageMap[sign.key] = sign.image_url;
+        });
       }
 
-      if (!handSigns || handSigns.length === 0) {
-        console.warn('⚠️ Aucune image trouvée dans hand_signs');
-        setLessonWithImages(lesson);
-        return;
-      }
+      // Charger les images depuis hand_positions pour la leçon 3
+      if (id === '3') {
+        const { data: handPositions, error: positionsError } = await supabase
+          .from('hand_positions')
+          .select('*')
+          .order('configuration_number', { ascending: true });
 
-      // Créer un map des images par clé
-      const imageMap: { [key: string]: string } = {};
-      handSigns?.forEach((sign: any) => {
-        console.log(`  - ${sign.key}: ${sign.image_url}`);
-        imageMap[sign.key] = sign.image_url;
-      });
+        console.log('📊 Résultat hand_positions:', { count: handPositions?.length, error: positionsError });
+
+        if (!positionsError && handPositions) {
+          handPositions.forEach((position: any) => {
+            console.log(`  - Position ${position.configuration_number}: ${position.image_url}`);
+            console.log(`    Description: ${position.description}`);
+            console.log(`    Voyelles: ${position.voyelles}`);
+            console.log(`    Exemples: ${position.exemples}`);
+            imageMap[position.configuration_number.toString()] = position.image_url;
+          });
+        }
+      }
 
       console.log('🗺️ Image map créé:', imageMap);
+
+      // Charger les données complètes des positions pour les leçons 3, 4 et 5
+      let positionsData: any[] = [];
+      if (id === '3' || id === '4' || id === '5') {
+        const { data: positions } = await supabase
+          .from('hand_positions')
+          .select('*')
+          .order('configuration_number', { ascending: true });
+        positionsData = positions || [];
+      }
+
+      // Créer un map des descriptions, voyelles et exemples des positions
+      const positionDescriptions: { [key: string]: string } = {};
+      const positionExamples: { [key: string]: string } = {};
+      const positionVoyelles: { [key: string]: string } = {};
+      if ((id === '3' || id === '4' || id === '5') && positionsData.length > 0) {
+        positionsData.forEach((pos: any) => {
+          positionDescriptions[`LOAD_POSITION_${pos.configuration_number}`] = pos.description;
+          positionExamples[`EXAMPLES_POSITION_${pos.configuration_number}`] = `Exemple : ${pos.exemples}`;
+          positionVoyelles[`VOYELLES_POSITION_${pos.configuration_number}`] = pos.voyelles;
+        });
+      }
 
       // Remplacer les URLs dans les sections
       const updatedSections = lesson.sections.map((section, index) => {
@@ -242,15 +619,119 @@ export default function LessonScreen() {
             imageUrl: newUrl || section.imageUrl
           };
         }
+
+        // Charger les images depuis le bucket 'Word' pour la leçon 5
+        if (section.type === 'image' && section.imageKey && section.imageKey.startsWith('word/')) {
+          const fileName = section.imageKey.replace('word/', '');
+          const { data } = supabase.storage.from('Word').getPublicUrl(fileName);
+          const imageUrl = data.publicUrl;
+          console.log(`  🖼️ Section ${index} (Word bucket): ${section.imageKey} -> ${imageUrl}`);
+          console.log(`  📁 Bucket: Word, File: ${fileName}`);
+          return {
+            ...section,
+            imageUrl: imageUrl
+          };
+        }
+
+        // Charger les données depuis hand_positions pour la leçon 3
+        if (section.type === 'image' && section.imageKey && section.imageUrl === 'LOAD_FROM_POSITIONS') {
+          const positionNumber = parseInt(section.imageKey);
+          const positionData = positionsData.find((p: any) => p.configuration_number === positionNumber);
+          
+          if (positionData) {
+            console.log(`  Position ${positionNumber}:`, positionData);
+            return {
+              ...section,
+              title: `Position ${positionNumber} : ${positionData.description}`,
+              imageUrl: positionData.image_url,
+              content: `**${positionData.description}**\n\nVoyelles : ${positionData.voyelles}\n\nExemples :\n${positionData.exemples}`
+            };
+          }
+        }
         
         // Charger les images pour les options de quiz
         if (section.type === 'quiz' && section.optionImages) {
-          const optionImageUrls = section.optionImages.map(key => imageMap[key] || '');
+          // Pour la leçon 3, utiliser les images des positions
+          const optionImageUrls = section.optionImages.map(key => {
+            // Si c'est un nombre (position), chercher dans imageMap avec le numéro
+            if (id === '3' && !isNaN(parseInt(key))) {
+              return imageMap[key] || '';
+            }
+            // Sinon, utiliser la clé directement (pour les autres leçons)
+            return imageMap[key] || '';
+          });
           console.log(`  Quiz ${index}: options images ->`, optionImageUrls);
           return {
             ...section,
             optionImageUrls: optionImageUrls
           };
+        }
+
+        // Remplacer les options et questions des quiz avec les descriptions des positions pour la leçon 3
+        if (section.type === 'quiz' && id === '3') {
+          let updatedSection = { ...section };
+          
+          // Remplacer les options
+          if (section.options) {
+            const updatedOptions = section.options.map(option => {
+              if (option.startsWith('LOAD_POSITION_')) {
+                return positionDescriptions[option] || option;
+              }
+              return option;
+            });
+            console.log(`  Quiz ${index}: options ->`, updatedOptions);
+            updatedSection.options = updatedOptions;
+          }
+          
+          // Remplacer les voyelles et exemples dans la question
+          if (section.question) {
+            let updatedQuestion = section.question;
+            
+            // Remplacer les voyelles
+            Object.keys(positionVoyelles).forEach(key => {
+              if (updatedQuestion.includes(key)) {
+                updatedQuestion = updatedQuestion.replace(key, positionVoyelles[key]);
+              }
+            });
+            
+            // Remplacer les exemples
+            Object.keys(positionExamples).forEach(key => {
+              if (updatedQuestion.includes(key)) {
+                updatedQuestion = updatedQuestion.replace(key, positionExamples[key]);
+              }
+            });
+            
+            console.log(`  Quiz ${index}: question ->`, updatedQuestion);
+            updatedSection.question = updatedQuestion;
+          }
+          
+          return updatedSection;
+        }
+
+        // Charger les configurations et positions pour les quiz multipart (leçons 4 et 5)
+        if (section.type === 'multipart_quiz' && (id === '4' || id === '5')) {
+          let updatedSection = { ...section };
+          
+          // Charger les URLs des configurations
+          if (section.configurationOptions) {
+            const configurationImageUrls = section.configurationOptions.map(key => imageMap[key] || '');
+            console.log(`  Multipart Quiz ${index}: configuration images ->`, configurationImageUrls);
+            updatedSection.configurationImageUrls = configurationImageUrls;
+          }
+          
+          // Remplacer les placeholders de positions par les descriptions
+          if (section.positionOptions) {
+            const positionOptionsUpdated = section.positionOptions.map(option => {
+              if (option.startsWith('LOAD_POSITION_')) {
+                return positionDescriptions[option] || option;
+              }
+              return option;
+            });
+            console.log(`  Multipart Quiz ${index}: position options ->`, positionOptionsUpdated);
+            updatedSection.positionOptions = positionOptionsUpdated;
+          }
+          
+          return updatedSection;
         }
         
         return section;
@@ -293,6 +774,9 @@ export default function LessonScreen() {
   const progress = ((currentSection + 1) / displayLesson.sections.length) * 100;
 
   const handleNext = async () => {
+    // Scroll en haut de la page
+    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+    
     if (isLastSection) {
       // Calculer le score final et vérifier si la leçon est réussie
       const totalQuestions = displayLesson.sections.filter(s => s.type === 'quiz').length;
@@ -334,43 +818,46 @@ export default function LessonScreen() {
             console.log('✅ Progression sauvegardée avec succès');
           }
 
-          // Mettre à jour le streak seulement si réussi
-          if (isPassed) {
-            const today = new Date().toISOString().split('T')[0];
-            const { data: profileData } = await supabase
-              .from('users_profiles')
-              .select('last_activity_date, current_streak')
-              .eq('id', user.id)
-              .single();
+          // Mettre à jour le streak à chaque fin de leçon (pas seulement si réussi)
+          const today = new Date().toISOString().split('T')[0];
+          const { data: profileData } = await supabase
+            .from('users_profiles')
+            .select('last_activity_date, current_streak')
+            .eq('id', user.id)
+            .single();
 
-            if (profileData) {
-              const lastActivity = profileData.last_activity_date;
-              const yesterday = new Date();
-              yesterday.setDate(yesterday.getDate() - 1);
-              const yesterdayStr = yesterday.toISOString().split('T')[0];
+          const lastActivity = profileData?.last_activity_date;
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          const yesterdayStr = yesterday.toISOString().split('T')[0];
 
-              let newStreak = profileData.current_streak || 0;
-              
-              if (lastActivity === yesterdayStr) {
-                newStreak += 1;
-              } else if (lastActivity !== today) {
-                newStreak = 1;
-              }
+          let newStreak = profileData?.current_streak || 0;
+          
+          // Si la dernière activité était hier, on incrémente
+          if (lastActivity === yesterdayStr) {
+            newStreak += 1;
+          } 
+          // Si la dernière activité n'était pas aujourd'hui, on recommence à 1
+          else if (lastActivity !== today) {
+            newStreak = 1;
+          }
+          // Si c'est déjà aujourd'hui, on garde le streak actuel (pas d'incrémentation)
 
-              const { error: streakError } = await supabase
-                .from('users_profiles')
-                .update({
-                  last_activity_date: today,
-                  current_streak: newStreak,
-                })
-                .eq('id', user.id);
+          console.log('📊 Mise à jour streak:', { lastActivity, today, yesterdayStr, currentStreak: profileData?.current_streak, newStreak });
 
-              if (streakError) {
-                console.error('❌ Erreur streak:', streakError);
-              } else {
-                console.log('✅ Streak mis à jour:', newStreak);
-              }
-            }
+          const { error: streakError } = await supabase
+            .from('users_profiles')
+            .upsert({
+              id: user.id,
+              username: user.user_metadata?.username || user.email?.split('@')[0] || 'user',
+              last_activity_date: today,
+              current_streak: newStreak,
+            });
+
+          if (streakError) {
+            console.error('❌ Erreur streak:', streakError);
+          } else {
+            console.log('✅ Streak mis à jour:', newStreak);
           }
 
         } catch (error) {
@@ -382,6 +869,8 @@ export default function LessonScreen() {
     } else {
       setCurrentSection(currentSection + 1);
       setSelectedAnswer(null);
+      setSelectedConfiguration(null);
+      setSelectedPosition(null);
       setShowExplanation(false);
     }
   };
@@ -390,6 +879,8 @@ export default function LessonScreen() {
     if (currentSection > 0) {
       setCurrentSection(currentSection - 1);
       setSelectedAnswer(null);
+      setSelectedConfiguration(null);
+      setSelectedPosition(null);
       setShowExplanation(false);
     }
   };
@@ -399,6 +890,26 @@ export default function LessonScreen() {
     setShowExplanation(true);
     
     if (index === section.correctAnswer && !answeredQuestions.has(currentSection)) {
+      setScore(score + 1);
+      setAnsweredQuestions(new Set(answeredQuestions).add(currentSection));
+    }
+  };
+
+  const handleMultipartSubmit = () => {
+    const hasPosition = section.positionOptions && section.positionOptions.length > 0;
+    
+    // Vérifier que les champs requis sont remplis
+    if (selectedConfiguration === null) return;
+    if (hasPosition && selectedPosition === null) return;
+    
+    setShowExplanation(true);
+    
+    // Valider selon le type de quiz (avec ou sans position)
+    const isCorrect = hasPosition
+      ? (selectedConfiguration === section.correctConfiguration && selectedPosition === section.correctPosition)
+      : (selectedConfiguration === section.correctConfiguration);
+    
+    if (isCorrect && !answeredQuestions.has(currentSection)) {
       setScore(score + 1);
       setAnsweredQuestions(new Set(answeredQuestions).add(currentSection));
     }
@@ -484,7 +995,7 @@ export default function LessonScreen() {
         );
 
       case 'practice':
-        const totalQuestions = displayLesson.sections.filter(s => s.type === 'quiz').length;
+        const totalQuestions = displayLesson.sections.filter(s => s.type === 'quiz' || s.type === 'multipart_quiz').length;
         const scorePercentage = totalQuestions > 0 ? (score / totalQuestions) * 100 : 100;
         const isPassed = scorePercentage >= 60;
         
@@ -516,9 +1027,11 @@ export default function LessonScreen() {
         );
 
       case 'image':
+        console.log('🖼️ Rendering image section:', { title: section.title, imageUrl: section.imageUrl, hasContent: !!section.content });
         return (
           <View style={styles.sectionContainer}>
             {section.title && <Text style={styles.sectionTitle}>{section.title}</Text>}
+            {section.content && <Text style={styles.sectionContent}>{section.content}</Text>}
             {section.imageUrl && (
               <View style={styles.imageContainer}>
                 <Image 
@@ -528,7 +1041,107 @@ export default function LessonScreen() {
                 />
               </View>
             )}
-            {section.content && <Text style={styles.sectionContent}>{section.content}</Text>}
+          </View>
+        );
+
+      case 'multipart_quiz':
+        const hasPosition = section.positionOptions && section.positionOptions.length > 0;
+        const isMultipartCorrect = hasPosition 
+          ? (selectedConfiguration === section.correctConfiguration && selectedPosition === section.correctPosition)
+          : (selectedConfiguration === section.correctConfiguration);
+        const canSubmit = hasPosition 
+          ? (selectedConfiguration !== null && selectedPosition !== null)
+          : (selectedConfiguration !== null);
+        
+        return (
+          <View style={styles.sectionContainer}>
+            <Text style={styles.quizTitle}>Question</Text>
+            <Text style={styles.quizQuestion}>{section.question}</Text>
+            
+            {/* Section Configuration */}
+            <Text style={styles.multipartSectionTitle}>Choisissez la configuration :</Text>
+            <View style={styles.optionsContainer}>
+              {section.configurationImageUrls?.map((imageUrl, index) => (
+                <Pressable
+                  key={`config-${index}`}
+                  onPress={() => !showExplanation && setSelectedConfiguration(index)}
+                  disabled={showExplanation}
+                  style={[
+                    styles.optionButton,
+                    styles.optionButtonWithImage,
+                    selectedConfiguration === index && styles.optionButtonSelected,
+                    showExplanation && index === section.correctConfiguration && styles.optionButtonCorrect,
+                    showExplanation && selectedConfiguration === index && index !== section.correctConfiguration && styles.optionButtonWrong,
+                  ]}
+                >
+                  <View style={styles.optionImageContainer}>
+                    <Image 
+                      source={{ uri: imageUrl }} 
+                      style={styles.optionImage}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+
+            {/* Section Position - uniquement si positionOptions existe */}
+            {hasPosition && (
+              <>
+                <Text style={styles.multipartSectionTitle}>Choisissez la position :</Text>
+                <View style={styles.optionsContainer}>
+                  {section.positionOptions?.map((position, index) => (
+                    <Pressable
+                      key={`pos-${index}`}
+                      onPress={() => !showExplanation && setSelectedPosition(index)}
+                      disabled={showExplanation}
+                      style={[
+                        styles.optionButton,
+                        selectedPosition === index && styles.optionButtonSelected,
+                        showExplanation && index === section.correctPosition && styles.optionButtonCorrect,
+                        showExplanation && selectedPosition === index && index !== section.correctPosition && styles.optionButtonWrong,
+                      ]}
+                    >
+                      <Text style={[
+                        styles.optionText,
+                        selectedPosition === index && styles.optionTextSelected,
+                      ]}>
+                        {position}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </View>
+              </>
+            )}
+
+            {/* Bouton Valider */}
+            {!showExplanation && (
+              <Pressable
+                onPress={handleMultipartSubmit}
+                disabled={!canSubmit}
+                style={[
+                  styles.submitButton,
+                  !canSubmit && styles.submitButtonDisabled,
+                ]}
+              >
+                <Text style={styles.submitButtonText}>
+                  {canSubmit ? 'Valider' : hasPosition ? 'Sélectionnez une configuration et une position' : 'Sélectionnez une configuration'}
+                </Text>
+              </Pressable>
+            )}
+
+            {/* Explication */}
+            {showExplanation && (
+              <View style={[
+                styles.explanationBox,
+                isMultipartCorrect ? styles.explanationCorrect : styles.explanationWrong
+              ]}>
+                <Text style={styles.explanationTitle}>
+                  {isMultipartCorrect ? '✓ Correct !' : '✗ Incorrect'}
+                </Text>
+                <Text style={styles.explanationText}>{section.explanation}</Text>
+              </View>
+            )}
           </View>
         );
 
@@ -554,7 +1167,7 @@ export default function LessonScreen() {
       </View>
 
       {/* Content */}
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+      <ScrollView ref={scrollViewRef} style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         {renderSection()}
       </ScrollView>
 
@@ -716,8 +1329,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   optionImage: {
-    width: 120,
-    height: 120,
+    width: 360,
+    height: 360,
   },
   optionImageLabel: {
     fontSize: 14,
@@ -811,8 +1424,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   handImage: {
-    width: 300,
-    height: 300,
+    width: 600,
+    height: 600,
   },
   navigation: {
     flexDirection: 'row',
@@ -840,24 +1453,48 @@ const styles = StyleSheet.create({
   navButtonText: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  navButtonTextPrimary: {
     color: '#FFFFFF',
   },
   navButtonTextSecondary: {
-    color: '#64748B',
-  },
-  errorText: {
-    fontSize: 18,
-    color: '#64748B',
-    textAlign: 'center',
-    marginTop: 100,
+    color: '#475569',
   },
   backButton: {
-    marginTop: 20,
-    alignSelf: 'center',
+    padding: 8,
   },
   backButtonText: {
     fontSize: 16,
     color: '#2563EB',
+    fontWeight: '600',
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#EF4444',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  multipartSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0F172A',
+    marginTop: 20,
+    marginBottom: 12,
+  },
+  submitButton: {
+    backgroundColor: '#2563EB',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  submitButtonDisabled: {
+    backgroundColor: '#94A3B8',
+    opacity: 0.6,
+  },
+  submitButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
     fontWeight: '600',
   },
 });

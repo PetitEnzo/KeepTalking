@@ -13,6 +13,7 @@ export default function HomeScreen() {
   const [step, setStep] = useState(1);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [currentStreak, setCurrentStreak] = useState(0);
 
   // Réponses du questionnaire
   const [profile, setProfile] = useState<UserProfile>(null);
@@ -21,6 +22,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     checkOnboardingStatus();
+    loadStreak();
   }, [user]);
 
   const checkOnboardingStatus = async () => {
@@ -40,6 +42,24 @@ export default function HomeScreen() {
       console.error('Erreur vérification onboarding:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadStreak = async () => {
+    if (!user) return;
+
+    try {
+      const { data } = await supabase
+        .from('users_profiles')
+        .select('current_streak')
+        .eq('id', user.id)
+        .single();
+
+      if (data) {
+        setCurrentStreak(data.current_streak || 0);
+      }
+    } catch (error) {
+      console.error('Erreur chargement streak:', error);
     }
   };
 
@@ -75,38 +95,64 @@ export default function HomeScreen() {
 
   if (hasCompletedOnboarding) {
     return (
-      <View style={styles.completedContainer}>
-        <Text style={styles.welcomeTitle}>
-          Bienvenue {user?.user_metadata?.username || 'Utilisateur'} ! 👋
-        </Text>
-        <Text style={styles.welcomeSubtitle}>
-          Votre parcours d'apprentissage est prêt.
-        </Text>
-        
-        <Pressable 
-          style={({ pressed }) => [
-            styles.actionCard,
-            pressed && styles.actionCardPressed
-          ]}
-          onPress={() => router.push('/(tabs)/lessons')}
-        >
-          <Text style={styles.actionCardTitle}>
-            📚 Commencez votre apprentissage
+      <ScrollView style={styles.completedContainer}>
+        <View style={styles.completedContent}>
+          <Text style={styles.welcomeTitle}>
+            Bienvenue {user?.user_metadata?.username || 'Utilisateur'} ! 👋
           </Text>
-          <Text style={styles.actionCardText}>
-            Explorez les leçons adaptées à votre niveau dans l'onglet "Leçons"
-          </Text>
-        </Pressable>
+          
+          {/* Streak */}
+          <View style={styles.streakCard}>
+            <Text style={styles.streakEmoji}>🔥</Text>
+            <View style={styles.streakContent}>
+              <Text style={styles.streakNumber}>{currentStreak}</Text>
+              <Text style={styles.streakLabel}>jour{currentStreak > 1 ? 's' : ''} de suite</Text>
+            </View>
+          </View>
 
-        <View style={[styles.actionCard, { backgroundColor: '#FAF5FF' }]}>
-          <Text style={[styles.actionCardTitle, { color: '#581C87' }]}>
-            💬 Pratiquez avec le chatbot
-          </Text>
-          <Text style={[styles.actionCardText, { color: '#7C3AED' }]}>
-            Posez vos questions sur le LfPC dans l'onglet "Chat"
-          </Text>
+          {/* Bannière d'avertissement */}
+          <View style={styles.warningBanner}>
+            <Text style={styles.warningIcon}>⚠️</Text>
+            <View style={styles.warningContent}>
+              <Text style={styles.warningTitle}>Application en développement</Text>
+              <Text style={styles.warningText}>
+                Cette application est un complément d'apprentissage et ne remplace pas les cours de LFPC. Des erreurs peuvent être présentes. N'hésitez pas à nous signaler tout problème !
+              </Text>
+            </View>
+          </View>
+        
+          <Pressable 
+            style={({ pressed }) => [
+              styles.actionCard,
+              pressed && styles.actionCardPressed
+            ]}
+            onPress={() => router.push('/(tabs)/lessons')}
+          >
+            <Text style={styles.actionCardTitle}>
+              📚 Commencez votre apprentissage
+            </Text>
+            <Text style={styles.actionCardText}>
+              Explorez les leçons adaptées à votre niveau
+            </Text>
+          </Pressable>
+
+          <Pressable 
+            style={({ pressed }) => [
+              styles.actionCard,
+              { backgroundColor: '#FAF5FF' },
+              pressed && styles.actionCardPressed
+            ]}
+            onPress={() => router.push('/(tabs)/chat')}
+          >
+            <Text style={[styles.actionCardTitle, { color: '#581C87' }]}>
+              💬 Traduisez avec le chatbot
+            </Text>
+            <Text style={[styles.actionCardText, { color: '#7C3AED' }]}>
+              Traduisez vos mots en LFPC avec l'assistant intelligent
+            </Text>
+          </Pressable>
         </View>
-      </View>
+      </ScrollView>
     );
   }
 
@@ -420,39 +466,90 @@ const styles = StyleSheet.create({
   },
   completedContainer: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    padding: 24,
+    backgroundColor: '#F8FAFC',
+  },
+  completedContent: {
+    padding: 20,
   },
   welcomeTitle: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#0F172A',
-    marginBottom: 16,
+    marginBottom: 20,
   },
-  welcomeSubtitle: {
-    fontSize: 18,
-    color: '#64748B',
-    marginBottom: 32,
+  streakCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#FCD34D',
+  },
+  streakEmoji: {
+    fontSize: 40,
+    marginRight: 16,
+  },
+  streakContent: {
+    flex: 1,
+  },
+  streakNumber: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#92400E',
+  },
+  streakLabel: {
+    fontSize: 16,
+    color: '#78350F',
+    fontWeight: '600',
+  },
+  warningBanner: {
+    flexDirection: 'row',
+    backgroundColor: '#FEF2F2',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
+  },
+  warningIcon: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  warningContent: {
+    flex: 1,
+  },
+  warningTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#991B1B',
+    marginBottom: 4,
+  },
+  warningText: {
+    fontSize: 14,
+    color: '#B91C1C',
+    lineHeight: 20,
   },
   actionCard: {
     backgroundColor: '#EFF6FF',
     borderRadius: 12,
-    padding: 24,
-    marginBottom: 16,
+    padding: 20,
+    marginBottom: 12,
   },
   actionCardPressed: {
     opacity: 0.8,
   },
   actionCardTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
     color: '#1E3A8A',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   actionCardText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#3B82F6',
-    lineHeight: 24,
+    lineHeight: 22,
   },
   scrollContainer: {
     flex: 1,

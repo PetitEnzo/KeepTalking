@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../services/supabase';
 
 interface HeaderProps {
   onMenuPress?: () => void;
@@ -9,6 +10,29 @@ interface HeaderProps {
 
 export function Header({ onMenuPress, title }: HeaderProps) {
   const { user } = useAuth();
+  const [streak, setStreak] = useState(0);
+
+  useEffect(() => {
+    loadStreak();
+  }, [user]);
+
+  const loadStreak = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('users_profiles')
+        .select('current_streak')
+        .eq('id', user.id)
+        .single();
+
+      if (!error && data) {
+        setStreak(data.current_streak || 0);
+      }
+    } catch (error) {
+      console.error('Erreur chargement streak:', error);
+    }
+  };
 
   return (
     <View className="bg-white border-b border-slate-200 px-6 py-4 flex-row items-center justify-between shadow-sm">
@@ -43,7 +67,7 @@ export function Header({ onMenuPress, title }: HeaderProps) {
         {/* Streak */}
         <View className="flex-row items-center bg-orange-50 px-3 py-2 rounded-full mr-3">
           <Text className="text-xl mr-1">🔥</Text>
-          <Text className="text-orange-600 font-bold">0</Text>
+          <Text className="text-orange-600 font-bold">{streak}</Text>
         </View>
 
         {/* Points */}
