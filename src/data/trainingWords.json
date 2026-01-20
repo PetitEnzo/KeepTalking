@@ -1,0 +1,256 @@
+[
+  {
+    "id": 1,
+    "word": "FEU",
+    "difficulty": "beginner",
+    "syllables": [
+      {
+        "text": "FEU",
+        "consonne": "F",
+        "voyelle": "eu",
+        "hand_sign_key": "M",
+        "hand_position_config": 1,
+        "description": "Main sous l'œil - Configuration M (F)"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "word": "MAIN",
+    "difficulty": "beginner",
+    "syllables": [
+      {
+        "text": "M",
+        "consonne": "M",
+        "voyelle": null,
+        "hand_sign_key": "M",
+        "hand_position_config": null,
+        "description": "Configuration M seule"
+      },
+      {
+        "text": "IN",
+        "consonne": null,
+        "voyelle": "in",
+        "hand_sign_key": null,
+        "hand_position_config": 1,
+        "description": "Main sous l'œil - Position 1"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "word": "PAPA",
+    "difficulty": "beginner",
+    "syllables": [
+      {
+        "text": "PA",
+        "consonne": "P",
+        "voyelle": "a",
+        "hand_sign_key": "J",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration J (P)"
+      },
+      {
+        "text": "PA",
+        "consonne": "P",
+        "voyelle": "a",
+        "hand_sign_key": "J",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration J (P)"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "word": "BONJOUR",
+    "difficulty": "intermediate",
+    "syllables": [
+      {
+        "text": "BON",
+        "consonne": "B",
+        "voyelle": "on",
+        "hand_sign_key": "B",
+        "hand_position_config": 3,
+        "description": "Main à côté de la bouche - Configuration B"
+      },
+      {
+        "text": "JOU",
+        "consonne": "J",
+        "voyelle": "ou",
+        "hand_sign_key": "J",
+        "hand_position_config": 4,
+        "description": "Main au niveau du menton - Configuration J"
+      },
+      {
+        "text": "R",
+        "consonne": "R",
+        "voyelle": null,
+        "hand_sign_key": "R",
+        "hand_position_config": null,
+        "description": "Configuration R seule"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "word": "MERCI",
+    "difficulty": "intermediate",
+    "syllables": [
+      {
+        "text": "ME",
+        "consonne": "M",
+        "voyelle": "e",
+        "hand_sign_key": "M",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration M"
+      },
+      {
+        "text": "R",
+        "consonne": "R",
+        "voyelle": null,
+        "hand_sign_key": "R",
+        "hand_position_config": null,
+        "description": "Configuration R seule"
+      },
+      {
+        "text": "CI",
+        "consonne": "C",
+        "voyelle": "i",
+        "hand_sign_key": "K",
+        "hand_position_config": 3,
+        "description": "Main à côté de la bouche - Configuration K (C)"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "word": "DEMAIN",
+    "difficulty": "intermediate",
+    "syllables": [
+      {
+        "text": "DE",
+        "consonne": "D",
+        "voyelle": "e",
+        "hand_sign_key": "J",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration J (D)"
+      },
+      {
+        "text": "M",
+        "consonne": "M",
+        "voyelle": null,
+        "hand_sign_key": "M",
+        "hand_position_config": null,
+        "description": "Configuration M seule"
+      },
+      {
+        "text": "IN",
+        "consonne": null,
+        "voyelle": "in",
+        "hand_sign_key": null,
+        "hand_position_config": 1,
+        "description": "Main sous l'œil - Position 1"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "word": "CHOCOLAT",
+    "difficulty": "advanced",
+    "syllables": [
+      {
+        "text": "CHO",
+        "consonne": "CH",
+        "voyelle": "o",
+        "hand_sign_key": "L",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration L (CH)"
+      },
+      {
+        "text": "CO",
+        "consonne": "C",
+        "voyelle": "o",
+        "hand_sign_key": "K",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration K (C)"
+      },
+      {
+        "text": "LA",
+        "consonne": "L",
+        "voyelle": "a",
+        "hand_sign_key": "L",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration L"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "word": "SALUT",
+    "difficulty": "intermediate",
+    "syllables": [
+      {
+        "text": "SA",
+        "consonne": "S",
+        "voyelle": "a",
+        "hand_sign_key": "R",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration R (S)"
+      },
+      {
+        "text": "LU",
+        "consonne": "L",
+        "voyelle": "u",
+        "hand_sign_key": "L",
+        "hand_position_config": 5,
+        "description": "Main au niveau du cou - Configuration L"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "word": "BÉBÉ",
+    "difficulty": "beginner",
+    "syllables": [
+      {
+        "text": "BÉ",
+        "consonne": "B",
+        "voyelle": "é",
+        "hand_sign_key": "B",
+        "hand_position_config": 5,
+        "description": "Main au niveau du cou - Configuration B"
+      },
+      {
+        "text": "BÉ",
+        "consonne": "B",
+        "voyelle": "é",
+        "hand_sign_key": "B",
+        "hand_position_config": 5,
+        "description": "Main au niveau du cou - Configuration B"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "word": "LUNDI",
+    "difficulty": "intermediate",
+    "syllables": [
+      {
+        "text": "LUN",
+        "consonne": "L",
+        "voyelle": "un",
+        "hand_sign_key": "L",
+        "hand_position_config": 1,
+        "description": "Main sous l'œil - Configuration L"
+      },
+      {
+        "text": "DI",
+        "consonne": "D",
+        "voyelle": "i",
+        "hand_sign_key": "J",
+        "hand_position_config": 3,
+        "description": "Main à côté de la bouche - Configuration J (D)"
+      }
+    ]
+  }
+]

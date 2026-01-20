@@ -12,10 +12,15 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@mediapipe/camera_utils": "^0.3.1675466862",
+    "@mediapipe/drawing_utils": "^0.3.1675466124",
+    "@mediapipe/hands": "^0.4.1675469240",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@supabase/supabase-js": "^2.39.0",
     "@tamagui/config": "^1.144.2",
     "@tamagui/core": "^1.144.2",
+    "@tensorflow-models/handpose": "^0.1.0",
+    "@tensorflow/tfjs": "^4.22.0",
     "ajv": "^8.17.1",
     "expo": "~52.0.0",
     "expo-constants": "~17.0.0",

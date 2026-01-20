@@ -9,9 +9,107 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ### À venir
 - Système de progression gamifié
-- Exercices interactifs de reconnaissance LfPC
 - Mode hors-ligne avec synchronisation
 - Notifications push pour rappels d'apprentissage
+
+## [0.2.0] - 2026-01-20
+
+### Ajouté
+
+#### Module d'entraînement avec reconnaissance de main en temps réel
+- **Interface d'entraînement interactive** (`/training`)
+  - Détection de main en temps réel avec TensorFlow.js HandPose
+  - Validation automatique des syllabes par reconnaissance gestuelle
+  - Grille visuelle sur la webcam avec 5 zones de position (œil, écart, bouche, menton, cou)
+  - Barre de confiance ultra-réactive (mise à jour 10 fois/seconde)
+  - Progression automatique entre syllabes et mots
+  - Bandeau de succès temporaire pour la complétion de mots
+  - Système de streak quotidien avec persistance Supabase
+
+#### Système de reconnaissance gestuelle LFPC
+- **Algorithme de matching syllabique** (`syllableMatcher.js`)
+  - Détection de position de main (5 zones verticales par rapport au visage)
+  - Détection de configuration de main (formes de doigts A-Z)
+  - Calcul de confiance avec scores pondérés
+  - Validation stricte de la configuration (minimum 70% requis)
+  - Protection anti-validations fantômes
+  - Groupes de configurations similaires pour tolérance
+  
+#### Composants de formation
+- **WebcamFeedback** - Composant de retour webcam avec overlay de landmarks
+  - Affichage miroir de la webcam
+  - Dessin des landmarks de main en temps réel
+  - Grille de zones avec labels non-miroir
+  - Détection throttlée à 100ms pour performance optimale
+  
+- **SyllableCard** - Carte d'affichage de syllabe
+  - États : en attente, en cours, validée
+  - Affichage des images de référence (hand_sign + hand_position)
+  - Indicateur visuel de progression
+
+#### Données d'entraînement
+- Fichier JSON `trainingWords.json` avec mots LFPC
+  - Structure : mot → syllabes → consonne/voyelle
+  - Mapping vers hand_sign_key et hand_position_config
+  - Descriptions textuelles pour feedback utilisateur
+
+### Modifié
+
+#### Optimisations de performance
+- **Détection ultra-réactive** : Intervalle réduit de 250ms → 100ms
+- **Validation rapide** : 5 détections à 60% = 0.5 seconde (au lieu de 1 seconde)
+- **Throttling intelligent** : Équilibre entre réactivité et performance CPU
+
+#### Amélioration de la précision
+- **Reconnaissance stricte de configuration** : Seuil minimum de 70% obligatoire
+- **Scores de confiance ajustés** :
+  - Position exacte : 100%
+  - Position adjacente (±1) : 95%
+  - Position proche (±2) : 85%
+  - Position éloignée (±3) : 65%
+  - Configuration exacte : 100%
+  - Configuration même groupe : 80%
+  - Configuration différente : 0% (bloque les validations fantômes)
+- **Calcul de confiance pénalisé** : Si config < 70%, prend le minimum des deux scores
+
+#### Expérience utilisateur
+- **Bandeau informatif** : Explique que la reconnaissance se fait sur les mains, pas le visage
+- **Feedback visuel amélioré** :
+  - Grille de zones sur la webcam
+  - Labels de zones correctement orientés (non-miroir)
+  - Barre de précision dynamique et précise
+- **Progression fluide** :
+  - Pas de blocage de syllabes validées
+  - Transition automatique entre mots (3 secondes)
+  - Webcam reste active pendant toute la session
+  - Prévention des validations multiples avec flag `isValidating`
+
+#### Persistance des données
+- **Migration streak vers Supabase** :
+  - Remplacement de AsyncStorage par Supabase
+  - Logique de streak quotidien : incrémente si activité hier, reset sinon
+  - Mise à jour de `users_profiles` : `last_activity_date`, `current_streak`
+
+### Corrigé
+- Bug de progression affichant "4 / 2 syllabes" (doublons dans validatedSyllables)
+- Bug de syllabes bloquées en vert (closure sur ancienne valeur de state)
+- Validations fantômes dues à des scores trop permissifs
+- Texte miroir sur les labels de la grille webcam
+- Streak non incrémentée après complétion de mot
+- Barre de confiance peu réactive et imprécise
+
+### Documentation
+- `README_HAND_DETECTION.md` - Guide complet de la détection de main MediaPipe
+- Exemples d'utilisation du hook `useHandDetection`
+- Documentation de l'algorithme de comparaison LFPC
+- Guide d'intégration avec Supabase pour les landmarks
+
+### Notes techniques
+- TensorFlow.js HandPose pour détection de 21 landmarks
+- Canvas 2D pour overlay graphique sur webcam
+- Normalisation des landmarks par hauteur de canvas (360px)
+- Validation stable avec historique de confiance (20 dernières détections)
+- Support React Native Web pour compatibilité cross-platform
 
 ## [0.1.0] - 2026-01-16
 

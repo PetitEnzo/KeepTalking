@@ -142,6 +142,14 @@ export default function TabsLayout() {
             </Pressable>
 
             <Pressable 
+              onPress={() => navigateTo('/(tabs)/training')}
+              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+            >
+              <Text style={styles.navIcon}>🎯</Text>
+              <Text style={styles.navText}>Entraînement</Text>
+            </Pressable>
+
+            <Pressable 
               onPress={() => navigateTo('/(tabs)/game')}
               style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
             >
@@ -210,6 +218,7 @@ export default function TabsLayout() {
         >
           <Stack.Screen name="index" />
           <Stack.Screen name="lessons" />
+          <Stack.Screen name="training" />
           <Stack.Screen name="chat" />
           <Stack.Screen name="profile" />
           <Stack.Screen name="about" />
