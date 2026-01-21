@@ -77,6 +77,10 @@ export default function ProfileScreen() {
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState('👤');
   const [loading, setLoading] = useState(true);
+  const [userLevel, setUserLevel] = useState(1);
+  const [currentXP, setCurrentXP] = useState(0);
+  const [xpForNextLevel, setXpForNextLevel] = useState(100);
+  const [userStats, setUserStats] = useState<any>(null);
 
   useEffect(() => {
     loadUserProgress();
@@ -86,6 +90,35 @@ export default function ProfileScreen() {
     if (!user) return;
 
     try {
+      // Charger les données utilisateur
+      const { data: userData } = await supabase
+        .from('users')
+        .select('user_id, level, total_points, current_streak')
+        .eq('auth_user_id', user.id)
+        .single();
+
+      if (userData) {
+        setUserLevel(userData.level || 1);
+        setCurrentXP(userData.total_points || 0);
+        setStreak(userData.current_streak || 0);
+        
+        // Calculer l'XP pour le niveau suivant
+        const nextLevel = userData.level + 1;
+        const xpNeeded = Math.pow(nextLevel - 1, 2) * 100;
+        setXpForNextLevel(xpNeeded);
+
+        // Charger les stats
+        const { data: stats } = await supabase
+          .from('user_stats')
+          .select('*')
+          .eq('user_id', userData.user_id)
+          .single();
+
+        if (stats) {
+          setUserStats(stats);
+        }
+      }
+
       // Charger les leçons terminées (seulement celles réussies)
       const { data: lessons, error: lessonsError } = await supabase
         .from('user_lesson_progress')
@@ -209,8 +242,74 @@ export default function ProfileScreen() {
           </View>
           
           <View style={styles.statCard}>
-            <Text style={styles.statValue}>{Math.round((totalLessons / 9) * 100)}%</Text>
-            <Text style={styles.statLabel}>Progression</Text>
+            <Text style={styles.statValue}>{userStats?.total_words_contributed || 0}</Text>
+            <Text style={styles.statLabel}>Mots contribués</Text>
+          </View>
+        </View>
+
+        {/* Progression XP */}
+        <View style={styles.xpSection}>
+          <View style={styles.xpHeader}>
+            <Text style={styles.xpLevel}>Niveau {userLevel}</Text>
+            <Text style={styles.xpText}>{currentXP} / {xpForNextLevel} XP</Text>
+          </View>
+          
+          <View style={styles.xpBarContainer}>
+            <View 
+              style={[
+                styles.xpBarFill, 
+                { width: `${Math.min((currentXP / xpForNextLevel) * 100, 100)}%` }
+              ]} 
+            />
+          </View>
+          
+          <Text style={styles.xpNextLevel}>
+            {xpForNextLevel - currentXP} XP pour atteindre le niveau {userLevel + 1}
+          </Text>
+        </View>
+
+        {/* Sources d'XP */}
+        <View style={styles.xpSourcesSection}>
+          <Text style={styles.sectionTitle}>💎 Comment gagner de l'XP</Text>
+          
+          <View style={styles.xpSourceCard}>
+            <Text style={styles.xpSourceIcon}>🎯</Text>
+            <View style={styles.xpSourceInfo}>
+              <Text style={styles.xpSourceName}>Session d'entraînement</Text>
+              <Text style={styles.xpSourceValue}>+20 XP</Text>
+            </View>
+          </View>
+
+          <View style={styles.xpSourceCard}>
+            <Text style={styles.xpSourceIcon}>📚</Text>
+            <View style={styles.xpSourceInfo}>
+              <Text style={styles.xpSourceName}>Leçon complétée</Text>
+              <Text style={styles.xpSourceValue}>+100 XP</Text>
+            </View>
+          </View>
+
+          <View style={styles.xpSourceCard}>
+            <Text style={styles.xpSourceIcon}>✍️</Text>
+            <View style={styles.xpSourceInfo}>
+              <Text style={styles.xpSourceName}>Mot contribué (validé)</Text>
+              <Text style={styles.xpSourceValue}>+50 XP (max 5/jour)</Text>
+            </View>
+          </View>
+
+          <View style={styles.xpSourceCard}>
+            <Text style={styles.xpSourceIcon}>📝</Text>
+            <View style={styles.xpSourceInfo}>
+              <Text style={styles.xpSourceName}>Exercice complété</Text>
+              <Text style={styles.xpSourceValue}>+15 XP</Text>
+            </View>
+          </View>
+
+          <View style={styles.xpSourceCard}>
+            <Text style={styles.xpSourceIcon}>🔥</Text>
+            <View style={styles.xpSourceInfo}>
+              <Text style={styles.xpSourceName}>Streak quotidien</Text>
+              <Text style={styles.xpSourceValue}>+10 XP/jour</Text>
+            </View>
           </View>
         </View>
 
@@ -403,6 +502,88 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#64748B',
     textAlign: 'center',
+  },
+  xpSection: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  xpHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  xpLevel: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2563EB',
+  },
+  xpText: {
+    fontSize: 16,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  xpBarContainer: {
+    height: 12,
+    backgroundColor: '#E2E8F0',
+    borderRadius: 6,
+    overflow: 'hidden',
+    marginBottom: 8,
+  },
+  xpBarFill: {
+    height: '100%',
+    backgroundColor: '#2563EB',
+    borderRadius: 6,
+  },
+  xpNextLevel: {
+    fontSize: 14,
+    color: '#64748B',
+    textAlign: 'center',
+  },
+  xpSourcesSection: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  xpSourceCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  xpSourceIcon: {
+    fontSize: 32,
+    marginRight: 16,
+  },
+  xpSourceInfo: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  xpSourceName: {
+    fontSize: 16,
+    color: '#0F172A',
+    fontWeight: '500',
+  },
+  xpSourceValue: {
+    fontSize: 16,
+    color: '#2563EB',
+    fontWeight: 'bold',
   },
   section: {
     marginBottom: 32,

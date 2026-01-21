@@ -6,6 +6,7 @@ declare global {
   interface Window {
     tf: any;
     handpose: any;
+    blazeface: any;
   }
 }
 
@@ -14,7 +15,7 @@ interface WebcamFeedbackProps {
   handedness: string | null;
   confidence: number;
   feedback: string;
-  onDetection?: (landmarks: any) => void;
+  onDetection?: (landmarks: any, face?: any) => void;
 }
 
 export default function WebcamFeedback({
@@ -29,6 +30,7 @@ export default function WebcamFeedback({
   const [isCameraEnabled, setIsCameraEnabled] = useState(false);
   const [isCameraFlipped, setIsCameraFlipped] = useState(true); // Effet miroir par défaut
   const handsRef = useRef<any>(null);
+  const faceRef = useRef<any>(null);
   const cameraRef = useRef<any>(null);
   const onDetectionRef = useRef(onDetection);
 
@@ -48,7 +50,7 @@ export default function WebcamFeedback({
     const loadTensorFlowScripts = () => {
       return new Promise((resolve) => {
         // Vérifier si déjà chargé
-        if (window.tf && window.handpose) {
+        if (window.tf && window.handpose && window.blazeface) {
           resolve(true);
           return;
         }
@@ -61,28 +63,39 @@ export default function WebcamFeedback({
         const handposeScript = document.createElement('script');
         handposeScript.src = 'https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose@0.0.7/dist/handpose.min.js';
 
+        // Charger BlazeFace
+        const blazefaceScript = document.createElement('script');
+        blazefaceScript.src = 'https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7/dist/blazeface.min.js';
+
         let tfLoaded = false;
         let handposeLoaded = false;
+        let blazefaceLoaded = false;
 
-        const checkBothLoaded = () => {
-          if (tfLoaded && handposeLoaded) {
-            console.log('TensorFlow.js chargé');
+        const checkAllLoaded = () => {
+          if (tfLoaded && handposeLoaded && blazefaceLoaded) {
+            console.log('✅ TensorFlow.js + HandPose + BlazeFace chargés');
             resolve(true);
           }
         };
 
         tfScript.onload = () => {
           tfLoaded = true;
-          checkBothLoaded();
+          checkAllLoaded();
         };
 
         handposeScript.onload = () => {
           handposeLoaded = true;
-          checkBothLoaded();
+          checkAllLoaded();
+        };
+
+        blazefaceScript.onload = () => {
+          blazefaceLoaded = true;
+          checkAllLoaded();
         };
 
         document.head.appendChild(tfScript);
         document.head.appendChild(handposeScript);
+        document.head.appendChild(blazefaceScript);
       });
     };
 
@@ -93,11 +106,16 @@ export default function WebcamFeedback({
 
         if (!isActive) return;
         
-        // Charger le modèle HandPose
-        const model = await window.handpose.load();
-        console.log('Modèle chargé');
+        // Charger les modèles HandPose et BlazeFace en parallèle
+        console.log('🔄 Chargement HandPose + BlazeFace...');
+        const [handModel, faceModel] = await Promise.all([
+          window.handpose.load(),
+          window.blazeface.load()
+        ]);
+        console.log('✅ Modèles chargés');
         
-        handsRef.current = model;
+        handsRef.current = handModel;
+        faceRef.current = faceModel;
 
         // Démarrer la webcam avec résolution réduite pour meilleures performances
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -133,60 +151,83 @@ export default function WebcamFeedback({
             canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
             canvasCtx.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
-            // Dessiner la grille des zones de détection (5 zones)
-            const canvasHeight = canvasRef.current.height;
-            const zones = [
-              { position: 1, label: "1. Sous l'œil", yStart: 0, yEnd: 0.20 },
-              { position: 2, label: "2. À l'écart", yStart: 0.20, yEnd: 0.35 },
-              { position: 3, label: "3. Bouche", yStart: 0.35, yEnd: 0.50 },
-              { position: 4, label: "4. Menton", yStart: 0.50, yEnd: 0.65 },
-              { position: 5, label: "5. Cou", yStart: 0.65, yEnd: 1.0 }
-            ];
-
-            zones.forEach(zone => {
-              const y1 = zone.yStart * canvasHeight;
-              const y2 = zone.yEnd * canvasHeight;
-              
-              // Ligne de séparation
-              canvasCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-              canvasCtx.lineWidth = 1;
-              canvasCtx.setLineDash([5, 5]);
-              canvasCtx.beginPath();
-              canvasCtx.moveTo(0, y2);
-              canvasCtx.lineTo(canvasRef.current.width, y2);
-              canvasCtx.stroke();
-              canvasCtx.setLineDash([]);
-              
-              // Label de la zone (avec correction du miroir)
-              canvasCtx.save();
-              canvasCtx.scale(-1, 1); // Inverser horizontalement pour corriger le miroir
-              canvasCtx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-              canvasCtx.font = '12px Arial';
-              canvasCtx.fillText(zone.label, -canvasRef.current.width + 10, y1 + 20);
-              canvasCtx.restore();
-            });
-
-            // Détecter les mains seulement toutes les 500ms (throttle)
+            // Détecter visage + main toutes les 100ms (throttle)
             const now = Date.now();
             if (now - lastDetectionTime >= detectionInterval) {
               lastDetectionTime = now;
 
-              const predictions = await handsRef.current.estimateHands(videoRef.current);
+              // Détecter visage ET main en parallèle
+              const [facePredictions, handPredictions] = await Promise.all([
+                faceRef.current.estimateFaces(videoRef.current, false),
+                handsRef.current.estimateHands(videoRef.current)
+              ]);
 
-              if (predictions.length > 0) {
-                const hand = predictions[0];
+              const face = facePredictions && facePredictions.length > 0 ? facePredictions[0] : null;
+              const hand = handPredictions && handPredictions.length > 0 ? handPredictions[0] : null;
+
+              // Log de débogage
+              if (face) {
+                console.log('👤 Visage détecté:', face);
+              } else {
+                console.log('❌ Aucun visage détecté');
+              }
+
+              if (hand && hand.landmarks) {
                 lastLandmarks = hand.landmarks; // Stocker les landmarks
                 
-                // Appeler le callback avec les landmarks
+                // Appeler le callback avec les landmarks ET le visage
                 try {
-                  if (onDetectionRef.current && hand.landmarks) {
-                    onDetectionRef.current(hand.landmarks);
+                  if (onDetectionRef.current) {
+                    onDetectionRef.current(hand.landmarks, face);
                   }
                 } catch (err) {
                   console.error('Erreur dans onDetection callback:', err);
                 }
               } else {
                 lastLandmarks = null; // Pas de main détectée
+              }
+
+              // Dessiner le visage si détecté
+              if (face) {
+                const [x1, y1] = face.topLeft;
+                const [x2, y2] = face.bottomRight;
+                const width = x2 - x1;
+                const height = y2 - y1;
+
+                // Rectangle du visage
+                canvasCtx.strokeStyle = '#00FF00';
+                canvasCtx.lineWidth = 2;
+                canvasCtx.strokeRect(x1, y1, width, height);
+
+                // Zones LFPC relatives au visage
+                const faceZones = [
+                  { y: 0.2, label: '1: Œil', color: 'rgba(0, 255, 0, 0.5)' },
+                  { y: 0.4, label: '2: Écart', color: 'rgba(0, 255, 0, 0.5)' },
+                  { y: 0.6, label: '3: Bouche', color: 'rgba(0, 255, 0, 0.5)' },
+                  { y: 0.9, label: '4: Menton', color: 'rgba(0, 255, 0, 0.5)' }
+                ];
+
+                canvasCtx.setLineDash([5, 5]);
+                canvasCtx.font = '10px Arial';
+                canvasCtx.fillStyle = '#00FF00';
+
+                faceZones.forEach(zone => {
+                  const zoneY = y1 + (height * zone.y);
+                  canvasCtx.strokeStyle = zone.color;
+                  canvasCtx.lineWidth = 1;
+                  canvasCtx.beginPath();
+                  canvasCtx.moveTo(x1, zoneY);
+                  canvasCtx.lineTo(x2, zoneY);
+                  canvasCtx.stroke();
+                  
+                  // Label (corrigé pour le miroir)
+                  canvasCtx.save();
+                  canvasCtx.scale(-1, 1);
+                  canvasCtx.fillText(zone.label, -(x2 - 5), zoneY - 5);
+                  canvasCtx.restore();
+                });
+
+                canvasCtx.setLineDash([]);
               }
             }
 
@@ -394,7 +435,6 @@ export default function WebcamFeedback({
           </View>
         </>
       ) : (
-        /* Message quand la caméra est éteinte */
         <View style={styles.cameraOffContainer}>
           <Text style={styles.cameraOffIcon}>📷</Text>
           <Text style={styles.cameraOffTitle}>Webcam désactivée</Text>
@@ -586,5 +626,30 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     color: '#1F2937',
+  },
+  orientationHint: {
+    position: 'absolute',
+    bottom: 60,
+    left: '50%',
+    transform: [{ translateX: -60 }],
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(99, 102, 241, 0.95)',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  orientationIcon: {
+    fontSize: 20,
+  },
+  orientationText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });

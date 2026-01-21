@@ -18,7 +18,7 @@ interface Syllable {
 }
 
 interface TrainingWord {
-  id: number;
+  id: number | string;
   word: string;
   difficulty: string;
   syllables: Syllable[];
@@ -32,6 +32,7 @@ interface HandSign {
 interface HandPosition {
   configuration_number: number;
   image_url: string;
+  description: string;
 }
 
 export default function TrainingScreen() {
@@ -65,12 +66,14 @@ export default function TrainingScreen() {
   }, []);
 
   // Callback pour recevoir les résultats de détection de WebcamFeedback
-  const handleDetectionResults = useCallback((landmarks: any) => {
+  const handleDetectionResults = useCallback((landmarks: any, face?: any) => {
     setIsDetecting(true);
     
     if (currentWord && currentSyllableIndex < currentWord.syllables.length) {
       const targetSyllable = currentWord.syllables[currentSyllableIndex];
-      const result = matchSyllable(landmarks, targetSyllable);
+      
+      // Passer le visage à matchSyllable pour position relative
+      const result = matchSyllable(landmarks, targetSyllable, face);
       
       setMatchResult({
         confidence: result.confidence,
@@ -81,9 +84,9 @@ export default function TrainingScreen() {
       setConfidenceHistory(prev => {
         const newHistory = [...prev, result.confidence].slice(-20);
         
-        // Vérifier si la validation est stable (5 détections à 60% = 0.5 seconde avec throttle 100ms)
-        // Plus strict pour éviter les validations fantômes
-        if (!isValidating && isValidationStable(newHistory, 60, 5)) {
+        // Vérifier si la validation est stable (8 détections à 60% = 0.8 seconde avec throttle 100ms)
+        // Plus strict pour éviter les validations fantômes et s'assurer que la main est stable
+        if (!isValidating && isValidationStable(newHistory, 60, 8)) {
           console.log('✅ Syllabe validée! Index:', currentSyllableIndex, 'isValidating:', isValidating);
           setIsValidating(true);
           // Utiliser setTimeout pour éviter les problèmes de state
@@ -104,20 +107,21 @@ export default function TrainingScreen() {
         .eq('type', 'consonne');
 
       if (signsData) {
+        console.log('🖐️ Configurations de main chargées:', signsData);
         setHandSigns(signsData);
       }
 
       // Charger les hand_positions
       const { data: positionsData } = await supabase
         .from('hand_positions')
-        .select('configuration_number, image_url');
+        .select('configuration_number, image_url, description');
 
       if (positionsData) {
         setHandPositions(positionsData);
       }
 
-      // Sélectionner un mot aléatoire
-      selectRandomWord();
+      // Sélectionner un mot aléatoire (incluant les mots approuvés)
+      await selectRandomWord();
     } catch (error) {
       console.error('Erreur chargement données:', error);
     } finally {
@@ -125,16 +129,56 @@ export default function TrainingScreen() {
     }
   };
 
-  const selectRandomWord = () => {
-    const words = trainingWordsData as TrainingWord[];
-    const randomIndex = Math.floor(Math.random() * words.length);
-    setCurrentWord(words[randomIndex]);
-    setCurrentSyllableIndex(0);
-    setValidatedSyllables([]);
-    setSessionComplete(false);
-    setScore(0);
-    setStartTime(new Date());
-    setConfidenceHistory([]);
+  const selectRandomWord = async () => {
+    try {
+      // Charger les mots de base depuis le JSON
+      const baseWords = trainingWordsData as TrainingWord[];
+      
+      // Charger les mots approuvés depuis word_contributions
+      const { data: approvedWords } = await supabase
+        .from('word_contributions')
+        .select('contribution_id, word, difficulty, syllables')
+        .eq('status', 'approved');
+      
+      // Combiner les deux sources de mots
+      let allWords = [...baseWords];
+      
+      if (approvedWords && approvedWords.length > 0) {
+        console.log('✅ Mots approuvés trouvés:', approvedWords);
+        const contributedWords: TrainingWord[] = approvedWords.map(w => ({
+          id: w.contribution_id,
+          word: w.word,
+          difficulty: w.difficulty,
+          syllables: w.syllables as Syllable[],
+        }));
+        allWords = [...allWords, ...contributedWords];
+        console.log(`📚 ${allWords.length} mots disponibles (${baseWords.length} de base + ${contributedWords.length} contribués)`);
+      } else {
+        console.log('⚠️ Aucun mot approuvé trouvé dans word_contributions');
+      }
+      
+      // Sélectionner un mot aléatoire
+      const randomIndex = Math.floor(Math.random() * allWords.length);
+      setCurrentWord(allWords[randomIndex]);
+      setCurrentSyllableIndex(0);
+      setValidatedSyllables([]);
+      setSessionComplete(false);
+      setScore(0);
+      setStartTime(new Date());
+      setConfidenceHistory([]);
+    } catch (error) {
+      console.error('Erreur lors de la sélection du mot:', error);
+      // Fallback sur les mots de base en cas d'erreur
+      const words = trainingWordsData as TrainingWord[];
+      const randomIndex = Math.floor(Math.random() * words.length);
+      setCurrentWord(words[randomIndex]);
+      setCurrentSyllableIndex(0);
+      setValidatedSyllables([]);
+      setSessionComplete(false);
+      setScore(0);
+      setStartTime(new Date());
+      setConfidenceHistory([]);
+    }
   };
 
   const handleSyllableValidated = useCallback(() => {
@@ -248,6 +292,20 @@ export default function TrainingScreen() {
     selectRandomWord();
   };
 
+  const handleSkipWord = () => {
+    // Passer au mot suivant SANS donner d'XP ni faire progresser la streak
+    console.log('⏭️ Mot passé (pas d\'XP, pas de streak)');
+    setValidatedSyllables([]);
+    setCurrentSyllableIndex(0);
+    setConfidenceHistory([]);
+    setSessionComplete(false);
+    setIsValidating(false);
+    setShowSuccessBanner(false);
+    
+    // Passer au mot suivant
+    selectRandomWord();
+  };
+
   const handleReplayWord = () => {
     setCurrentSyllableIndex(0);
     setValidatedSyllables([]);
@@ -276,6 +334,12 @@ export default function TrainingScreen() {
     if (!config) return undefined;
     const position = handPositions.find(p => p.configuration_number === config);
     return position?.image_url;
+  };
+
+  const getHandPositionDescription = (config: number | null) => {
+    if (!config) return '';
+    const position = handPositions.find(p => p.configuration_number === config);
+    return position?.description || '';
   };
 
   const getElapsedTime = () => {
@@ -326,10 +390,9 @@ export default function TrainingScreen() {
             Reproduisez les configurations LFPC avec votre main
           </Text>
           <View style={styles.infoBanner}>
-            <Text style={styles.infoBannerIcon}>ℹ️</Text>
+            <Text style={styles.infoBannerIcon}>✨</Text>
             <Text style={styles.infoBannerText}>
-              Comment ça fonctionne ?
-              Le système détecte uniquement la position de vos mains pour l'instant. La grille affichée vous aide à positionner votre main à la hauteur correspondante de votre visage (front, nez, menton). La reconnaissance faciale n'est pas encore active simultanément.
+              Le système détecte votre visage et vos mains en temps réel ! Formez la bonne configuration de main et placez-la aux positions indiquées (Œil, Écart, Bouche, Menton, Cou) pour former les syllabes.
             </Text>
           </View>
         </View>
@@ -377,17 +440,27 @@ export default function TrainingScreen() {
                     status={status}
                     handSignImage={getHandSignImage(syllable.hand_sign_key)}
                     handPositionImage={getHandPositionImage(syllable.hand_position_config)}
+                    handPositionDescription={getHandPositionDescription(syllable.hand_position_config)}
                   />
                 );
               })}
             </View>
 
-            <Pressable 
-              style={[styles.button, styles.buttonSkip]}
-              onPress={handleSkipSyllable}
-            >
-              <Text style={styles.buttonTextSkip}>⏭️ Passer cette syllabe</Text>
-            </Pressable>
+            <View style={styles.skipButtonsContainer}>
+              <Pressable 
+                style={[styles.button, styles.buttonSkip]}
+                onPress={handleSkipSyllable}
+              >
+                <Text style={styles.buttonTextSkip}>⏭️ Passer la syllabe</Text>
+              </Pressable>
+              
+              <Pressable 
+                style={[styles.button, styles.buttonSkipWord]}
+                onPress={handleSkipWord}
+              >
+                <Text style={styles.buttonTextSkipWord}>⏩ Passer le mot</Text>
+              </Pressable>
+            </View>
           </View>
 
           {/* Colonne droite - Webcam */}
@@ -407,6 +480,13 @@ export default function TrainingScreen() {
                 • Maintenez la position stable pendant 1 seconde{'\n'}
                 • Assurez-vous d'avoir un bon éclairage{'\n'}
                 • La barre de précision doit atteindre 80%
+              </Text>
+            </View>
+
+            <View style={styles.orientationCard}>
+              <Text style={styles.orientationIcon}>🖐️</Text>
+              <Text style={styles.orientationText}>
+                Codez toujours avec l'intérieur de la main vers vous
               </Text>
             </View>
           </View>
@@ -619,6 +699,22 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#92400E',
   },
+  skipButtonsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+  },
+  buttonSkipWord: {
+    flex: 1,
+    backgroundColor: '#FEE2E2',
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
+  },
+  buttonTextSkipWord: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#991B1B',
+  },
   instructionsCard: {
     backgroundColor: '#EFF6FF',
     borderRadius: 8,
@@ -635,6 +731,27 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#1E40AF',
     lineHeight: 22,
+  },
+  orientationCard: {
+    backgroundColor: '#F3E8FF',
+    borderRadius: 8,
+    padding: 16,
+    marginTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 2,
+    borderColor: '#A78BFA',
+  },
+  orientationIcon: {
+    fontSize: 24,
+  },
+  orientationText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6B21A8',
+    lineHeight: 20,
   },
   successContainer: {
     flex: 1,

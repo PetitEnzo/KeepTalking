@@ -252,5 +252,243 @@
         "description": "Main à côté de la bouche - Configuration J (D)"
       }
     ]
+  },
+  {
+    "id": 11,
+    "word": "CHAT",
+    "difficulty": "beginner",
+    "syllables": [
+      {
+        "text": "CHA",
+        "consonne": "CH",
+        "voyelle": "a",
+        "hand_sign_key": "L",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration L (CH)"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "word": "SOLEIL",
+    "difficulty": "intermediate",
+    "syllables": [
+      {
+        "text": "SO",
+        "consonne": "S",
+        "voyelle": "o",
+        "hand_sign_key": "R",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration R (S)"
+      },
+      {
+        "text": "LE",
+        "consonne": "L",
+        "voyelle": "e",
+        "hand_sign_key": "L",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration L"
+      },
+      {
+        "text": "Y",
+        "consonne": "Y",
+        "voyelle": null,
+        "hand_sign_key": "L",
+        "hand_position_config": null,
+        "description": "Configuration L seule (Y)"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "word": "JARDIN",
+    "difficulty": "intermediate",
+    "syllables": [
+      {
+        "text": "JAR",
+        "consonne": "J",
+        "voyelle": "ar",
+        "hand_sign_key": "J",
+        "hand_position_config": 4,
+        "description": "Main au niveau du menton - Configuration J"
+      },
+      {
+        "text": "DIN",
+        "consonne": "D",
+        "voyelle": "in",
+        "hand_sign_key": "J",
+        "hand_position_config": 1,
+        "description": "Main sous l'œil - Configuration J (D)"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "word": "ÉCOLE",
+    "difficulty": "intermediate",
+    "syllables": [
+      {
+        "text": "É",
+        "consonne": null,
+        "voyelle": "é",
+        "hand_sign_key": null,
+        "hand_position_config": 5,
+        "description": "Main au niveau du cou - Position 5"
+      },
+      {
+        "text": "CO",
+        "consonne": "C",
+        "voyelle": "o",
+        "hand_sign_key": "K",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration K (C)"
+      },
+      {
+        "text": "LE",
+        "consonne": "L",
+        "voyelle": "e",
+        "hand_sign_key": "L",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration L"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "word": "MAISON",
+    "difficulty": "intermediate",
+    "syllables": [
+      {
+        "text": "MAI",
+        "consonne": "M",
+        "voyelle": "ai",
+        "hand_sign_key": "M",
+        "hand_position_config": 4,
+        "description": "Main au niveau du menton - Configuration M"
+      },
+      {
+        "text": "SON",
+        "consonne": "S",
+        "voyelle": "on",
+        "hand_sign_key": "R",
+        "hand_position_config": 3,
+        "description": "Main à côté de la bouche - Configuration R (S)"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "word": "VÉLO",
+    "difficulty": "beginner",
+    "syllables": [
+      {
+        "text": "VÉ",
+        "consonne": "V",
+        "voyelle": "é",
+        "hand_sign_key": "K",
+        "hand_position_config": 5,
+        "description": "Main au niveau du cou - Configuration K (V)"
+      },
+      {
+        "text": "LO",
+        "consonne": "L",
+        "voyelle": "o",
+        "hand_sign_key": "L",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration L"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "word": "BALLON",
+    "difficulty": "intermediate",
+    "syllables": [
+      {
+        "text": "BA",
+        "consonne": "B",
+        "voyelle": "a",
+        "hand_sign_key": "B",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration B"
+      },
+      {
+        "text": "LON",
+        "consonne": "L",
+        "voyelle": "on",
+        "hand_sign_key": "L",
+        "hand_position_config": 3,
+        "description": "Main à côté de la bouche - Configuration L"
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "word": "CADEAU",
+    "difficulty": "intermediate",
+    "syllables": [
+      {
+        "text": "CA",
+        "consonne": "C",
+        "voyelle": "a",
+        "hand_sign_key": "K",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration K (C)"
+      },
+      {
+        "text": "DO",
+        "consonne": "D",
+        "voyelle": "o",
+        "hand_sign_key": "J",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration J (D)"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "word": "RIRE",
+    "difficulty": "beginner",
+    "syllables": [
+      {
+        "text": "RI",
+        "consonne": "R",
+        "voyelle": "i",
+        "hand_sign_key": "R",
+        "hand_position_config": 3,
+        "description": "Main à côté de la bouche - Configuration R"
+      },
+      {
+        "text": "RE",
+        "consonne": "R",
+        "voyelle": "e",
+        "hand_sign_key": "R",
+        "hand_position_config": 2,
+        "description": "Main à l'écart du visage - Configuration R"
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "word": "BISOU",
+    "difficulty": "beginner",
+    "syllables": [
+      {
+        "text": "BI",
+        "consonne": "B",
+        "voyelle": "i",
+        "hand_sign_key": "B",
+        "hand_position_config": 3,
+        "description": "Main à côté de la bouche - Configuration B"
+      },
+      {
+        "text": "SOU",
+        "consonne": "S",
+        "voyelle": "ou",
+        "hand_sign_key": "R",
+        "hand_position_config": 4,
+        "description": "Main au niveau du menton - Configuration R (S)"
+      }
+    ]
   }
 ]

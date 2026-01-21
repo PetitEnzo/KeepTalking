@@ -41,9 +41,11 @@ const getAvatarImageSource = (avatarId: string) => {
 export default function TabsLayout() {
   const { user, signOut } = useAuth();
   const [userAvatar, setUserAvatar] = useState<string>('👤');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     loadUserAvatar();
+    checkAdminStatus();
     
     // Rafraîchir l'avatar toutes les 2 secondes pour détecter les changements
     const interval = setInterval(() => {
@@ -71,6 +73,27 @@ export default function TabsLayout() {
     }
   };
 
+  const checkAdminStatus = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('role')
+        .eq('auth_user_id', user.id)
+        .single();
+
+      if (!error && data?.role === 'admin') {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    } catch (error) {
+      console.log('Erreur lors de la vérification du rôle:', error);
+      setIsAdmin(false);
+    }
+  };
+
   const handleSignOut = async () => {
     await signOut();
     router.replace('/(auth)/login');
@@ -91,7 +114,6 @@ export default function TabsLayout() {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.appTitle}>KeepTalking</Text>
         </View>
 
         {/* User Info */}
@@ -150,6 +172,14 @@ export default function TabsLayout() {
             </Pressable>
 
             <Pressable 
+              onPress={() => navigateTo('/(tabs)/contribute')}
+              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+            >
+              <Text style={styles.navIcon}>✍️</Text>
+              <Text style={styles.navText}>Ajouter un mot</Text>
+            </Pressable>
+
+            <Pressable 
               onPress={() => navigateTo('/(tabs)/game')}
               style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
             >
@@ -163,14 +193,6 @@ export default function TabsLayout() {
             >
               <Text style={styles.navIcon}>📖</Text>
               <Text style={styles.navText}>Les bases du code</Text>
-            </Pressable>
-
-            <Pressable 
-              onPress={() => navigateTo('/(tabs)/chat')}
-              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
-            >
-              <Text style={styles.navIcon}>💬</Text>
-              <Text style={styles.navText}>Chat</Text>
             </Pressable>
 
             <Pressable 
@@ -193,6 +215,16 @@ export default function TabsLayout() {
               <Text style={styles.navIcon}>ℹ️</Text>
               <Text style={styles.navText}>À propos</Text>
             </Pressable>
+
+            {isAdmin && (
+              <Pressable 
+                onPress={() => navigateTo('/(tabs)/admin')}
+                style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+              >
+                <Text style={styles.navIcon}>🛡️</Text>
+                <Text style={styles.navText}>Administration</Text>
+              </Pressable>
+            )}
           </View>
         </ScrollView>
 
@@ -219,9 +251,10 @@ export default function TabsLayout() {
           <Stack.Screen name="index" />
           <Stack.Screen name="lessons" />
           <Stack.Screen name="training" />
-          <Stack.Screen name="chat" />
+          <Stack.Screen name="contribute" />
           <Stack.Screen name="profile" />
           <Stack.Screen name="about" />
+          <Stack.Screen name="admin" />
         </Stack>
       </View>
     </View>
@@ -246,8 +279,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 480,
+    height: 480,
     marginBottom: 16,
   },
   appTitle: {

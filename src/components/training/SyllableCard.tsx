@@ -13,13 +13,15 @@ interface SyllableCardProps {
   status: 'pending' | 'current' | 'validated';
   handSignImage?: string;
   handPositionImage?: string;
+  handPositionDescription?: string;
 }
 
 export default function SyllableCard({ 
   syllable, 
   status, 
   handSignImage, 
-  handPositionImage 
+  handPositionImage,
+  handPositionDescription
 }: SyllableCardProps) {
   const getStatusStyle = () => {
     switch (status) {
@@ -86,7 +88,14 @@ export default function SyllableCard({
         )}
       </View>
 
-      <Text style={styles.description}>{syllable.description}</Text>
+      {handPositionDescription && (
+        <Text style={styles.description}>
+          Position: {handPositionDescription}
+        </Text>
+      )}
+      {!handPositionDescription && syllable.description && (
+        <Text style={styles.description}>{syllable.description}</Text>
+      )}
     </View>
   );
 }
