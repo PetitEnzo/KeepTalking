@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, ScrollView, StyleSheet, Modal, Image } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
 
 interface LessonProgress {
@@ -71,6 +72,7 @@ const LESSON_NAMES: { [key: string]: string } = {
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
+  const { colors } = useTheme();
   const [completedLessons, setCompletedLessons] = useState<LessonProgress[]>([]);
   const [streak, setStreak] = useState(0);
   const [totalLessons, setTotalLessons] = useState(0);
@@ -207,8 +209,8 @@ export default function ProfileScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.content]}>
         {/* Header avec avatar */}
         <View style={styles.header}>
           <Pressable onPress={() => setShowAvatarModal(true)} style={styles.avatarContainer}>
@@ -222,39 +224,39 @@ export default function ProfileScreen() {
               <Text style={styles.avatar}>{selectedAvatar}</Text>
             )}
             <View style={styles.editBadge}>
-              <Text style={styles.editIcon}>✏️</Text>
+              <Text style={[styles.title, { color: colors.text }]}>👤 Mon Profil</Text>
             </View>
           </Pressable>
           
-          <Text style={styles.username}>
+          <Text style={[styles.username, { color: colors.text }]}>
             {user?.user_metadata?.username || 'Utilisateur'}
           </Text>
-          <Text style={styles.email}>{user?.email}</Text>
+          <Text style={[styles.email, { color: colors.textSecondary }]}>{user?.email}</Text>
         </View>
 
         {/* Statistiques */}
         <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{totalLessons}</Text>
-            <Text style={styles.statLabel}>Leçons terminées</Text>
+          <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.statValue, { color: colors.text }]}>{totalLessons}</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Leçons terminées</Text>
           </View>
           
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>🔥 {streak}</Text>
-            <Text style={styles.statLabel}>Jours de suite</Text>
+          <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.statValue, { color: colors.text }]}>🔥 {streak}</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Jours de suite</Text>
           </View>
           
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{userStats?.total_words_contributed || 0}</Text>
-            <Text style={styles.statLabel}>Mots contribués</Text>
+          <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.statValue, { color: colors.text }]}>{userStats?.total_words_contributed || 0}</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Mots contribués</Text>
           </View>
         </View>
 
         {/* Progression XP */}
-        <View style={styles.xpSection}>
+        <View style={[styles.xpSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.xpHeader}>
-            <Text style={styles.xpLevel}>Niveau {userLevel}</Text>
-            <Text style={styles.xpText}>{currentXP} / {xpForNextLevel} XP</Text>
+            <Text style={[styles.xpLevel, { color: colors.text }]}>Niveau {userLevel}</Text>
+            <Text style={[styles.xpText, { color: colors.textSecondary }]}>{currentXP} / {xpForNextLevel} XP</Text>
           </View>
           
           <View style={styles.xpBarContainer}>
@@ -266,14 +268,14 @@ export default function ProfileScreen() {
             />
           </View>
           
-          <Text style={styles.xpNextLevel}>
+          <Text style={[styles.xpNextLevel, { color: colors.textSecondary }]}>
             {xpForNextLevel - currentXP} XP pour atteindre le niveau {userLevel + 1}
           </Text>
         </View>
 
         {/* Sources d'XP */}
-        <View style={styles.xpSourcesSection}>
-          <Text style={styles.sectionTitle}>💎 Comment gagner de l'XP</Text>
+        <View style={[styles.xpSourcesSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Sources d'XP</Text>
           
           <View style={styles.xpSourceCard}>
             <Text style={styles.xpSourceIcon}>🎯</Text>
@@ -286,8 +288,8 @@ export default function ProfileScreen() {
           <View style={styles.xpSourceCard}>
             <Text style={styles.xpSourceIcon}>📚</Text>
             <View style={styles.xpSourceInfo}>
-              <Text style={styles.xpSourceName}>Leçon complétée</Text>
-              <Text style={styles.xpSourceValue}>+100 XP</Text>
+              <Text style={[styles.xpSourceText, { color: colors.text }]}>Leçon terminée</Text>
+              <Text style={[styles.xpSourceValue, { color: colors.success }]}>+100 XP</Text>
             </View>
           </View>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, Alert, StyleSheet, Image } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
 
 interface Syllable {
@@ -39,6 +40,7 @@ const CONSONNES_BY_CONFIG: { [key: string]: string[] } = {
 
 export default function ContributeScreen() {
   const { user } = useAuth();
+  const { colors } = useTheme();
   const [word, setWord] = useState('');
   const [difficulty, setDifficulty] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner');
   const [syllables, setSyllables] = useState<Syllable[]>([]);
@@ -272,12 +274,12 @@ export default function ContributeScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>✍️ Ajouter un mot</Text>
-          <Text style={styles.headerSubtitle}>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>✍️ Ajouter un mot</Text>
+          <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
             Contribuez à la communauté en ajoutant de nouveaux mots LFPC
           </Text>
         </View>

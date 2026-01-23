@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { View, Text, Pressable, ScrollView, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../../services/supabase';
 import { matchSyllable, isValidationStable } from '../../utils/syllableMatcher';
 import SyllableCard from '../../components/training/SyllableCard';
@@ -37,6 +38,7 @@ interface HandPosition {
 
 export default function TrainingScreen() {
   const { user } = useAuth();
+  const { colors } = useTheme();
   const [currentWord, setCurrentWord] = useState<TrainingWord | null>(null);
   const [currentSyllableIndex, setCurrentSyllableIndex] = useState(0);
   const [validatedSyllables, setValidatedSyllables] = useState<number[]>([]);
@@ -352,23 +354,23 @@ export default function TrainingScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color="#3B82F6" />
-        <Text style={styles.loadingText}>Chargement...</Text>
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Chargement...</Text>
       </View>
     );
   }
 
   if (!currentWord) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Aucun mot disponible</Text>
+      <View style={[styles.errorContainer, { backgroundColor: colors.background }]}>
+        <Text style={[styles.errorText, { color: colors.error }]}>Aucun mot disponible</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Bandeau de succès */}
       {showSuccessBanner && (
         <View style={styles.successBanner}>
@@ -385,13 +387,13 @@ export default function TrainingScreen() {
       <View style={styles.content}>
         {/* En-tête */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>🎯 Entraînement Reconnaissance</Text>
-          <Text style={styles.headerSubtitle}>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>🎯 Entraînement Reconnaissance</Text>
+          <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
             Reproduisez les configurations LFPC avec votre main
           </Text>
           <View style={styles.infoBanner}>
             <Text style={styles.infoBannerIcon}>✨</Text>
-            <Text style={styles.infoBannerText}>
+            <Text style={[styles.infoBannerText, { color: colors.textSecondary }]}>
               Le système détecte votre visage et vos mains en temps réel ! Formez la bonne configuration de main et placez-la aux positions indiquées (Œil, Écart, Bouche, Menton, Cou) pour former les syllabes.
             </Text>
           </View>
@@ -401,9 +403,9 @@ export default function TrainingScreen() {
         <View style={styles.mainLayout}>
           {/* Colonne gauche - Syllabes */}
           <View style={styles.leftColumn}>
-            <View style={styles.wordCard}>
-              <Text style={styles.wordLabel}>Mot à coder</Text>
-              <Text style={styles.wordText}>{currentWord.word}</Text>
+            <View style={[styles.wordCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <Text style={[styles.wordLabel, { color: colors.textSecondary }]}>Mot à coder</Text>
+              <Text style={[styles.wordText, { color: colors.text }]}>{currentWord.word}</Text>
               <Text style={styles.wordDecomposition}>
                 {currentWord.syllables.map(s => s.text).join(' - ')}
               </Text>
