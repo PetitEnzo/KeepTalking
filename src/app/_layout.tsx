@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { TamaguiProvider } from '@tamagui/core';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import { ThemeProvider } from '../contexts/ThemeContext';
 import tamaguiConfig from '../../tamagui.config';
 
 function RootLayoutNav() {
@@ -54,9 +55,11 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <TamaguiProvider config={tamaguiConfig}>
-      <AuthProvider>
-        <RootLayoutNav />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <RootLayoutNav />
+        </AuthProvider>
+      </ThemeProvider>
     </TamaguiProvider>
   );
 }

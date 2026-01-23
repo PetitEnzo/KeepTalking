@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { View, Text, Pressable, ScrollView, Image, StyleSheet } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { router } from 'expo-router';
 import { supabase } from '../../services/supabase';
 
@@ -40,6 +41,7 @@ const getAvatarImageSource = (avatarId: string) => {
 
 export default function TabsLayout() {
   const { user, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [userAvatar, setUserAvatar] = useState<string>('👤');
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -228,6 +230,19 @@ export default function TabsLayout() {
           </View>
         </ScrollView>
 
+        {/* Theme Toggle */}
+        <View style={styles.themeSection}>
+          <Pressable 
+            onPress={toggleTheme}
+            style={({ pressed }) => [styles.themeButton, pressed && styles.themeButtonPressed]}
+          >
+            <Text style={styles.themeIcon}>{theme === 'light' ? '🌙' : '☀️'}</Text>
+            <Text style={styles.themeText}>
+              {theme === 'light' ? 'Mode nuit' : 'Mode jour'}
+            </Text>
+          </Pressable>
+        </View>
+
         {/* Sign Out */}
         <View style={styles.signOutSection}>
           <Pressable 
@@ -360,6 +375,32 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   navText: {
+    color: '#FFFFFF',
+    fontWeight: '500',
+    fontSize: 16,
+  },
+  themeSection: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#334155',
+  },
+  themeButton: {
+    backgroundColor: '#475569',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  themeButtonPressed: {
+    backgroundColor: '#334155',
+  },
+  themeIcon: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  themeText: {
     color: '#FFFFFF',
     fontWeight: '500',
     fontSize: 16,

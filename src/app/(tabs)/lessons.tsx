@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
 
 type LessonLevel = 'beginner' | 'intermediate' | 'advanced';
@@ -96,6 +97,7 @@ const lessons: Lesson[] = [
 
 export default function LessonsScreen() {
   const { user } = useAuth();
+  const { colors } = useTheme();
   const [selectedLevel, setSelectedLevel] = useState<LessonLevel>('beginner');
   const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(new Set());
   const [failedLessonIds, setFailedLessonIds] = useState<Set<string>>(new Set());
@@ -155,10 +157,10 @@ export default function LessonsScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
-        <Text style={styles.title}>📚 Mes Leçons</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: colors.text }]}>📚 Mes Leçons</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
           Progressez à votre rythme avec nos leçons interactives
         </Text>
 
@@ -238,6 +240,42 @@ export default function LessonsScreen() {
           </View>
         )}
 
+        {/* Bandeau de félicitations pour avoir complété les leçons avancées */}
+        {selectedLevel === 'advanced' &&
+         completedLessonIds.has('8') && 
+         completedLessonIds.has('9') && (
+          <View style={styles.congratsBanner}>
+            <Text style={styles.congratsEmoji}>🎊</Text>
+            <View style={styles.congratsContent}>
+              <Text style={styles.congratsTitle}>Félicitations ! Vous avez terminé toutes les leçons !</Text>
+              <Text style={styles.congratsText}>
+                Vous maîtrisez maintenant le LFPC de A à Z ! Vous êtes un codeur accompli.
+              </Text>
+              <Text style={styles.congratsHint}>
+                💡 N'hésitez pas à refaire les leçons pour consolider vos acquis, et découvrez (ou redécouvrez) les jeux et l'entraînement pour pratiquer !
+              </Text>
+              <View style={styles.congratsButtonsRow}>
+                <Pressable 
+                  style={[styles.congratsButton, styles.congratsButtonSecondary]}
+                  onPress={() => router.push('/(tabs)/training')}
+                >
+                  <Text style={styles.congratsButtonTextSecondary}>
+                    🎯 Entraînement
+                  </Text>
+                </Pressable>
+                <Pressable 
+                  style={styles.congratsButton}
+                  onPress={() => router.push('/(tabs)/basics')}
+                >
+                  <Text style={styles.congratsButtonText}>
+                    🎮 Les bases du code
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        )}
+
         {/* Liste des leçons */}
         <View style={styles.lessonsContainer}>
           {filteredLessons.map((lesson) => (
@@ -245,6 +283,7 @@ export default function LessonsScreen() {
               key={lesson.id}
               style={({ pressed }) => [
                 styles.lessonCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 pressed && styles.lessonCardPressed,
                 completedLessonIds.has(lesson.id) && styles.lessonCardCompleted,
                 failedLessonIds.has(lesson.id) && styles.lessonCardFailed
@@ -271,8 +310,8 @@ export default function LessonsScreen() {
                 </View>
               </View>
               
-              <Text style={styles.lessonTitle}>{lesson.title}</Text>
-              <Text style={styles.lessonDescription}>{lesson.description}</Text>
+              <Text style={[styles.lessonTitle, { color: colors.text }]}>{lesson.title}</Text>
+              <Text style={[styles.lessonDescription, { color: colors.textSecondary }]}>{lesson.description}</Text>
               
               <View style={styles.lessonFooter}>
                 <Text style={styles.lessonLevel}>
@@ -488,5 +527,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  congratsButtonsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 8,
+  },
+  congratsButtonSecondary: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#22C55E',
+  },
+  congratsButtonTextSecondary: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#22C55E',
   },
 });
