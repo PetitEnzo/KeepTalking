@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, Pressable, Image, StyleSheet, ScrollView } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
 
 interface HandSign {
@@ -13,6 +14,7 @@ interface HandSign {
 
 export default function GameScreen() {
   const { user } = useAuth();
+  const { colors } = useTheme();
   const [handSigns, setHandSigns] = useState<HandSign[]>([]);
   const [currentSign, setCurrentSign] = useState<HandSign | null>(null);
   const [userInput, setUserInput] = useState('');
@@ -260,10 +262,10 @@ export default function GameScreen() {
 
   if (!gameStarted) {
     return (
-      <ScrollView style={styles.container}>
+      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.content}>
-          <Text style={styles.title}>🎮 Jeu des Configurations</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.title, { color: colors.text }]}>🎮 Jeu des Configurations</Text>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             Testez vos connaissances des 8 configurations de main du LFPC !
           </Text>
 
