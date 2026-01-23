@@ -122,6 +122,21 @@ export default function ContributeScreen() {
       return;
     }
 
+    if (!currentSyllable.hand_sign_key) {
+      Alert.alert('Erreur', 'Veuillez sélectionner une configuration de main');
+      return;
+    }
+
+    if (!currentSyllable.consonne) {
+      Alert.alert('Erreur', 'Veuillez sélectionner une consonne');
+      return;
+    }
+
+    if (!currentSyllable.hand_position_config) {
+      Alert.alert('Erreur', 'Veuillez sélectionner une position du visage');
+      return;
+    }
+
     setSyllables([...syllables, currentSyllable]);
     setCurrentSyllable({
       text: '',
@@ -148,6 +163,19 @@ export default function ContributeScreen() {
 
     if (syllables.length === 0) {
       Alert.alert('Erreur', 'Veuillez ajouter au moins une syllabe');
+      return;
+    }
+
+    // Vérifier que toutes les syllabes sont complètes
+    const incompleteSyllable = syllables.find(
+      s => !s.text || !s.hand_sign_key || !s.consonne || !s.hand_position_config
+    );
+    
+    if (incompleteSyllable) {
+      Alert.alert(
+        'Erreur',
+        `La syllabe "${incompleteSyllable.text || 'vide'}" est incomplète. Toutes les syllabes doivent avoir :\n- Un texte\n- Une configuration de main\n- Une consonne\n- Une position du visage`
+      );
       return;
     }
 

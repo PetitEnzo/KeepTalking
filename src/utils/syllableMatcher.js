@@ -220,14 +220,67 @@ function estimateHandConfiguration(landmarks) {
     }
   }
   
-  // Configuration K (2 doigts) - Index + Majeur (signe de paix/victoire)
+  // Configuration K/V (2 doigts) - Index + Majeur
+  // Différencier K (doigts collés) et V (doigts écartés)
   else if (fingersExtended === 2) {
     if (!thumb && index && middle && !ring && !pinky) {
-      config = 'K';
-      confidence = 100; // Pattern exact
+      // Vérifier l'écartement entre index et majeur pour différencier K et V
+      const indexTip = landmarks[8];
+      const middleTip = landmarks[12];
+      const indexMCP = landmarks[5];
+      const pinkyMCP = landmarks[17];
+      
+      // Calculer l'écartement entre les bouts des doigts
+      const fingerSpacing = Math.sqrt(
+        Math.pow(indexTip.x - middleTip.x, 2) + 
+        Math.pow(indexTip.y - middleTip.y, 2)
+      );
+      
+      // Normaliser par rapport à la largeur de la main (distance index-auriculaire)
+      const handWidth = Math.sqrt(
+        Math.pow(indexMCP.x - pinkyMCP.x, 2) + 
+        Math.pow(indexMCP.y - pinkyMCP.y, 2)
+      );
+      
+      const spacingRatio = fingerSpacing / (handWidth + 0.001);
+      
+      // Si le ratio est > 0.5, les doigts sont écartés (V)
+      // Sinon ils sont collés (K)
+      if (spacingRatio > 0.5) {
+        config = 'ING'; // Configuration V pour ING/LLE
+        confidence = 100;
+        console.log(`✌️ Doigts écartés détectés (ratio: ${spacingRatio.toFixed(3)}, spacing: ${fingerSpacing.toFixed(1)}px, handWidth: ${handWidth.toFixed(1)}px) → Configuration V/ING`);
+      } else {
+        config = 'K'; // Configuration K pour K/V/Z
+        confidence = 100;
+        console.log(`🤞 Doigts collés détectés (ratio: ${spacingRatio.toFixed(3)}, spacing: ${fingerSpacing.toFixed(1)}px, handWidth: ${handWidth.toFixed(1)}px) → Configuration K`);
+      }
     } else if (index && middle) {
-      config = 'K';
-      confidence = 90; // Pattern proche
+      // Pattern proche - vérifier l'écartement
+      const indexTip = landmarks[8];
+      const middleTip = landmarks[12];
+      const indexMCP = landmarks[5];
+      const pinkyMCP = landmarks[17];
+      
+      const fingerSpacing = Math.sqrt(
+        Math.pow(indexTip.x - middleTip.x, 2) + 
+        Math.pow(indexTip.y - middleTip.y, 2)
+      );
+      
+      const handWidth = Math.sqrt(
+        Math.pow(indexMCP.x - pinkyMCP.x, 2) + 
+        Math.pow(indexMCP.y - pinkyMCP.y, 2)
+      );
+      
+      const spacingRatio = fingerSpacing / (handWidth + 0.001);
+      
+      if (spacingRatio > 0.5) {
+        config = 'ING';
+        confidence = 90;
+      } else {
+        config = 'K';
+        confidence = 90;
+      }
     } else if (thumb && index) {
       // Pouce + Index = pourrait être L mal détecté
       config = 'L';

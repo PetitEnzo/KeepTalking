@@ -98,14 +98,17 @@ export default function ProfileScreen() {
         .single();
 
       if (userData) {
-        setUserLevel(userData.level || 1);
-        setCurrentXP(userData.total_points || 0);
+        const currentLevel = userData.level || 1;
+        const totalXP = userData.total_points || 0;
+        
+        setUserLevel(currentLevel);
+        setCurrentXP(totalXP);
         setStreak(userData.current_streak || 0);
         
         // Calculer l'XP pour le niveau suivant
-        const nextLevel = userData.level + 1;
-        const xpNeeded = Math.pow(nextLevel - 1, 2) * 100;
-        setXpForNextLevel(xpNeeded);
+        // Formule : xp_needed = (level ^ 2) * 100
+        const xpNeededForNextLevel = Math.pow(currentLevel, 2) * 100;
+        setXpForNextLevel(xpNeededForNextLevel);
 
         // Charger les stats
         const { data: stats } = await supabase
