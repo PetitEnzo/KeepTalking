@@ -203,7 +203,8 @@ export default function TrainingBeginnerScreen() {
     setConfidenceHistory(prev => {
       const newHistory = [...prev, confidence].slice(-10);
       
-      if (!isValidating && newHistory.length >= 8 && newHistory.slice(-8).every(c => c > 60)) {
+      // Valider dès que 3 frames consécutives sont > 60% (au lieu de 8)
+      if (!isValidating && newHistory.length >= 3 && newHistory.slice(-3).every(c => c > 60)) {
         setIsValidating(true);
         setTimeout(() => handleSignValidated(), 0);
       }
