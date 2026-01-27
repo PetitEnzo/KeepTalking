@@ -168,10 +168,20 @@ export default function TrainingBeginnerScreen() {
 
     console.log(`🖐️ Détecté: "${detectedConfig}" | Cible: Configuration ${currentSign.configuration_number} (${currentSign.consonnes}) | Confiance détection: ${detectionConfidence}%`);
 
+    // Debug détaillé de chaque consonne
+    console.log(`🔍 DEBUG SPLIT: consonnes brutes="${currentSign.consonnes}"`);
+    console.log(`🔍 DEBUG ARRAY: targetConsonnes=`, targetConsonnes);
+    console.log(`🔍 DEBUG DETECTED: detectedConfig="${detectedConfig}" (length: ${detectedConfig.length}, charCodes: ${Array.from(detectedConfig).map(ch => ch.charCodeAt(0))})`);
+    targetConsonnes.forEach((c, i) => {
+      const match = c === detectedConfig;
+      console.log(`  [${i}] "${c}" (length: ${c.length}, charCodes: ${Array.from(c).map(ch => ch.charCodeAt(0))}) === "${detectedConfig}" ? ${match}`);
+    });
+
     // Vérifier si la configuration détectée est dans le groupe de consonnes cibles
-    const isMatch = targetConsonnes.includes(detectedConfig);
+    // Normaliser et comparer en insensible à la casse pour éviter les problèmes de comparaison
+    const isMatch = targetConsonnes.some(c => c.toUpperCase() === detectedConfig.toUpperCase());
     
-    console.log(`🔍 DEBUG: detectedConfig="${detectedConfig}", targetConsonnes=${JSON.stringify(targetConsonnes)}, isMatch=${isMatch}`);
+    console.log(`🔍 DEBUG: detectedConfig="${detectedConfig}" (length: ${detectedConfig.length}), targetConsonnes=${JSON.stringify(targetConsonnes)}, isMatch=${isMatch}`);
 
     // Calculer la confiance basée sur la correspondance
     let confidence = 0;
@@ -403,14 +413,29 @@ export default function TrainingBeginnerScreen() {
                 </Text>
               </View>
 
-              <Pressable 
-                style={[styles.button, { backgroundColor: colors.error }]}
-                onPress={handleRestart}
-              >
-                <Text style={styles.buttonText}>
-                  🔄 Changer de mode
-                </Text>
-              </Pressable>
+              <View style={styles.buttonGroup}>
+                <Pressable 
+                  style={[styles.button, styles.skipButton, { backgroundColor: colors.primary }]}
+                  onPress={() => {
+                    selectRandomSign();
+                    setConfidenceHistory([]);
+                    setIsValidating(false);
+                  }}
+                >
+                  <Text style={styles.buttonText}>
+                    ⏭️ Passer
+                  </Text>
+                </Pressable>
+                
+                <Pressable 
+                  style={[styles.button, { backgroundColor: colors.error }]}
+                  onPress={handleRestart}
+                >
+                  <Text style={styles.buttonText}>
+                    🔄 Changer de mode
+                  </Text>
+                </Pressable>
+              </View>
             </View>
 
             <View style={styles.rightColumn}>
@@ -554,6 +579,13 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   leftColumn: {
+    flex: 1,
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  skipButton: {
     flex: 1,
   },
   rightColumn: {
