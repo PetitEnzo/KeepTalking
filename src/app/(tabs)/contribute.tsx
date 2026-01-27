@@ -70,14 +70,13 @@ export default function ContributeScreen() {
       // Charger les configurations de main depuis hand_signs
       const { data: handSignsData, error: handSignsError } = await supabase
         .from('hand_signs')
-        .select('key, image_url')
-        .eq('type', 'consonne')
-        .in('key', HAND_CONFIG_KEYS);
+        .select('configuration_number, consonnes, description, image_url')
+        .order('configuration_number', { ascending: true });
 
       if (!handSignsError && handSignsData) {
         const configs: HandConfig[] = handSignsData.map((sign: any) => ({
-          key: sign.key,
-          name: sign.key,
+          key: sign.consonnes.split(', ')[0], // Utiliser la première consonne comme clé
+          name: sign.consonnes,
           image_url: sign.image_url,
         }));
         setHandConfigs(configs);

@@ -78,11 +78,16 @@ export default function AdminScreen() {
       // Charger les configurations de main
       const { data: signsData } = await supabase
         .from('hand_signs')
-        .select('key, image_url')
-        .eq('type', 'consonne');
+        .select('configuration_number, consonnes, description, image_url')
+        .order('configuration_number', { ascending: true });
       
       if (signsData) {
-        setHandSigns(signsData);
+        // Mapper pour garder la compatibilité avec l'interface existante
+        const mappedSigns = signsData.map((sign: any) => ({
+          key: sign.consonnes.split(', ')[0],
+          image_url: sign.image_url,
+        }));
+        setHandSigns(mappedSigns);
       }
       
       // Charger les positions du visage

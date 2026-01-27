@@ -7,7 +7,9 @@ import WebcamFeedback from '../../components/training/WebcamFeedback';
 import { estimateHandConfiguration } from '../../utils/syllableMatcher';
 
 interface HandSign {
-  key: string;
+  configuration_number: number;
+  consonnes: string;
+  description: string;
   image_url: string;
 }
 
@@ -58,9 +60,8 @@ export default function TrainingBeginnerScreen() {
     try {
       const { data: signsData } = await supabase
         .from('hand_signs')
-        .select('key, image_url')
-        .eq('type', 'consonne')
-        .order('key', { ascending: true });
+        .select('configuration_number, consonnes, description, image_url')
+        .order('configuration_number', { ascending: true });
 
       if (signsData) {
         setHandSigns(signsData);
@@ -161,48 +162,32 @@ export default function TrainingBeginnerScreen() {
     }
 
     // Vérifier si la configuration correspond à la cible
-    const targetKey = currentSign.key;
-    const detectedConfig: string = configResult.config;
+    const targetConsonnes = currentSign.consonnes.split(', ').map(c => c.trim());
+    const detectedConfig: string = configResult.config.trim();
     const detectionConfidence: number = configResult.confidence;
 
-    console.log(`🖐️ Détecté: ${detectedConfig} | Cible: ${targetKey} | Confiance détection: ${detectionConfidence}%`);
+    console.log(`🖐️ Détecté: "${detectedConfig}" | Cible: Configuration ${currentSign.configuration_number} (${currentSign.consonnes}) | Confiance détection: ${detectionConfidence}%`);
 
-    // Utiliser calculateConfigurationConfidence pour vérifier si les configs sont dans le même groupe LFPC
-    const configGroups: { [key: string]: string[] } = {
-      'M': ['M', 'T', 'F'],
-      'P': ['P', 'D', 'J'],
-      'B': ['B', 'N', 'UI'],
-      'L': ['L', 'CH', 'GN', 'OUI'],
-      'K': ['K', 'V', 'Z'],
-      'S': ['S', 'R'],
-      'G': ['G'],
-      'ING': ['ING', 'LLE'],
-    };
-
-    // Trouver le groupe de la config cible
-    let targetGroup = null;
-    for (const [key, group] of Object.entries(configGroups)) {
-      if (group.includes(targetKey)) {
-        targetGroup = group;
-        break;
-      }
-    }
+    // Vérifier si la configuration détectée est dans le groupe de consonnes cibles
+    const isMatch = targetConsonnes.includes(detectedConfig);
+    
+    console.log(`🔍 DEBUG: detectedConfig="${detectedConfig}", targetConsonnes=${JSON.stringify(targetConsonnes)}, isMatch=${isMatch}`);
 
     // Calculer la confiance basée sur la correspondance
     let confidence = 0;
-    if (detectedConfig === targetKey) {
-      confidence = detectionConfidence; // Configuration exacte
-    } else if (targetGroup && targetGroup.includes(detectedConfig)) {
-      confidence = detectionConfidence; // Configuration du même groupe LFPC
+    if (isMatch) {
+      console.log(`✅ Match: ${detectedConfig} dans ${JSON.stringify(targetConsonnes)}`);
+      confidence = detectionConfidence;
     } else {
-      confidence = 0; // Configuration différente
+      console.log(`❌ Pas de match: ${detectedConfig} pas dans ${JSON.stringify(targetConsonnes)}`);
+      confidence = 0;
     }
 
     console.log(`✅ Confiance finale: ${confidence}%`);
     
     setMatchResult({
       confidence,
-      feedback: confidence > 60 ? `Bonne configuration ${targetKey} !` : `Détecté: ${detectedConfig} | Cible: ${targetKey}`,
+      feedback: confidence > 60 ? `Bonne configuration !` : `Détecté: ${detectedConfig} | Cible: ${targetConsonnes.join(', ')}`,
     });
 
     setConfidenceHistory(prev => {
@@ -397,7 +382,10 @@ export default function TrainingBeginnerScreen() {
                   Configuration à reproduire
                 </Text>
                 <Text style={[styles.currentSignKey, { color: colors.text }]}>
-                  {currentSign.key}
+                  {currentSign.consonnes}
+                </Text>
+                <Text style={[styles.configDescription, { color: colors.textSecondary }]}>
+                  {currentSign.description}
                 </Text>
                 
                 {showImageHelp && currentSign.image_url && (
@@ -586,7 +574,13 @@ const styles = StyleSheet.create({
   currentSignKey: {
     fontSize: 64,
     fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  configDescription: {
+    fontSize: 14,
     marginBottom: 16,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
   signImageContainer: {
     width: 200,

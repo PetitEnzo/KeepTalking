@@ -911,14 +911,18 @@ export default function LessonScreen() {
       const { data: handSigns, error: handSignsError } = await supabase
         .from('hand_signs')
         .select('*')
-        .eq('type', 'consonne');
+        .order('configuration_number', { ascending: true });
 
       console.log('📊 Résultat hand_signs:', { count: handSigns?.length, error: handSignsError });
 
       if (!handSignsError && handSigns) {
         handSigns.forEach((sign: any) => {
-          console.log(`  - ${sign.key}: ${sign.image_url}`);
-          imageMap[sign.key] = sign.image_url;
+          // Mapper chaque consonne du groupe à l'image_url
+          const consonnes = sign.consonnes.split(', ').map((c: string) => c.trim());
+          consonnes.forEach((consonne: string) => {
+            console.log(`  - ${consonne}: ${sign.image_url}`);
+            imageMap[consonne] = sign.image_url;
+          });
         });
       }
 

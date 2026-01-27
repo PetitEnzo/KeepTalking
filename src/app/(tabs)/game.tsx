@@ -59,33 +59,20 @@ export default function GameScreen() {
       const { data, error } = await supabase
         .from('hand_signs')
         .select('*')
-        .eq('type', 'consonne');
+        .order('configuration_number', { ascending: true });
 
       if (!error && data) {
         console.log('🔍 Données brutes depuis Supabase:', data);
         
-        // Mapping hardcodé des configurations avec leurs consonnes exactes
-        const configMapping: { [key: string]: string[] } = {
-          'config1.jpg': ['M', 'T', 'F'],
-          'config2.jpg': ['J', 'D', 'P'],
-          'config3.jpg': ['B', 'N', 'UI'],
-          'config4.jpg': ['CH', 'OU', 'L', 'GN'],
-          'config5.jpg': ['K', 'Z', 'V'],
-          'config6.jpg': ['S', 'R'],
-          'config7.jpg': ['G'],
-          'config8.jpg': ['ING', 'LLE'],
-        };
-        
         const signs: HandSign[] = data.map((sign: any) => {
-          // Extraire le nom du fichier depuis l'URL
-          const imageFileName = sign.image_url.split('/').pop();
-          const consonnes = configMapping[imageFileName] || [];
+          // Extraire les consonnes depuis la colonne consonnes
+          const consonnes = sign.consonnes.split(', ').map((c: string) => c.trim());
           
-          console.log(`📋 Image: ${imageFileName} | Description: "${sign.description}" | Consonnes valides:`, consonnes);
+          console.log(`📋 Configuration ${sign.configuration_number} | Description: "${sign.description}" | Consonnes valides:`, consonnes);
           
           return {
-            key: sign.key,
-            label: sign.label,
+            key: consonnes[0], // Utiliser la première consonne comme clé
+            label: sign.consonnes,
             description: sign.description,
             image_url: sign.image_url,
             consonnes: consonnes,
