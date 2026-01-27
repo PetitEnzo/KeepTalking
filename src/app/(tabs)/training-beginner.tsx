@@ -202,13 +202,13 @@ export default function TrainingBeginnerScreen() {
     
     setMatchResult({
       confidence,
-      feedback: confidence > 70 ? `Bonne configuration ${targetKey} !` : `Détecté: ${detectedConfig} | Cible: ${targetKey}`,
+      feedback: confidence > 60 ? `Bonne configuration ${targetKey} !` : `Détecté: ${detectedConfig} | Cible: ${targetKey}`,
     });
 
     setConfidenceHistory(prev => {
       const newHistory = [...prev, confidence].slice(-10);
       
-      if (!isValidating && newHistory.length >= 8 && newHistory.slice(-8).every(c => c > 70)) {
+      if (!isValidating && newHistory.length >= 8 && newHistory.slice(-8).every(c => c > 60)) {
         setIsValidating(true);
         setTimeout(() => handleSignValidated(), 0);
       }
@@ -387,10 +387,10 @@ export default function TrainingBeginnerScreen() {
               <View style={[
                 styles.currentSignCard, 
                 { 
-                  backgroundColor: matchResult.confidence > 70 
+                  backgroundColor: matchResult.confidence > 60 
                     ? (theme === 'dark' ? '#065f46' : '#D1FAE5')
                     : colors.card,
-                  borderColor: matchResult.confidence > 70 ? '#10B981' : colors.border
+                  borderColor: matchResult.confidence > 60 ? '#10B981' : colors.border
                 }
               ]}>
                 <Text style={[styles.currentSignLabel, { color: colors.textSecondary }]}>
@@ -441,7 +441,7 @@ export default function TrainingBeginnerScreen() {
                   • Placez votre main bien visible{'\n'}
                   • Maintenez la position stable{'\n'}
                   • Bon éclairage requis{'\n'}
-                  • Précision minimale : 70%
+                  • Précision minimale : 60%
                 </Text>
               </View>
             </View>

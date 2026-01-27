@@ -44,6 +44,18 @@ export default function WebcamFeedback({
   // Initialiser et démarrer/arrêter MediaPipe
   useEffect(() => {
     if (!isCameraEnabled || !videoRef.current || !canvasRef.current) {
+      // Arrêter la caméra si elle est désactivée
+      if (!isCameraEnabled) {
+        if (cameraRef.current && cameraRef.current.getTracks) {
+          cameraRef.current.getTracks().forEach((track: any) => track.stop());
+          cameraRef.current = null;
+        }
+        if (videoRef.current && videoRef.current.srcObject) {
+          const stream = videoRef.current.srcObject as MediaStream;
+          stream.getTracks().forEach(track => track.stop());
+          videoRef.current.srcObject = null;
+        }
+      }
       return;
     }
 
