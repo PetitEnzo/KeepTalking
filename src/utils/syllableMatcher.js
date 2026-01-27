@@ -348,11 +348,12 @@ export function estimateHandConfiguration(landmarks) {
     pinky ? 'P' : '-'
   ].join('');
 
-  // Réduire la confiance si la paume n'est pas vers la caméra
+  // Ne plus réduire la confiance basée sur l'orientation pour plus de tolérance
   let finalConfidence = confidence;
+  
+  // Log de l'orientation mais sans pénalité
   if (!orientation.palmFacingCamera) {
-    finalConfidence = Math.min(confidence * 0.4, 35); // Max 35% si paume vers extérieur
-    console.log(`⚠️ Paume vers extérieur détectée - Confiance réduite: ${confidence}% → ${finalConfidence.toFixed(0)}%`);
+    console.log(`ℹ️ Paume vers extérieur détectée - Mais confiance maintenue pour tolérance`);
   }
 
   console.log(`✋ Configuration: ${config} (confiance: ${finalConfidence.toFixed(0)}%) | Pattern: ${fingerPattern} | Total: ${fingersExtended} doigts`);
@@ -421,15 +422,15 @@ function analyzeFingerStates(landmarks) {
     // Utiliser un ratio plutôt que des coordonnées absolues
     const extensionRatio = tipToWrist / (pipToWrist + 0.001); // +0.001 pour éviter division par 0
     
-    // Seuil adapté par doigt (PLUS STRICT pour R/S - poing fermé)
+    // Seuil adapté par doigt (PLUS TOLÉRANT pour meilleure détection)
     let extended = false;
     
     if (index === 0) {
-      // Pouce: seuil plus strict pour mieux détecter poing fermé
-      extended = extensionRatio > 1.20;
-    } else {
-      // Autres doigts: seuil plus strict pour mieux détecter poing fermé
+      // Pouce: seuil assoupli
       extended = extensionRatio > 1.15;
+    } else {
+      // Autres doigts: seuil assoupli
+      extended = extensionRatio > 1.10;
     }
 
     return {
