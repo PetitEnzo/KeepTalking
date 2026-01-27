@@ -346,9 +346,25 @@ export default function TrainingScreen() {
     setTimeLeft(120);
   };
 
+  // Mapping des consonnes vers les configurations de main
+  const consonneToConfigMap: { [key: string]: string } = {
+    'M': 'M', 'T': 'M', 'F': 'M',
+    'P': 'P', 'D': 'P', 'J': 'P',
+    'B': 'B', 'N': 'B', 'UI': 'B',
+    'L': 'L', 'CH': 'L', 'GN': 'L', 'OUI': 'L', 'OU': 'L',
+    'K': 'K', 'V': 'K', 'Z': 'K', 'C': 'K',
+    'S': 'S', 'R': 'S',
+    'G': 'G',
+    'ING': 'ING', 'LLE': 'ING', 'ILLE': 'ING',
+  };
+
   const getHandSignImage = (key: string | null) => {
     if (!key || !showImageHelp) return undefined;
-    const sign = handSigns.find(s => s.key === key);
+    
+    // Trouver la configuration correspondante à la consonne
+    const configKey = consonneToConfigMap[key] || key;
+    const sign = handSigns.find(s => s.key === configKey);
+    
     return sign?.image_url;
   };
 
