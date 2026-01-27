@@ -136,7 +136,7 @@ function detectHandOrientation(landmarks) {
  * @param {Array} landmarks - 21 landmarks de la main
  * @returns {Object} { config: string, confidence: number, handedness: string, palmFacingCamera: boolean }
  */
-function estimateHandConfiguration(landmarks) {
+export function estimateHandConfiguration(landmarks) {
   if (!landmarks || landmarks.length !== 21) {
     return null;
   }

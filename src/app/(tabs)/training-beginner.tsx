@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
 import WebcamFeedback from '../../components/training/WebcamFeedback';
+import { estimateHandConfiguration } from '../../utils/syllableMatcher';
 
 interface HandSign {
   key: string;
@@ -148,7 +149,7 @@ export default function TrainingBeginnerScreen() {
     });
 
     // Utiliser la fonction d'estimation de configuration
-    const configResult = estimateHandConfiguration(normalizedLandmarks);
+    const configResult: any = estimateHandConfiguration(normalizedLandmarks);
     
     if (!configResult || !configResult.config) {
       console.log('❌ Aucune configuration détectée');
@@ -161,8 +162,8 @@ export default function TrainingBeginnerScreen() {
 
     // Vérifier si la configuration correspond à la cible
     const targetKey = currentSign.key;
-    const detectedConfig = configResult.config;
-    const detectionConfidence = configResult.confidence;
+    const detectedConfig: string = configResult.config;
+    const detectionConfidence: number = configResult.confidence;
 
     console.log(`🖐️ Détecté: ${detectedConfig} | Cible: ${targetKey} | Confiance détection: ${detectionConfidence}%`);
 
@@ -215,79 +216,6 @@ export default function TrainingBeginnerScreen() {
       return newHistory;
     });
   }, [currentSign, isValidating]);
-
-  // Fonction pour estimer la configuration de main (copie simplifiée de syllableMatcher)
-  const estimateHandConfiguration = (landmarks: any[]) => {
-    if (!landmarks || landmarks.length !== 21) return null;
-
-    const fingerStates = analyzeFingerStates(landmarks);
-    const fingersExtended = fingerStates.filter((f: any) => f.extended).length;
-    
-    const [thumb, index, middle, ring, pinky] = fingerStates.map((f: any) => f.extended);
-    
-    let config = null;
-    let confidence = 100;
-
-    if (fingersExtended === 5) {
-      config = 'M';
-    } else if (fingersExtended === 4 && !thumb) {
-      config = 'B';
-    } else if (fingersExtended === 3) {
-      if (thumb && index && pinky) {
-        config = 'L';
-      } else if (index && middle && ring) {
-        config = 'R';
-      }
-    } else if (fingersExtended === 2 && index && middle) {
-      config = 'K';
-    } else if (fingersExtended === 1 && index) {
-      config = 'J';
-    } else if (fingersExtended === 0) {
-      config = 'G';
-    }
-
-    return { config, confidence };
-  };
-
-  const analyzeFingerStates = (landmarks: any[]) => {
-    const fingers = [
-      { name: 'thumb', tip: 4, pip: 3, mcp: 2 },
-      { name: 'index', tip: 8, pip: 6, mcp: 5 },
-      { name: 'middle', tip: 12, pip: 10, mcp: 9 },
-      { name: 'ring', tip: 16, pip: 14, mcp: 13 },
-      { name: 'pinky', tip: 20, pip: 18, mcp: 17 }
-    ];
-
-    const wrist = landmarks[0];
-
-    return fingers.map((finger, index) => {
-      const tip = landmarks[finger.tip];
-      const pip = landmarks[finger.pip];
-
-      const tipToWrist = Math.sqrt(
-        Math.pow(tip.x - wrist.x, 2) + 
-        Math.pow(tip.y - wrist.y, 2) +
-        Math.pow((tip.z || 0) - (wrist.z || 0), 2)
-      );
-
-      const pipToWrist = Math.sqrt(
-        Math.pow(pip.x - wrist.x, 2) + 
-        Math.pow(pip.y - wrist.y, 2) +
-        Math.pow((pip.z || 0) - (wrist.z || 0), 2)
-      );
-
-      const extensionRatio = tipToWrist / (pipToWrist + 0.001);
-      
-      let extended = false;
-      if (index === 0) {
-        extended = extensionRatio > 1.20;
-      } else {
-        extended = extensionRatio > 1.15;
-      }
-
-      return { name: finger.name, extended };
-    });
-  };
 
   const handleSignValidated = () => {
     const newCount = validatedCount + 1;
