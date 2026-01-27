@@ -1,50 +1,53 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export default function AboutTabScreen() {
+  const { colors } = useTheme();
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
-        <Text style={styles.title}>
+        <Text style={[styles.title, { color: colors.text }]}>
           À propos de KeepTalking
         </Text>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+        <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
             Notre Mission
           </Text>
-          <Text style={styles.text}>
+          <Text style={[styles.text, { color: colors.textSecondary }]}>
             Rendre l'apprentissage du Langage Français Parlé Complété (LfPC) accessible à tous, 
             partout, à tout moment.
           </Text>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+        <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
             Qu'est-ce que le LfPC ?
           </Text>
-          <Text style={styles.text}>
+          <Text style={[styles.text, { color: colors.textSecondary }]}>
             Le Langage Français Parlé Complété est un code gestuel qui complète la lecture labiale. 
             Il permet aux personnes sourdes ou malentendantes de percevoir visuellement tous les sons 
             de la langue française.
           </Text>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+        <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
             Comment ça marche ?
           </Text>
-          <Text style={styles.text}>
+          <Text style={[styles.text, { color: colors.textSecondary }]}>
             Le LfPC utilise 8 configurations de main et 5 positions autour du visage pour représenter 
             les différents sons de la langue française. Chaque syllabe est codée par une configuration 
             et une position.
           </Text>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+        <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
             Pourquoi KeepTalking ?
           </Text>
-          <Text style={styles.text}>
+          <Text style={[styles.text, { color: colors.textSecondary }]}>
             • Apprentissage ludique avec système de progression{'\n'}
             • Sessions courtes adaptées à tous les emplois du temps{'\n'}
             • Assistant intelligent pour pratiquer{'\n'}
@@ -55,7 +58,7 @@ export default function AboutTabScreen() {
         </View>
 
         <View style={styles.statsSection}>
-          <Text style={styles.sectionTitle}>
+          <Text style={[styles.sectionTitle, { color: '#FFFFFF' }]}>
             Notre Impact
           </Text>
           
@@ -77,18 +80,18 @@ export default function AboutTabScreen() {
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+        <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
             Contact
           </Text>
-          <Text style={styles.text}>
+          <Text style={[styles.text, { color: colors.textSecondary }]}>
             Pour toute question ou suggestion, n'hésitez pas à nous contacter à :{'\n'}
             contact@keeptalking.fr
           </Text>
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
+          <Text style={[styles.footerText, { color: colors.textSecondary }]}>
             © 2026 KeepTalking - Tous droits réservés
           </Text>
         </View>

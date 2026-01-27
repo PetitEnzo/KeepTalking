@@ -270,15 +270,15 @@ export default function GameScreen() {
           </Text>
 
           {bestScore > 0 && (
-            <View style={styles.bestScoreCard}>
-              <Text style={styles.bestScoreLabel}>🏆 Meilleur score</Text>
-              <Text style={styles.bestScoreValue}>{bestScore}</Text>
+            <View style={[styles.bestScoreCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <Text style={[styles.bestScoreLabel, { color: colors.textSecondary }]}>🏆 Meilleur score</Text>
+              <Text style={[styles.bestScoreValue, { color: colors.text }]}>{bestScore}</Text>
             </View>
           )}
 
-          <View style={styles.rulesCard}>
-            <Text style={styles.rulesTitle}>📋 Règles du jeu</Text>
-            <Text style={styles.rulesText}>
+          <View style={[styles.rulesCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.rulesTitle, { color: colors.text }]}>📋 Règles du jeu</Text>
+            <Text style={[styles.rulesText, { color: colors.textSecondary }]}>
               • Une image de configuration apparaît{'\n'}
               • Vous avez 60 secondes pour deviner un maximum de consonnes{'\n'}
               • Tapez une des consonnes associées à la configuration{'\n'}
@@ -300,14 +300,14 @@ export default function GameScreen() {
 
   if (gameOver) {
     return (
-      <ScrollView style={styles.container}>
+      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.content}>
-          <Text style={styles.title}>🏁 Partie terminée !</Text>
+          <Text style={[styles.title, { color: colors.text }]}>🏁 Partie terminée !</Text>
           
-          <View style={styles.scoreCard}>
-            <Text style={styles.finalScoreLabel}>Votre score</Text>
-            <Text style={styles.finalScore}>{score}</Text>
-            <Text style={styles.finalScoreSubtext}>
+          <View style={[styles.scoreCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.finalScoreLabel, { color: colors.textSecondary }]}>Votre score</Text>
+            <Text style={[styles.finalScore, { color: colors.text }]}>{score}</Text>
+            <Text style={[styles.finalScoreSubtext, { color: colors.textSecondary }]}>
               {score === 0 ? 'Continuez à pratiquer !' :
                score < 5 ? 'Bon début !' :
                score < 10 ? 'Bien joué !' :
@@ -340,12 +340,12 @@ export default function GameScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
         {/* Header avec timer et score */}
         <View style={styles.gameHeader}>
-          <View style={styles.timerBox}>
-            <Text style={styles.timerLabel}>⏱️ Temps</Text>
+          <View style={[styles.timerBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.timerLabel, { color: colors.textSecondary }]}>⏱️ Temps</Text>
             <Text style={[
               styles.timerValue,
               timeLeft <= 10 && styles.timerWarning
@@ -354,34 +354,34 @@ export default function GameScreen() {
             </Text>
           </View>
           
-          <View style={styles.scoreBox}>
-            <Text style={styles.scoreLabel}>🏆 Score</Text>
-            <Text style={styles.scoreValue}>{score}</Text>
+          <View style={[styles.scoreBox, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.scoreLabel, { color: colors.textSecondary }]}>🏆 Score</Text>
+            <Text style={[styles.scoreValue, { color: colors.text }]}>{score}</Text>
           </View>
         </View>
 
         {/* Image de la configuration */}
         {currentSign && (
-          <View style={styles.signCard}>
-            <View style={styles.imageContainer}>
+          <View style={[styles.signCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={[styles.imageContainer, { backgroundColor: colors.background }]}>
               <Image 
                 source={{ uri: currentSign.image_url }}
                 style={styles.signImage}
                 resizeMode="contain"
               />
             </View>
-            <Text style={styles.signDescription}>{currentSign.description}</Text>
+            <Text style={[styles.signDescription, { color: colors.textSecondary }]}>{currentSign.description}</Text>
           </View>
         )}
 
         {/* Input et validation */}
         <View style={styles.inputSection}>
-          <Text style={styles.inputLabel}>
+          <Text style={[styles.inputLabel, { color: colors.text }]}>
             Tapez une consonne :
           </Text>
           <TextInput
             ref={inputRef}
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]}
             value={userInput}
             onChangeText={setUserInput}
             onKeyPress={handleKeyPress}

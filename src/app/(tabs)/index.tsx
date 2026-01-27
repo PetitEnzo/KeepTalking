@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
 import { router } from 'expo-router';
 
@@ -10,6 +11,7 @@ type UserGoal = 'communication' | 'professional' | 'family' | 'curiosity' | null
 
 export default function HomeScreen() {
   const { user } = useAuth();
+  const { colors } = useTheme();
   const [step, setStep] = useState(1);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -87,17 +89,17 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Chargement...</Text>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Chargement...</Text>
       </View>
     );
   }
 
   if (hasCompletedOnboarding) {
     return (
-      <ScrollView style={styles.completedContainer}>
+      <ScrollView style={[styles.completedContainer, { backgroundColor: colors.background }]}>
         <View style={styles.completedContent}>
-          <Text style={styles.welcomeTitle}>
+          <Text style={[styles.welcomeTitle, { color: colors.text }]}>
             Bienvenue {user?.user_metadata?.username || 'Utilisateur'} ! 👋
           </Text>
           
@@ -111,60 +113,122 @@ export default function HomeScreen() {
           </View>
 
           {/* Bannière d'avertissement */}
-          <View style={styles.warningBanner}>
+          <View style={[styles.warningBanner, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Text style={styles.warningIcon}>⚠️</Text>
             <View style={styles.warningContent}>
-              <Text style={styles.warningTitle}>Application en développement</Text>
-              <Text style={styles.warningText}>
+              <Text style={[styles.warningTitle, { color: colors.error }]}>Application en développement</Text>
+              <Text style={[styles.warningText, { color: colors.textSecondary }]}>
                 Cette application est un complément d'apprentissage et ne remplace pas les cours de LFPC. Des erreurs peuvent être présentes. N'hésitez pas à nous signaler tout problème !
               </Text>
             </View>
           </View>
-        
-          <Pressable 
-            style={({ pressed }) => [
-              styles.actionCard,
-              pressed && styles.actionCardPressed
-            ]}
-            onPress={() => router.push('/(tabs)/lessons')}
-          >
-            <Text style={styles.actionCardTitle}>
-              📚 Commencez votre apprentissage
-            </Text>
-            <Text style={styles.actionCardText}>
-              Explorez les leçons adaptées à votre niveau
-            </Text>
-          </Pressable>
 
-          <Pressable 
-            style={({ pressed }) => [
-              styles.actionCard,
-              { backgroundColor: '#FAF5FF' },
-              pressed && styles.actionCardPressed
-            ]}
-            onPress={() => router.push('/(tabs)/chat')}
-          >
-            <Text style={[styles.actionCardTitle, { color: '#581C87' }]}>
-              💬 Traduisez avec le chatbot
-            </Text>
-            <Text style={[styles.actionCardText, { color: '#7C3AED' }]}>
-              Traduisez vos mots en LFPC avec l'assistant intelligent
-            </Text>
-          </Pressable>
+          {/* Grille de cartes */}
+          <View style={styles.cardsGrid}>
+            <Pressable 
+              style={({ pressed }) => [
+                styles.gridCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
+                pressed && styles.gridCardPressed
+              ]}
+              onPress={() => router.push('/(tabs)/lessons')}
+            >
+              <Text style={styles.gridCardIcon}>📚</Text>
+              <Text style={[styles.gridCardTitle, { color: colors.text }]}>Leçons</Text>
+              <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
+                Apprenez les bases du LFPC étape par étape
+              </Text>
+            </Pressable>
+
+            <Pressable 
+              style={({ pressed }) => [
+                styles.gridCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
+                pressed && styles.gridCardPressed
+              ]}
+              onPress={() => router.push('/(tabs)/training-beginner')}
+            >
+              <Text style={styles.gridCardIcon}>🖐️</Text>
+              <Text style={[styles.gridCardTitle, { color: colors.text }]}>Entraînement Débutant</Text>
+              <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
+                Pratiquez les configurations de main de base
+              </Text>
+            </Pressable>
+
+            <Pressable 
+              style={({ pressed }) => [
+                styles.gridCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
+                pressed && styles.gridCardPressed
+              ]}
+              onPress={() => router.push('/(tabs)/training')}
+            >
+              <Text style={styles.gridCardIcon}>🎯</Text>
+              <Text style={[styles.gridCardTitle, { color: colors.text }]}>Entraînement Avancé</Text>
+              <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
+                Codez des mots complets avec détection en temps réel
+              </Text>
+            </Pressable>
+
+            <Pressable 
+              style={({ pressed }) => [
+                styles.gridCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
+                pressed && styles.gridCardPressed
+              ]}
+              onPress={() => router.push('/(tabs)/contribute')}
+            >
+              <Text style={styles.gridCardIcon}>✍️</Text>
+              <Text style={[styles.gridCardTitle, { color: colors.text }]}>Ajouter un mot</Text>
+              <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
+                Contribuez en proposant de nouveaux mots à coder
+              </Text>
+            </Pressable>
+
+            <Pressable 
+              style={({ pressed }) => [
+                styles.gridCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
+                pressed && styles.gridCardPressed
+              ]}
+              onPress={() => router.push('/(tabs)/basics')}
+            >
+              <Text style={styles.gridCardIcon}>📖</Text>
+              <Text style={[styles.gridCardTitle, { color: colors.text }]}>Les bases du code</Text>
+              <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
+                Découvrez les fondamentaux du LFPC
+              </Text>
+            </Pressable>
+
+            <Pressable 
+              style={({ pressed }) => [
+                styles.gridCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
+                pressed && styles.gridCardPressed
+              ]}
+              onPress={() => router.push('/(tabs)/game')}
+            >
+              <Text style={styles.gridCardIcon}>🎮</Text>
+              <Text style={[styles.gridCardTitle, { color: colors.text }]}>Jeu</Text>
+              <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
+                Apprenez en vous amusant avec nos mini-jeux
+              </Text>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
     );
   }
 
   return (
-    <ScrollView style={styles.scrollContainer}>
+    <ScrollView style={[styles.scrollContainer, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
         {/* En-tête */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>
             Personnalisez votre expérience
           </Text>
-          <Text style={styles.headerSubtitle}>
+          <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
             Quelques questions pour adapter les exercices à vos besoins
           </Text>
           
@@ -175,12 +239,12 @@ export default function HomeScreen() {
                 key={s}
                 style={[
                   styles.progressBar,
-                  s <= step ? styles.progressBarActive : styles.progressBarInactive
+                  s <= step ? styles.progressBarActive : [styles.progressBarInactive, { backgroundColor: colors.border }]
                 ]}
               />
             ))}
           </View>
-          <Text style={styles.stepText}>
+          <Text style={[styles.stepText, { color: colors.textSecondary }]}>
             Étape {step} sur 3
           </Text>
         </View>
@@ -188,7 +252,7 @@ export default function HomeScreen() {
         {/* Étape 1 : Profil */}
         {step === 1 && (
           <View>
-            <Text style={styles.questionTitle}>
+            <Text style={[styles.questionTitle, { color: colors.text }]}>
               Qui êtes-vous ?
             </Text>
 
@@ -196,14 +260,15 @@ export default function HomeScreen() {
               onPress={() => setProfile('deaf')}
               style={[
                 styles.optionCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 profile === 'deaf' && styles.optionCardSelected
               ]}
             >
               <Text style={styles.optionEmoji}>🦻</Text>
-              <Text style={styles.optionTitle}>
+              <Text style={[styles.optionTitle, { color: colors.text }]}>
                 Je suis malentendant(e) ou sourd(e)
               </Text>
-              <Text style={styles.optionDescription}>
+              <Text style={[styles.optionDescription, { color: colors.textSecondary }]}>
                 Je veux apprendre le LfPC pour mieux communiquer
               </Text>
             </Pressable>
@@ -212,14 +277,15 @@ export default function HomeScreen() {
               onPress={() => setProfile('hearing')}
               style={[
                 styles.optionCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 profile === 'hearing' && styles.optionCardSelected
               ]}
             >
               <Text style={styles.optionEmoji}>👂</Text>
-              <Text style={styles.optionTitle}>
+              <Text style={[styles.optionTitle, { color: colors.text }]}>
                 Je suis entendant(e)
               </Text>
-              <Text style={styles.optionDescription}>
+              <Text style={[styles.optionDescription, { color: colors.textSecondary }]}>
                 Je veux apprendre pour communiquer avec une personne sourde
               </Text>
             </Pressable>
@@ -228,14 +294,15 @@ export default function HomeScreen() {
               onPress={() => setProfile('family')}
               style={[
                 styles.optionCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 profile === 'family' && styles.optionCardSelected
               ]}
             >
               <Text style={styles.optionEmoji}>👨‍👩‍👧</Text>
-              <Text style={styles.optionTitle}>
+              <Text style={[styles.optionTitle, { color: colors.text }]}>
                 Je suis parent ou proche
               </Text>
-              <Text style={styles.optionDescription}>
+              <Text style={[styles.optionDescription, { color: colors.textSecondary }]}>
                 Mon enfant ou un proche est sourd ou malentendant
               </Text>
             </Pressable>
@@ -244,14 +311,15 @@ export default function HomeScreen() {
               onPress={() => setProfile('professional')}
               style={[
                 styles.optionCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 profile === 'professional' && styles.optionCardSelected
               ]}
             >
               <Text style={styles.optionEmoji}>💼</Text>
-              <Text style={styles.optionTitle}>
+              <Text style={[styles.optionTitle, { color: colors.text }]}>
                 Je suis professionnel(le)
               </Text>
-              <Text style={styles.optionDescription}>
+              <Text style={[styles.optionDescription, { color: colors.textSecondary }]}>
                 Enseignant, orthophoniste, éducateur, etc.
               </Text>
             </Pressable>
@@ -274,7 +342,7 @@ export default function HomeScreen() {
         {/* Étape 2 : Niveau */}
         {step === 2 && (
           <View>
-            <Text style={styles.questionTitle}>
+            <Text style={[styles.questionTitle, { color: colors.text }]}>
               Quel est votre niveau en LfPC ?
             </Text>
 
@@ -282,14 +350,15 @@ export default function HomeScreen() {
               onPress={() => setLevel('beginner')}
               style={[
                 styles.optionCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 level === 'beginner' && styles.optionCardSelected
               ]}
             >
               <Text style={styles.optionEmoji}>🌱</Text>
-              <Text style={styles.optionTitle}>
+              <Text style={[styles.optionTitle, { color: colors.text }]}>
                 Débutant
               </Text>
-              <Text style={styles.optionDescription}>
+              <Text style={[styles.optionDescription, { color: colors.textSecondary }]}>
                 Je découvre le LfPC, je n'ai jamais pratiqué
               </Text>
             </Pressable>
@@ -298,14 +367,15 @@ export default function HomeScreen() {
               onPress={() => setLevel('intermediate')}
               style={[
                 styles.optionCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 level === 'intermediate' && styles.optionCardSelected
               ]}
             >
               <Text style={styles.optionEmoji}>🌿</Text>
-              <Text style={styles.optionTitle}>
+              <Text style={[styles.optionTitle, { color: colors.text }]}>
                 Intermédiaire
               </Text>
-              <Text style={styles.optionDescription}>
+              <Text style={[styles.optionDescription, { color: colors.textSecondary }]}>
                 Je connais les bases, je veux me perfectionner
               </Text>
             </Pressable>
@@ -314,14 +384,15 @@ export default function HomeScreen() {
               onPress={() => setLevel('advanced')}
               style={[
                 styles.optionCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 level === 'advanced' && styles.optionCardSelected
               ]}
             >
               <Text style={styles.optionEmoji}>🌳</Text>
-              <Text style={styles.optionTitle}>
+              <Text style={[styles.optionTitle, { color: colors.text }]}>
                 Avancé
               </Text>
-              <Text style={styles.optionDescription}>
+              <Text style={[styles.optionDescription, { color: colors.textSecondary }]}>
                 Je maîtrise le LfPC, je veux approfondir mes compétences
               </Text>
             </Pressable>
@@ -355,7 +426,7 @@ export default function HomeScreen() {
         {/* Étape 3 : Objectifs */}
         {step === 3 && (
           <View>
-            <Text style={styles.questionTitle}>
+            <Text style={[styles.questionTitle, { color: colors.text }]}>
               Quel est votre objectif principal ?
             </Text>
 
@@ -363,14 +434,15 @@ export default function HomeScreen() {
               onPress={() => setGoal('communication')}
               style={[
                 styles.optionCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 goal === 'communication' && styles.optionCardSelected
               ]}
             >
               <Text style={styles.optionEmoji}>💬</Text>
-              <Text style={styles.optionTitle}>
+              <Text style={[styles.optionTitle, { color: colors.text }]}>
                 Communication quotidienne
               </Text>
-              <Text style={styles.optionDescription}>
+              <Text style={[styles.optionDescription, { color: colors.textSecondary }]}>
                 Échanger au quotidien avec mes proches
               </Text>
             </Pressable>
@@ -379,14 +451,15 @@ export default function HomeScreen() {
               onPress={() => setGoal('professional')}
               style={[
                 styles.optionCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 goal === 'professional' && styles.optionCardSelected
               ]}
             >
               <Text style={styles.optionEmoji}>💼</Text>
-              <Text style={styles.optionTitle}>
+              <Text style={[styles.optionTitle, { color: colors.text }]}>
                 Usage professionnel
               </Text>
-              <Text style={styles.optionDescription}>
+              <Text style={[styles.optionDescription, { color: colors.textSecondary }]}>
                 Utiliser le LfPC dans mon travail
               </Text>
             </Pressable>
@@ -395,14 +468,15 @@ export default function HomeScreen() {
               onPress={() => setGoal('family')}
               style={[
                 styles.optionCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 goal === 'family' && styles.optionCardSelected
               ]}
             >
               <Text style={styles.optionEmoji}>❤️</Text>
-              <Text style={styles.optionTitle}>
+              <Text style={[styles.optionTitle, { color: colors.text }]}>
                 Accompagnement familial
               </Text>
-              <Text style={styles.optionDescription}>
+              <Text style={[styles.optionDescription, { color: colors.textSecondary }]}>
                 Aider un enfant ou un proche dans son apprentissage
               </Text>
             </Pressable>
@@ -411,14 +485,15 @@ export default function HomeScreen() {
               onPress={() => setGoal('curiosity')}
               style={[
                 styles.optionCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
                 goal === 'curiosity' && styles.optionCardSelected
               ]}
             >
               <Text style={styles.optionEmoji}>🔍</Text>
-              <Text style={styles.optionTitle}>
+              <Text style={[styles.optionTitle, { color: colors.text }]}>
                 Curiosité et découverte
               </Text>
-              <Text style={styles.optionDescription}>
+              <Text style={[styles.optionDescription, { color: colors.textSecondary }]}>
                 Découvrir une nouvelle forme de communication
               </Text>
             </Pressable>
@@ -655,5 +730,49 @@ const styles = StyleSheet.create({
   },
   buttonTextSecondary: {
     color: '#64748B',
+  },
+  cardsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+    marginTop: 20,
+  },
+  gridCard: {
+    width: '32%',
+    minWidth: 280,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 24,
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
+    alignItems: 'center',
+  },
+  gridCardPressed: {
+    opacity: 0.9,
+    transform: [{ scale: 0.96 }],
+    borderColor: '#3B82F6',
+    backgroundColor: '#F0F9FF',
+    shadowColor: '#3B82F6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  gridCardIcon: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  gridCardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0F172A',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  gridCardDescription: {
+    fontSize: 14,
+    color: '#64748B',
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });

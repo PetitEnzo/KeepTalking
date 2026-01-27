@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface Configuration {
   number: number;
@@ -60,12 +61,13 @@ const CONFIGURATIONS: Configuration[] = [
 ];
 
 export default function BasicsScreen() {
+  const { colors } = useTheme();
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
-        <Text style={styles.title}>📖 Les bases du code LFPC</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: colors.text }]}>📖 Les bases du code LFPC</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
           Apprenez les différentes configurations de main du code LFPC
         </Text>
 
@@ -79,12 +81,12 @@ export default function BasicsScreen() {
 
         <View style={styles.gridContainer}>
           {CONFIGURATIONS.map((config) => (
-            <View key={config.number} style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.cardNumber}>Configuration {config.number}</Text>
+            <View key={config.number} style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <View style={[styles.cardHeader, { backgroundColor: colors.border }]}>
+                <Text style={[styles.cardNumber, { color: colors.text }]}>Configuration {config.number}</Text>
               </View>
 
-              <View style={styles.imageContainer}>
+              <View style={[styles.imageContainer, { backgroundColor: '#FFFFFF' }]}>
                 <Image
                   source={{ uri: config.image_url }}
                   style={styles.signImage}
@@ -94,7 +96,7 @@ export default function BasicsScreen() {
 
               <View style={styles.cardContent}>
                 <View style={styles.consonnesSection}>
-                  <Text style={styles.consonnesLabel}>Consonnes :</Text>
+                  <Text style={[styles.consonnesLabel, { color: colors.textSecondary }]}>Consonnes :</Text>
                   <View style={styles.consonnesList}>
                     {config.consonnes.map((consonne, idx) => (
                       <View key={idx} style={styles.consonneChip}>

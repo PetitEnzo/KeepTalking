@@ -16,6 +16,7 @@ interface WebcamFeedbackProps {
   confidence: number;
   feedback: string;
   onDetection?: (landmarks: any, face?: any) => void;
+  detectFace?: boolean; // Activer/désactiver la détection de visage
 }
 
 export default function WebcamFeedback({
@@ -24,6 +25,7 @@ export default function WebcamFeedback({
   confidence,
   feedback,
   onDetection,
+  detectFace = true, // Par défaut, détection de visage activée
 }: WebcamFeedbackProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -106,16 +108,25 @@ export default function WebcamFeedback({
 
         if (!isActive) return;
         
-        // Charger les modèles HandPose et BlazeFace en parallèle
-        console.log('🔄 Chargement HandPose + BlazeFace...');
-        const [handModel, faceModel] = await Promise.all([
-          window.handpose.load(),
-          window.blazeface.load()
-        ]);
-        console.log('✅ Modèles chargés');
-        
-        handsRef.current = handModel;
-        faceRef.current = faceModel;
+        // Charger les modèles HandPose et BlazeFace en parallèle (si nécessaire)
+        if (detectFace) {
+          console.log('🔄 Chargement HandPose + BlazeFace...');
+          const [handModel, faceModel] = await Promise.all([
+            window.handpose.load(),
+            window.blazeface.load()
+          ]);
+          console.log('✅ Modèles chargés');
+          
+          handsRef.current = handModel;
+          faceRef.current = faceModel;
+        } else {
+          console.log('🔄 Chargement HandPose uniquement...');
+          const handModel = await window.handpose.load();
+          console.log('✅ Modèle chargé');
+          
+          handsRef.current = handModel;
+          faceRef.current = null;
+        }
 
         // Démarrer la webcam avec résolution réduite pour meilleures performances
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -156,35 +167,44 @@ export default function WebcamFeedback({
             if (now - lastDetectionTime >= detectionInterval) {
               lastDetectionTime = now;
 
-              // Détecter visage ET main en parallèle
-              const [facePredictions, handPredictions] = await Promise.all([
-                faceRef.current.estimateFaces(videoRef.current, false),
-                handsRef.current.estimateHands(videoRef.current)
-              ]);
-
-              const face = facePredictions && facePredictions.length > 0 ? facePredictions[0] : null;
-              const hand = handPredictions && handPredictions.length > 0 ? handPredictions[0] : null;
-
-              // Log de débogage
-              if (face) {
-                console.log('👤 Visage détecté:', face);
+              // Détecter main et visage (si activé)
+              let face = null;
+              let handPredictions;
+              
+              if (detectFace && faceRef.current) {
+                const [facePredictions, handPreds] = await Promise.all([
+                  faceRef.current.estimateFaces(videoRef.current, false),
+                  handsRef.current.estimateHands(videoRef.current)
+                ]);
+                face = facePredictions && facePredictions.length > 0 ? facePredictions[0] : null;
+                handPredictions = handPreds;
               } else {
-                console.log('❌ Aucun visage détecté');
+                handPredictions = await handsRef.current.estimateHands(videoRef.current);
               }
+
+              const hand = handPredictions && handPredictions.length > 0 ? handPredictions[0] : null;
 
               if (hand && hand.landmarks) {
                 lastLandmarks = hand.landmarks; // Stocker les landmarks
                 
-                // Appeler le callback avec les landmarks ET le visage
-                try {
-                  if (onDetectionRef.current) {
+                // Appeler le callback UNIQUEMENT si la caméra est activée
+                if (onDetectionRef.current && isCameraEnabled) {
+                  try {
                     onDetectionRef.current(hand.landmarks, face);
+                  } catch (err) {
+                    console.error('Erreur dans onDetection callback:', err);
                   }
-                } catch (err) {
-                  console.error('Erreur dans onDetection callback:', err);
                 }
               } else {
-                lastLandmarks = null; // Pas de main détectée
+                lastLandmarks = null; // Pas de main détectée - effacer les landmarks
+                // Appeler le callback UNIQUEMENT si la caméra est activée
+                if (onDetectionRef.current && isCameraEnabled) {
+                  try {
+                    onDetectionRef.current(null, face);
+                  } catch (err) {
+                    console.error('Erreur dans onDetection callback:', err);
+                  }
+                }
               }
 
               // Dessiner le visage si détecté
@@ -301,6 +321,21 @@ export default function WebcamFeedback({
       }
     };
   }, [isCameraEnabled]);
+
+  // Désactiver la caméra automatiquement quand on quitte la page
+  useEffect(() => {
+    return () => {
+      // Cleanup : arrêter la caméra quand le composant est démonté
+      if (cameraRef.current && cameraRef.current.getTracks) {
+        cameraRef.current.getTracks().forEach((track: any) => track.stop());
+      }
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach(track => track.stop());
+        videoRef.current.srcObject = null;
+      }
+    };
+  }, []);
 
   const toggleCamera = () => {
     setIsCameraEnabled(prev => !prev);
@@ -519,6 +554,8 @@ const styles = StyleSheet.create({
   canvasContainer: {
     position: 'relative',
     width: '100%',
+    maxWidth: 700,
+    alignSelf: 'center',
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#000',

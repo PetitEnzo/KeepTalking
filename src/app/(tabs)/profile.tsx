@@ -277,43 +277,43 @@ export default function ProfileScreen() {
         <View style={[styles.xpSourcesSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Sources d'XP</Text>
           
-          <View style={styles.xpSourceCard}>
+          <View style={[styles.xpSourceCard, { backgroundColor: colors.background, borderColor: colors.border }]}>
             <Text style={styles.xpSourceIcon}>🎯</Text>
             <View style={styles.xpSourceInfo}>
-              <Text style={styles.xpSourceName}>Session d'entraînement</Text>
-              <Text style={styles.xpSourceValue}>+20 XP</Text>
+              <Text style={[styles.xpSourceName, { color: colors.text }]}>Session d'entraînement</Text>
+              <Text style={[styles.xpSourceValue, { color: colors.success }]}>+20 XP</Text>
             </View>
           </View>
 
-          <View style={styles.xpSourceCard}>
+          <View style={[styles.xpSourceCard, { backgroundColor: colors.background, borderColor: colors.border }]}>
             <Text style={styles.xpSourceIcon}>📚</Text>
             <View style={styles.xpSourceInfo}>
-              <Text style={[styles.xpSourceText, { color: colors.text }]}>Leçon terminée</Text>
+              <Text style={[styles.xpSourceName, { color: colors.text }]}>Leçon terminée</Text>
               <Text style={[styles.xpSourceValue, { color: colors.success }]}>+100 XP</Text>
             </View>
           </View>
 
-          <View style={styles.xpSourceCard}>
+          <View style={[styles.xpSourceCard, { backgroundColor: colors.background, borderColor: colors.border }]}>
             <Text style={styles.xpSourceIcon}>✍️</Text>
             <View style={styles.xpSourceInfo}>
-              <Text style={styles.xpSourceName}>Mot contribué (validé)</Text>
-              <Text style={styles.xpSourceValue}>+50 XP (max 5/jour)</Text>
+              <Text style={[styles.xpSourceName, { color: colors.text }]}>Mot contribué (validé)</Text>
+              <Text style={[styles.xpSourceValue, { color: colors.success }]}>+50 XP (max 5/jour)</Text>
             </View>
           </View>
 
-          <View style={styles.xpSourceCard}>
+          <View style={[styles.xpSourceCard, { backgroundColor: colors.background, borderColor: colors.border }]}>
             <Text style={styles.xpSourceIcon}>📝</Text>
             <View style={styles.xpSourceInfo}>
-              <Text style={styles.xpSourceName}>Exercice complété</Text>
-              <Text style={styles.xpSourceValue}>+15 XP</Text>
+              <Text style={[styles.xpSourceName, { color: colors.text }]}>Exercice complété</Text>
+              <Text style={[styles.xpSourceValue, { color: colors.success }]}>+15 XP</Text>
             </View>
           </View>
 
-          <View style={styles.xpSourceCard}>
+          <View style={[styles.xpSourceCard, { backgroundColor: colors.background, borderColor: colors.border }]}>
             <Text style={styles.xpSourceIcon}>🔥</Text>
             <View style={styles.xpSourceInfo}>
-              <Text style={styles.xpSourceName}>Streak quotidien</Text>
-              <Text style={styles.xpSourceValue}>+10 XP/jour</Text>
+              <Text style={[styles.xpSourceName, { color: colors.text }]}>Streak quotidien</Text>
+              <Text style={[styles.xpSourceValue, { color: colors.success }]}>+10 XP/jour</Text>
             </View>
           </View>
         </View>
@@ -336,12 +336,12 @@ export default function ProfileScreen() {
           ) : (
             <View style={styles.lessonsGrid}>
               {completedLessons.map((lesson) => (
-                <View key={lesson.lesson_id} style={styles.lessonCard}>
+                <View key={lesson.lesson_id} style={[styles.lessonCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                   <Text style={styles.lessonCheck}>✓</Text>
-                  <Text style={styles.lessonName}>
+                  <Text style={[styles.lessonName, { color: colors.text }]}>
                     {LESSON_NAMES[lesson.lesson_id] || `Leçon ${lesson.lesson_id}`}
                   </Text>
-                  <Text style={styles.lessonDate}>
+                  <Text style={[styles.lessonDate, { color: colors.textSecondary }]}>
                     {new Date(lesson.completed_at).toLocaleDateString('fr-FR')}
                   </Text>
                 </View>

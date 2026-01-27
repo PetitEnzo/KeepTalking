@@ -455,17 +455,17 @@ function calculatePositionConfidence(detectedPosition, targetPosition) {
     return 0;
   }
 
-  // Confiance basée sur la proximité (ENCORE PLUS PERMISSIF)
+  // Confiance basée sur la proximité (ÉQUILIBRÉ - comme ce matin)
   const difference = Math.abs(detectedPosition - targetPosition);
   
   if (difference === 0) {
     return 100; // Position exacte
   } else if (difference === 1) {
-    return 95; // Position adjacente (très très permissif)
+    return 85; // Position adjacente (tolérance bonne)
   } else if (difference === 2) {
-    return 85; // Position proche (très permissif)
+    return 65; // Position proche (tolérance acceptable)
   } else {
-    return 65; // Position éloignée (permissif)
+    return 40; // Position éloignée (tolérance minimale)
   }
 }
 
@@ -480,15 +480,16 @@ function calculateConfigurationConfidence(detectedConfig, targetConfig) {
     return 0;
   }
 
-  // Configurations similaires (même groupe)
+  // Configurations LFPC (groupes de lettres partageant la même configuration de main)
   const configGroups = {
-    'M': ['M', 'T', 'F'],
-    'J': ['J', 'P', 'D'],
-    'B': ['B', 'N'],
-    'L': ['L', 'CH', 'GN'],
-    'K': ['K', 'Z', 'V', 'C', 'Q'],
-    'R': ['R', 'S'],
-    'G': ['G'],
+    'M': ['M', 'T', 'F'],           // Config 1: Main ouverte
+    'P': ['P', 'D', 'J'],           // Config 2: Index tendu
+    'B': ['B', 'N', 'UI'],          // Config 3: Quatre doigts
+    'L': ['L', 'CH', 'GN', 'OUI'],  // Config 4: Pouce et index
+    'K': ['K', 'V', 'Z'],           // Config 5: Index et majeur
+    'S': ['S', 'R'],                // Config 6: Auriculaire annulaire majeur
+    'G': ['G'],                     // Config 7: Pouce index et majeur
+    'ING': ['ING', 'LLE'],          // Config 8: Index et majeur écarté
   };
 
   // Trouver le groupe de la config cible
@@ -503,9 +504,9 @@ function calculateConfigurationConfidence(detectedConfig, targetConfig) {
   if (detectedConfig === targetConfig) {
     return 100; // Configuration exacte
   } else if (targetGroup && targetGroup.includes(detectedConfig)) {
-    return 80; // Configuration du même groupe (permissif mais pas trop)
+    return 100; // Configuration du même groupe LFPC = IDENTIQUE
   } else {
-    return 0; // Configuration différente = ÉCHEC (pas de validation fantôme)
+    return 0; // Configuration différente = ÉCHEC
   }
 }
 
@@ -595,9 +596,9 @@ export function matchSyllable(landmarks, targetSyllable, faceBoundingBox = null)
   let totalConfidence = 0;
   if (targetSyllable.hand_position_config && targetSyllable.hand_sign_key) {
     // Syllabe complète (consonne + voyelle)
-    // Moyenne pondérée avec légère pénalité si config < 60%
+    // Moyenne pondérée avec pénalité si config < 60%
     if (configConfidence < 60) {
-      totalConfidence = Math.min(configConfidence, positionConfidence); // Prendre le plus faible
+      totalConfidence = Math.min(configConfidence, positionConfidence);
     } else {
       totalConfidence = (positionConfidence + configConfidence) / 2;
     }
@@ -612,14 +613,27 @@ export function matchSyllable(landmarks, targetSyllable, faceBoundingBox = null)
     totalConfidence = 0;
   }
 
-  // Validation avec vérification stricte de la configuration
+  // Validation STRICTE avec vérification de TOUTES les conditions
   let isValid = totalConfidence >= 60;
   
-  // RÈGLE STRICTE: Si une configuration est requise, elle doit être au moins à 60%
+  // RÈGLE STRICTE: Si configuration requise, elle doit être >= 60%
   if (targetSyllable.hand_sign_key && configConfidence < 60) {
     isValid = false;
     feedback = `Formez la configuration ${targetSyllable.hand_sign_key} correctement`;
-  } else if (isValid) {
+  }
+  // RÈGLE STRICTE: Si position requise, elle doit être >= 60%
+  else if (targetSyllable.hand_position_config && positionConfidence < 60) {
+    isValid = false;
+    const positionNames = {
+      1: "sous l'œil",
+      2: "à l'écart du visage",
+      3: "à côté de la bouche",
+      4: "au niveau du menton",
+      5: "au niveau du cou",
+    };
+    feedback = `Positionnez votre main ${positionNames[targetSyllable.hand_position_config]}`;
+  }
+  else if (isValid) {
     feedback = '✅ Syllabe validée !';
   } else if (totalConfidence >= 40) {
     feedback = 'Presque ! Maintenez la position...';

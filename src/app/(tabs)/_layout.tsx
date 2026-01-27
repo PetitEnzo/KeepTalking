@@ -166,11 +166,19 @@ export default function TabsLayout() {
             </Pressable>
 
             <Pressable 
+              onPress={() => navigateTo('/(tabs)/training-beginner')}
+              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+            >
+              <Text style={styles.navIcon}>🖐️</Text>
+              <Text style={styles.navText}>Entraînement Débutant</Text>
+            </Pressable>
+
+            <Pressable 
               onPress={() => navigateTo('/(tabs)/training')}
               style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
             >
               <Text style={styles.navIcon}>🎯</Text>
-              <Text style={styles.navText}>Entraînement</Text>
+              <Text style={styles.navText}>Entraînement Avancé</Text>
             </Pressable>
 
             <Pressable 

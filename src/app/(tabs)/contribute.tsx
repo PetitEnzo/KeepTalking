@@ -9,6 +9,7 @@ interface Syllable {
   consonne: string | null;
   hand_sign_key: string | null;
   hand_position_config: number | null;
+  description: string;
 }
 
 interface HandConfig {
@@ -49,6 +50,7 @@ export default function ContributeScreen() {
     consonne: null,
     hand_sign_key: null,
     hand_position_config: null,
+    description: '',
   });
   const [loading, setLoading] = useState(false);
   const [userStats, setUserStats] = useState<any>(null);
@@ -139,12 +141,24 @@ export default function ContributeScreen() {
       return;
     }
 
-    setSyllables([...syllables, currentSyllable]);
+    // Générer la description automatiquement
+    const position = facePositions.find(p => p.configuration_number === currentSyllable.hand_position_config);
+    const positionDescription = position?.description || 'Position inconnue';
+    const configName = currentSyllable.hand_sign_key;
+    const description = `${positionDescription} - Configuration ${configName}`;
+
+    const syllableWithDescription = {
+      ...currentSyllable,
+      description,
+    };
+
+    setSyllables([...syllables, syllableWithDescription]);
     setCurrentSyllable({
       text: '',
       consonne: null,
       hand_sign_key: null,
       hand_position_config: null,
+      description: '',
     });
   };
 
@@ -241,6 +255,7 @@ export default function ContributeScreen() {
         consonne: null,
         hand_sign_key: null,
         hand_position_config: null,
+        description: '',
       });
 
       // Afficher la pop-up de remerciement
@@ -286,35 +301,36 @@ export default function ContributeScreen() {
 
         {/* XP Info */}
         {userStats && (
-          <View style={styles.xpCard}>
+          <View style={[styles.xpCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Text style={styles.xpIcon}>⭐</Text>
-            <Text style={styles.xpText}>
-              Chaque mot validé vous rapporte <Text style={styles.xpAmount}>50 XP</Text>
+            <Text style={[styles.xpText, { color: colors.text }]}>
+              Chaque mot validé vous rapporte <Text style={[styles.xpAmount, { color: colors.success }]}>50 XP</Text>
             </Text>
           </View>
         )}
 
         {/* Word Input */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Mot à ajouter</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Mot à ajouter</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]}
             value={word}
             onChangeText={setWord}
             placeholder="Entrez le mot (ex: Chocolat)"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.textSecondary}
           />
         </View>
 
         {/* Difficulty Selection */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Difficulté</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Difficulté</Text>
           <View style={styles.difficultyButtons}>
             {(['beginner', 'intermediate', 'advanced'] as const).map((level) => (
               <Pressable
                 key={level}
                 style={[
                   styles.difficultyButton,
+                  { backgroundColor: colors.card, borderColor: colors.border },
                   difficulty === level && styles.difficultyButtonActive,
                 ]}
                 onPress={() => setDifficulty(level)}
@@ -322,6 +338,7 @@ export default function ContributeScreen() {
                 <Text
                   style={[
                     styles.difficultyButtonText,
+                    { color: colors.textSecondary },
                     difficulty === level && styles.difficultyButtonTextActive,
                   ]}
                 >
@@ -336,20 +353,20 @@ export default function ContributeScreen() {
 
         {/* Current Syllable Input */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Ajouter une syllabe</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Ajouter une syllabe</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]}
             value={currentSyllable.text}
             onChangeText={(text) =>
               setCurrentSyllable({ ...currentSyllable, text })
             }
             placeholder="Texte de la syllabe (ex: Bon)"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.textSecondary}
           />
           
-          <Text style={styles.inputLabel}>Configuration de main</Text>
+          <Text style={[styles.inputLabel, { color: colors.text }]}>Configuration de main</Text>
           {imagesLoading ? (
-            <Text style={styles.loadingText}>Chargement des images...</Text>
+            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Chargement des images...</Text>
           ) : (
             <View style={styles.configButtons}>
               {handConfigs.map((config) => (
@@ -357,6 +374,7 @@ export default function ContributeScreen() {
                   key={config.key}
                   style={[
                     styles.configButton,
+                    { backgroundColor: colors.card, borderColor: colors.border },
                     currentSyllable.hand_sign_key === config.key && styles.configButtonActive,
                   ]}
                   onPress={() =>
@@ -379,13 +397,14 @@ export default function ContributeScreen() {
           {/* Sélecteur de consonne basé sur la configuration */}
           {currentSyllable.hand_sign_key && (
             <View style={styles.consonneSection}>
-              <Text style={styles.inputLabel}>Consonne</Text>
+              <Text style={[styles.inputLabel, { color: colors.text }]}>Consonne</Text>
               <View style={styles.consonneButtons}>
                 {CONSONNES_BY_CONFIG[currentSyllable.hand_sign_key]?.map((consonne) => (
                   <Pressable
                     key={consonne}
                     style={[
                       styles.consonneButton,
+                      { backgroundColor: colors.card, borderColor: colors.border },
                       currentSyllable.consonne === consonne && styles.consonneButtonActive,
                     ]}
                     onPress={() =>
@@ -398,6 +417,7 @@ export default function ContributeScreen() {
                     <Text
                       style={[
                         styles.consonneButtonText,
+                        { color: colors.textSecondary },
                         currentSyllable.consonne === consonne && styles.consonneButtonTextActive,
                       ]}
                     >
@@ -409,9 +429,9 @@ export default function ContributeScreen() {
             </View>
           )}
           
-          <Text style={styles.inputLabel}>Position du visage</Text>
+          <Text style={[styles.inputLabel, { color: colors.text }]}>Position du visage</Text>
           {imagesLoading ? (
-            <Text style={styles.loadingText}>Chargement des images...</Text>
+            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Chargement des images...</Text>
           ) : (
             <View style={styles.positionButtons}>
               {facePositions.map((position) => (
@@ -419,6 +439,7 @@ export default function ContributeScreen() {
                   key={position.configuration_number}
                   style={[
                     styles.positionButton,
+                    { backgroundColor: colors.card, borderColor: colors.border },
                     currentSyllable.hand_position_config === position.configuration_number &&
                       styles.positionButtonActive,
                   ]}
@@ -437,6 +458,7 @@ export default function ContributeScreen() {
                   <Text
                     style={[
                       styles.positionButtonText,
+                      { color: colors.textSecondary },
                       currentSyllable.hand_position_config === position.configuration_number &&
                         styles.positionButtonTextActive,
                     ]}
@@ -476,25 +498,25 @@ export default function ContributeScreen() {
         {/* Syllables List */}
         {syllables.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
               Syllabes ajoutées ({syllables.length})
             </Text>
             {syllables.map((syllable, index) => (
-              <View key={index} style={styles.syllableCard}>
+              <View key={index} style={[styles.syllableCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                 <View style={styles.syllableInfo}>
-                  <Text style={styles.syllableText}>{syllable.text}</Text>
+                  <Text style={[styles.syllableText, { color: colors.text }]}>{syllable.text}</Text>
                   {syllable.consonne && (
-                    <Text style={styles.syllableDetail}>
+                    <Text style={[styles.syllableDetail, { color: colors.textSecondary }]}>
                       Consonne: {syllable.consonne}
                     </Text>
                   )}
                   {syllable.hand_sign_key && (
-                    <Text style={styles.syllableDetail}>
+                    <Text style={[styles.syllableDetail, { color: colors.textSecondary }]}>
                       Config: {syllable.hand_sign_key}
                     </Text>
                   )}
                   {syllable.hand_position_config && (
-                    <Text style={styles.syllableDetail}>
+                    <Text style={[styles.syllableDetail, { color: colors.textSecondary }]}>
                       Position: {syllable.hand_position_config}
                     </Text>
                   )}
@@ -522,10 +544,10 @@ export default function ContributeScreen() {
         </Pressable>
 
         {/* Info Card */}
-        <View style={styles.infoCard}>
+        <View style={[styles.infoCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={styles.infoIcon}>💡</Text>
-          <Text style={styles.infoTitle}>Comment ça marche ?</Text>
-          <Text style={styles.infoText}>
+          <Text style={[styles.infoTitle, { color: colors.text }]}>Comment ça marche ?</Text>
+          <Text style={[styles.infoText, { color: colors.textSecondary }]}>
             • Ajoutez un mot et décomposez-le en syllabes{' \n'}
             • Indiquez la configuration de main et la position du visage{' \n'}
             • Votre contribution sera vérifiée par un modérateur{' \n'}

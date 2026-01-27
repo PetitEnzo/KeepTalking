@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Image } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useTheme } from '../../../contexts/ThemeContext';
 import { supabase } from '../../../services/supabase';
 
 interface LessonSection {
@@ -535,35 +536,35 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       {
         type: 'text',
         title: 'Phrase 1 : "Bonjour, comment ça va ?"',
-        content: 'Commençons par une phrase de salutation classique.\n\nDécomposition :\n- BONJOUR : BON-JOUR\n- COMMENT : COM-MENT\n- ÇA : ÇA\n- VA : VA\n\nAstuce : Marquez une micro-pause entre chaque mot, comme à l\'oral.',
+        content: 'Commençons par une phrase de salutation classique.\n\nDécomposition :\n- BONJOUR : BON-JOUR > BOn > JOU > R\n- COMMENT : KO-MAN\n- ÇA : SA\n- VA : VA\n\nAstuce : Marquez une micro-pause entre chaque mot, comme à l\'oral.',
       },
       {
         type: 'multipart_quiz',
-        question: 'Pour coder "COM" dans "COMMENT", sélectionnez la configuration et la position :',
+        question: 'Pour coder "KO" dans "COMMENT", sélectionnez la configuration et la position :',
         configurationOptions: ['M', 'J', 'B', 'K'],
-        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
-        correctConfiguration: 2,
-        correctPosition: 2,
-        explanation: 'Pour "COM" : Configuration B (pour C qui se prononce K) + Position 3 (pour ON).\n\nAttention : C devant O se prononce K, donc configuration K/B.',
+        positionOptions: ['Main à côté de la bouche', 'Main à l\'écart du visage', 'Main au niveau du cou', 'Main au niveau du menton', 'Main sous l\'œil'],
+        correctConfiguration: 3,
+        correctPosition: 1,
+        explanation: 'Pour "KO" : Configuration K (pour K/V/Z) + Position "Main à l\'écart du visage" (pour O).\n\nAttention : C devant O se prononce K, donc configuration K.',
       },
       {
         type: 'text',
         title: 'Phrase 2 : "Je voudrais un café"',
-        content: 'Une phrase utile au quotidien !\n\nDécomposition :\n- JE : JE\n- VOUDRAIS : VOU-DRAIS\n- UN : UN\n- CAFÉ : CA-FÉ\n\nPoint clé : Les liaisons ne se codent pas en LFPC, on suit la prononciation naturelle.',
+        content: 'Une phrase utile au quotidien !\n\nDécomposition :\n- JE : JE\n- VOUDRAIS : VOU-R-Ré\n- UN : UN\n- CAFÉ : CA-FÉ\n\nPoint clé : Les liaisons ne se codent pas en LFPC, on suit la prononciation naturelle.',
       },
       {
         type: 'multipart_quiz',
         question: 'Pour coder "VOU" dans "VOUDRAIS", sélectionnez la configuration et la position :',
         configurationOptions: ['M', 'J', 'K', 'L'],
-        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        positionOptions: ['Main à côté de la bouche', 'Main à l\'écart du visage', 'Main au niveau du cou', 'Main au niveau du menton', 'Main sous l\'œil'],
         correctConfiguration: 2,
         correctPosition: 3,
-        explanation: 'Pour "VOU" : Configuration K (pour V, K, Z) + Position 4 (pour OU).\n\nV fait partie du groupe K/V/Z.',
+        explanation: 'Pour "VOU" : Configuration K (pour V/K/Z) + Position "Main au niveau du menton" (pour OU).\n\nV fait partie du groupe K/V/Z.',
       },
       {
         type: 'text',
         title: 'Phrase 3 : "Quelle heure est-il ?"',
-        content: 'Une question fréquente.\n\nDécomposition :\n- QUELLE : QUEL-LE\n- HEURE : EU-RE (H muet)\n- EST : EST\n- IL : IL\n\nRappel : Le H muet ne se code pas, on passe directement à la voyelle.',
+        content: 'Une question fréquente.\n\nDécomposition :\n- QUELLE : Ké-L\n- HEURE : EU-R (H muet)\n- EST : EST\n- IL : IL\n\nRappel : Le H muet ne se code pas, on passe directement à la voyelle.',
       },
       {
         type: 'quiz',
@@ -575,21 +576,46 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       {
         type: 'text',
         title: 'Phrase 4 : "Merci beaucoup"',
-        content: 'Expression de politesse essentielle.\n\nDécomposition :\n- MERCI : MER-CI\n- BEAUCOUP : BEAU-COUP\n\nAstuce : BEAU se prononce BO, donc B + O (position 2).',
+        content: 'Expression de politesse essentielle.\n\nDécomposition :\n- MERCI : ME-R-CI\n- BEAUCOUP : BO-KOU\n\nAstuce : Dans BEAUCOUP, le son "BO" utilise la configuration B et la position Côté. Le "KOU" combine la configuration K avec la position Gorge.',
       },
       {
         type: 'multipart_quiz',
-        question: 'Pour coder "BEAU" dans "BEAUCOUP", sélectionnez la configuration et la position :',
+        question: 'Pour coder "BO" dans "BEAUCOUP", sélectionnez la configuration et la position :',
         configurationOptions: ['M', 'J', 'B', 'L'],
-        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        positionOptions: ['Main à côté de la bouche', 'Main à l\'écart du visage', 'Main au niveau du cou', 'Main au niveau du menton', 'Main sous l\'œil'],
         correctConfiguration: 2,
         correctPosition: 1,
-        explanation: 'Pour "BEAU" (prononcé BO) : Configuration B + Position 2 (pour O).\n\nEAU se prononce O, donc une seule voyelle à coder.',
+        explanation: 'Pour "BO" : Configuration B + Position "Main à l\'écart du visage" (pour O).\n\nEAU se prononce O, donc une seule voyelle à coder.',
       },
       {
         type: 'text',
         title: 'Phrase 5 : "Je ne comprends pas"',
-        content: 'Phrase importante pour la communication.\n\nDécomposition :\n- JE : JE\n- NE : NE\n- COMPRENDS : COM-PRENDS\n- PAS : PAS\n\nPoint clé : Le "ne" de négation se code normalement, même s\'il est parfois omis à l\'oral.',
+        content: 'Phrase importante pour la communication.\n\nDécomposition :\n- JE : JE\n- NE : NE\n- COMPRENDS : KON-P-RAN\n- PAS : PA\n\nPoint clé : En LFPC, chaque syllabe doit être codée distinctement. Décomposez bien "COMPRENDS" en trois parties : KON, P, RAN.',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "KON" dans "COMPRENDS", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'K'],
+        positionOptions: ['Main à côté de la bouche', 'Main à l\'écart du visage', 'Main au niveau du cou', 'Main au niveau du menton', 'Main sous l\'œil'],
+        correctConfiguration: 3,
+        correctPosition: 0,
+        explanation: 'Pour "KON" : Configuration K (pour K/V/Z) + Position "Main à côté de la bouche" (pour ON).\n\nLe C devant O se prononce K. ON se code à côté de la bouche.',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "P" dans "COMPRENDS", sélectionnez la configuration :',
+        configurationOptions: ['M', 'J', 'B', 'L'],
+        correctConfiguration: 1,
+        explanation: 'Pour "P" seul : Configuration J (pour P/T/D).\n\nPour les consonnes seules, seule la configuration de main est nécessaire.',
+      },
+      {
+        type: 'multipart_quiz',
+        question: 'Pour coder "RAN" dans "COMPRENDS", sélectionnez la configuration et la position :',
+        configurationOptions: ['M', 'J', 'B', 'K', 'L', 'R'],
+        positionOptions: ['Main à côté de la bouche', 'Main à l\'écart du visage', 'Main au niveau du cou', 'Main au niveau du menton', 'Main sous l\'œil'],
+        correctConfiguration: 5,
+        correctPosition: 0,
+        explanation: 'Pour "RAN" : Configuration R (pour S/R) + Position "Main à côté de la bouche" (pour AN).\n\nR fait partie du groupe S/R et AN se code à côté de la bouche.',
       },
       {
         type: 'info',
@@ -657,10 +683,10 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
         type: 'multipart_quiz',
         question: 'Dans "APPELLES" (tu t\'appelles), pour coder "PE", sélectionnez :',
         configurationOptions: ['M', 'J', 'B', 'L'],
-        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        positionOptions: ['Main à côté de la bouche', 'Main à l\'écart du visage', 'Main au niveau du cou', 'Main au niveau du menton', 'Main sous l\'œil'],
         correctConfiguration: 1,
         correctPosition: 1,
-        explanation: 'Pour "PE" : Configuration J (pour P) + Position 2 (pour E).\n\nDans un mot rapide, gardez la même précision qu\'en lent.',
+        explanation: 'Pour "PE" : Configuration J (pour P) + Position "Main à l\'écart du visage" (pour E).\n\nDans un mot rapide, gardez la même précision qu\'en lent.',
       },
       {
         type: 'text',
@@ -713,10 +739,10 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
         type: 'multipart_quiz',
         question: 'Pour coder "SIO" dans "PASSIONNANT", sélectionnez :',
         configurationOptions: ['M', 'J', 'K', 'R'],
-        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        positionOptions: ['Main à côté de la bouche', 'Main à l\'écart du visage', 'Main au niveau du cou', 'Main au niveau du menton', 'Main sous l\'œil'],
         correctConfiguration: 3,
-        correctPosition: 2,
-        explanation: 'Pour "SIO" : Configuration R (pour S) + Position 3 (pour IO prononcé comme dans "lion").\n\nDans les mots longs, décomposez syllabe par syllabe.',
+        correctPosition: 4,
+        explanation: 'Pour "SIO" : Configuration R (pour S) + Position "Main sous l\'œil" (pour IO prononcé comme dans "lion").\n\nDans les mots longs, décomposez syllabe par syllabe.',
       },
       {
         type: 'text',
@@ -732,10 +758,10 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
         type: 'multipart_quiz',
         question: 'Pour coder "MAN" dans "MANGÉ", sélectionnez :',
         configurationOptions: ['M', 'J', 'B', 'L'],
-        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        positionOptions: ['Main à côté de la bouche', 'Main à l\'écart du visage', 'Main au niveau du cou', 'Main au niveau du menton', 'Main sous l\'œil'],
         correctConfiguration: 0,
         correctPosition: 2,
-        explanation: 'Pour "MAN" : Configuration M + Position 3 (pour AN).\n\nAN est une voyelle nasale, position à côté de la bouche.',
+        explanation: 'Pour "MAN" : Configuration M + Position "Main au niveau du cou" (pour AN).\n\nAN est une voyelle nasale, position "Main au niveau du cou".',
       },
       {
         type: 'text',
@@ -781,10 +807,10 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
         type: 'multipart_quiz',
         question: 'Pour coder "FARD" dans "CAFARD", sélectionnez :',
         configurationOptions: ['M', 'J', 'B', 'L'],
-        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        positionOptions: ['Main à côté de la bouche', 'Main à l\'écart du visage', 'Main au niveau du cou', 'Main au niveau du menton', 'Main sous l\'œil'],
         correctConfiguration: 0,
-        correctPosition: 1,
-        explanation: 'Pour "FARD" : Configuration M (pour F) + Position 2 (pour AR).\n\nAR se prononce comme dans "bar", "car".',
+        correctPosition: 4,
+        explanation: 'Pour "FARD" : Configuration M (pour F) + Position "Main sous l\'œil" (pour AR).\n\nAR se prononce comme dans "bar", "car" avec le son A.',
       },
       {
         type: 'text',
@@ -817,10 +843,10 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
         type: 'multipart_quiz',
         question: 'Pour coder "GOR" dans "GORGE", sélectionnez :',
         configurationOptions: ['M', 'J', 'B', 'G'],
-        positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
+        positionOptions: ['Main à côté de la bouche', 'Main à l\'écart du visage', 'Main au niveau du cou', 'Main au niveau du menton', 'Main sous l\'œil'],
         correctConfiguration: 3,
-        correctPosition: 2,
-        explanation: 'Pour "GOR" : Configuration G (poing fermé pour G) + Position 3 (pour OR).\n\nG est la seule consonne de son groupe.',
+        correctPosition: 1,
+        explanation: 'Pour "GOR" : Configuration G (poing fermé pour G) + Position "Main à l\'écart du visage" (pour OR).\n\nG est la seule consonne de son groupe.',
       },
       {
         type: 'text',
@@ -854,6 +880,7 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
 export default function LessonScreen() {
   const { id } = useLocalSearchParams();
   const { user } = useAuth();
+  const { colors } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentSection, setCurrentSection] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -1038,8 +1065,8 @@ export default function LessonScreen() {
           return updatedSection;
         }
 
-        // Charger les configurations et positions pour les quiz multipart (leçons 4 et 5)
-        if (section.type === 'multipart_quiz' && (id === '4' || id === '5')) {
+        // Charger les configurations et positions pour les quiz multipart (leçons 4, 5, 6, 7, 8)
+        if (section.type === 'multipart_quiz' && (id === '4' || id === '5' || id === '6' || id === '7' || id === '8')) {
           let updatedSection = { ...section };
           
           // Charger les URLs des configurations
@@ -1109,7 +1136,7 @@ export default function LessonScreen() {
     
     if (isLastSection) {
       // Calculer le score final et vérifier si la leçon est réussie
-      const totalQuestions = displayLesson.sections.filter(s => s.type === 'quiz').length;
+      const totalQuestions = displayLesson.sections.filter(s => s.type === 'quiz' || s.type === 'multipart_quiz').length;
       const scorePercentage = totalQuestions > 0 ? (score / totalQuestions) * 100 : 100;
       const isPassed = scorePercentage >= 60; // Minimum 60% pour réussir
 
@@ -1125,6 +1152,16 @@ export default function LessonScreen() {
         console.log('Passed:', isPassed);
 
         try {
+          // Vérifier si la leçon a déjà été réussie avant
+          const { data: existingProgress } = await supabase
+            .from('user_lesson_progress')
+            .select('passed')
+            .eq('user_id', user.id)
+            .eq('lesson_id', id as string)
+            .single();
+
+          const wasAlreadyPassed = existingProgress?.passed === true;
+
           const { data: progressData, error: progressError } = await supabase
             .from('user_lesson_progress')
             .upsert({
@@ -1139,7 +1176,7 @@ export default function LessonScreen() {
             })
             .select();
 
-          console.log('📊 Résultat progression:', { data: progressData, error: progressError });
+          console.log('📊 Résultat progression:', { data: progressData, error: progressError, wasAlreadyPassed });
 
           if (progressError) {
             console.error('❌ Erreur progression:', progressError);
@@ -1148,7 +1185,57 @@ export default function LessonScreen() {
             console.log('✅ Progression sauvegardée avec succès');
           }
 
-          // Mettre à jour le streak à chaque fin de leçon (pas seulement si réussi)
+          // Attribuer les XP si la leçon est réussie ET que c'est la première fois
+          if (isPassed && !wasAlreadyPassed) {
+            console.log('🎁 Attribution des XP pour leçon réussie (première fois)...');
+            
+            // Récupérer les données utilisateur actuelles
+            const { data: userData, error: userError } = await supabase
+              .from('users')
+              .select('level, total_points')
+              .eq('auth_user_id', user.id)
+              .single();
+
+            if (!userError && userData) {
+              const currentPoints = userData.total_points || 0;
+              const currentLevel = userData.level || 1;
+              const xpGained = 100; // 100 XP par leçon réussie (première fois uniquement)
+              const newTotalPoints = currentPoints + xpGained;
+
+              // Calculer le nouveau niveau (formule : xp_needed = level^2 * 100)
+              let newLevel = currentLevel;
+              let xpForNextLevel = Math.pow(newLevel, 2) * 100;
+              
+              while (newTotalPoints >= xpForNextLevel) {
+                newLevel += 1;
+                xpForNextLevel = Math.pow(newLevel, 2) * 100;
+              }
+
+              console.log('📊 XP:', { currentPoints, xpGained, newTotalPoints, currentLevel, newLevel });
+
+              // Mettre à jour les points et le niveau
+              const { error: xpError } = await supabase
+                .from('users')
+                .update({
+                  total_points: newTotalPoints,
+                  level: newLevel,
+                })
+                .eq('auth_user_id', user.id);
+
+              if (xpError) {
+                console.error('❌ Erreur mise à jour XP:', xpError);
+              } else {
+                console.log('✅ XP et niveau mis à jour:', { newTotalPoints, newLevel });
+                if (newLevel > currentLevel) {
+                  alert(`🎉 Félicitations ! Vous êtes passé au niveau ${newLevel} !`);
+                }
+              }
+            }
+          } else if (isPassed && wasAlreadyPassed) {
+            console.log('ℹ️ Leçon déjà réussie auparavant, pas d\'XP attribués (anti-farm)');
+          }
+
+          // Mettre à jour le streak à chaque fin de leçon
           const today = new Date().toISOString().split('T')[0];
           const { data: profileData } = await supabase
             .from('users_profiles')
@@ -1163,15 +1250,19 @@ export default function LessonScreen() {
 
           let newStreak = profileData?.current_streak || 0;
           
+          // Si c'est déjà aujourd'hui, on garde le streak actuel (pas de changement)
+          if (lastActivity === today) {
+            newStreak = profileData?.current_streak || 0;
+          }
           // Si la dernière activité était hier, on incrémente
-          if (lastActivity === yesterdayStr) {
+          else if (lastActivity === yesterdayStr) {
             newStreak += 1;
           } 
-          // Si la dernière activité n'était pas aujourd'hui, on recommence à 1
-          else if (lastActivity !== today) {
-            newStreak = 1;
+          // Si la dernière activité n'était pas hier ni aujourd'hui, le streak est cassé (sera géré par un job serveur à minuit)
+          // Pour l'instant on garde le streak actuel, il sera réinitialisé à 0 à minuit par le serveur
+          else {
+            newStreak = profileData?.current_streak || 0;
           }
-          // Si c'est déjà aujourd'hui, on garde le streak actuel (pas d'incrémentation)
 
           console.log('📊 Mise à jour streak:', { lastActivity, today, yesterdayStr, currentStreak: profileData?.current_streak, newStreak });
 
@@ -1249,18 +1340,18 @@ export default function LessonScreen() {
     switch (section.type) {
       case 'text':
         return (
-          <View style={styles.sectionContainer}>
-            {section.title && <Text style={styles.sectionTitle}>{section.title}</Text>}
-            <Text style={styles.sectionContent}>{section.content}</Text>
+          <View style={[styles.sectionContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            {section.title && <Text style={[styles.sectionTitle, { color: colors.text }]}>{section.title}</Text>}
+            <Text style={[styles.sectionContent, { color: colors.textSecondary }]}>{section.content}</Text>
           </View>
         );
 
       case 'info':
         return (
-          <View style={[styles.sectionContainer, styles.infoBox]}>
+          <View style={[styles.sectionContainer, styles.infoBox, { backgroundColor: colors.card, borderColor: colors.primary }]}>
             <Text style={styles.infoIcon}>💡</Text>
-            {section.title && <Text style={styles.infoTitle}>{section.title}</Text>}
-            <Text style={styles.infoContent}>{section.content}</Text>
+            {section.title && <Text style={[styles.infoTitle, { color: colors.text }]}>{section.title}</Text>}
+            <Text style={[styles.infoContent, { color: colors.textSecondary }]}>{section.content}</Text>
           </View>
         );
 
@@ -1481,18 +1572,18 @@ export default function LessonScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <Pressable onPress={() => router.back()} style={styles.closeButton}>
           <Text style={styles.closeButtonText}>✕</Text>
         </Pressable>
-        <Text style={styles.lessonTitle}>{displayLesson.title}</Text>
-        <Text style={styles.progressText}>{currentSection + 1}/{displayLesson.sections.length}</Text>
+        <Text style={[styles.lessonTitle, { color: colors.text }]}>{displayLesson.title}</Text>
+        <Text style={[styles.progressText, { color: colors.textSecondary }]}>{currentSection + 1}/{displayLesson.sections.length}</Text>
       </View>
 
       {/* Progress Bar */}
-      <View style={styles.progressBarContainer}>
+      <View style={[styles.progressBarContainer, { backgroundColor: colors.border }]}>
         <View style={[styles.progressBar, { width: `${progress}%` }]} />
       </View>
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface SyllableCardProps {
   syllable: {
@@ -23,10 +24,23 @@ export default function SyllableCard({
   handPositionImage,
   handPositionDescription
 }: SyllableCardProps) {
+  const { colors, theme } = useTheme();
   const getStatusStyle = () => {
     switch (status) {
       case 'validated':
-        return styles.cardValidated;
+        return theme === 'dark' 
+          ? { 
+              ...styles.cardValidated, 
+              backgroundColor: '#065f46', // Vert plus clair et plus visible
+              borderColor: '#10B981',
+              borderWidth: 3,
+              shadowColor: '#10B981',
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.6,
+              shadowRadius: 12,
+              elevation: 8,
+            }
+          : styles.cardValidated; // Style original en mode jour
       case 'current':
         return styles.cardCurrent;
       default:
@@ -52,49 +66,52 @@ export default function SyllableCard({
     return null;
   };
 
+  const cardBackgroundColor = status === 'validated' 
+    ? (theme === 'dark' ? '#065f46' : '#D1FAE5')
+    : colors.card;
+
+  const cardBorderColor = status === 'validated'
+    ? '#10B981'
+    : (status === 'current' ? '#3B82F6' : colors.border);
+
   return (
-    <View style={[styles.card, getStatusStyle()]}>
+    <View style={[styles.card, getStatusStyle(), { backgroundColor: cardBackgroundColor, borderColor: cardBorderColor }]}>
       {getStatusBadge()}
       
       <View style={styles.header}>
-        <Text style={styles.syllableText}>{syllable.text}</Text>
+        <Text style={[styles.syllableText, { color: colors.text }]}>{syllable.text}</Text>
       </View>
 
       <View style={styles.imagesContainer}>
         {syllable.consonne && handSignImage && (
-          <View style={styles.imageBox}>
+          <View style={[styles.imageBox, { backgroundColor: colors.background }]}>
             <Image 
               source={{ uri: handSignImage }} 
               style={styles.image}
               resizeMode="contain"
             />
-            <Text style={styles.imageLabel}>
+            <Text style={[styles.imageLabel, { color: colors.textSecondary }]}>
               Consonne: {syllable.consonne}
             </Text>
           </View>
         )}
 
         {syllable.voyelle && handPositionImage && (
-          <View style={styles.imageBox}>
+          <View style={[styles.imageBox, { backgroundColor: colors.background }]}>
             <Image 
               source={{ uri: handPositionImage }} 
               style={styles.image}
               resizeMode="contain"
             />
-            <Text style={styles.imageLabel}>
+            <Text style={[styles.imageLabel, { color: colors.textSecondary }]}>
               Voyelle: {syllable.voyelle}
             </Text>
           </View>
         )}
       </View>
 
-      {handPositionDescription && (
-        <Text style={styles.description}>
-          Position: {handPositionDescription}
-        </Text>
-      )}
-      {!handPositionDescription && syllable.description && (
-        <Text style={styles.description}>{syllable.description}</Text>
+      {syllable.description && (
+        <Text style={[styles.description, { color: colors.textSecondary }]}>{syllable.description}</Text>
       )}
     </View>
   );
@@ -102,7 +119,6 @@ export default function SyllableCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -160,7 +176,6 @@ const styles = StyleSheet.create({
   syllableText: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#1F2937',
     textAlign: 'center',
   },
   imagesContainer: {
@@ -171,7 +186,6 @@ const styles = StyleSheet.create({
   },
   imageBox: {
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
     borderRadius: 8,
     padding: 8,
     flex: 1,
@@ -184,13 +198,11 @@ const styles = StyleSheet.create({
   },
   imageLabel: {
     fontSize: 11,
-    color: '#6B7280',
     fontWeight: '600',
     textAlign: 'center',
   },
   description: {
     fontSize: 13,
-    color: '#4B5563',
     textAlign: 'center',
     lineHeight: 18,
   },

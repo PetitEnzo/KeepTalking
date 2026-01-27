@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Alert, TextInput, Image } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
 
 interface WordContribution {
@@ -40,6 +41,7 @@ interface HandPosition {
 
 export default function AdminScreen() {
   const { user } = useAuth();
+  const { colors } = useTheme();
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'contributions' | 'users'>('contributions');
@@ -255,30 +257,30 @@ export default function AdminScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>🛡️ Administration</Text>
-        <Text style={styles.headerSubtitle}>
+      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>🛡️ Administration</Text>
+        <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
           Gestion des contributions et des utilisateurs
         </Text>
       </View>
 
       {/* Tabs */}
-      <View style={styles.tabs}>
+      <View style={[styles.tabs, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         <Pressable
-          style={[styles.tab, activeTab === 'contributions' && styles.tabActive]}
+          style={[styles.tab, { borderBottomColor: colors.border }, activeTab === 'contributions' && styles.tabActive]}
           onPress={() => setActiveTab('contributions')}
         >
-          <Text style={[styles.tabText, activeTab === 'contributions' && styles.tabTextActive]}>
+          <Text style={[styles.tabText, { color: colors.textSecondary }, activeTab === 'contributions' && styles.tabTextActive]}>
             📝 Contributions ({contributions.length})
           </Text>
         </Pressable>
         <Pressable
-          style={[styles.tab, activeTab === 'users' && styles.tabActive]}
+          style={[styles.tab, { borderBottomColor: colors.border }, activeTab === 'users' && styles.tabActive]}
           onPress={() => setActiveTab('users')}
         >
-          <Text style={[styles.tabText, activeTab === 'users' && styles.tabTextActive]}>
+          <Text style={[styles.tabText, { color: colors.textSecondary }, activeTab === 'users' && styles.tabTextActive]}>
             👥 Utilisateurs ({users.length})
           </Text>
         </Pressable>
@@ -294,6 +296,7 @@ export default function AdminScreen() {
                   key={status}
                   style={[
                     styles.filterButton,
+                    { backgroundColor: colors.card, borderColor: colors.border },
                     filterStatus === status && styles.filterButtonActive,
                   ]}
                   onPress={() => setFilterStatus(status)}
@@ -301,6 +304,7 @@ export default function AdminScreen() {
                   <Text
                     style={[
                       styles.filterButtonText,
+                      { color: colors.textSecondary },
                       filterStatus === status && styles.filterButtonTextActive,
                     ]}
                   >
@@ -317,15 +321,15 @@ export default function AdminScreen() {
             {contributions.length === 0 ? (
               <View style={styles.emptyState}>
                 <Text style={styles.emptyIcon}>📭</Text>
-                <Text style={styles.emptyText}>Aucune contribution à afficher</Text>
+                <Text style={[styles.emptyText, { color: colors.textSecondary }]}>Aucune contribution à afficher</Text>
               </View>
             ) : (
               contributions.map((contribution) => (
-                <View key={contribution.contribution_id} style={styles.contributionCard}>
+                <View key={contribution.contribution_id} style={[styles.contributionCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                   <View style={styles.contributionHeader}>
                     <View>
-                      <Text style={styles.contributionWord}>{contribution.word}</Text>
-                      <Text style={styles.contributionMeta}>
+                      <Text style={[styles.contributionWord, { color: colors.text }]}>{contribution.word}</Text>
+                      <Text style={[styles.contributionMeta, { color: colors.textSecondary }]}>
                         Par {contribution.users?.username || 'Inconnu'} •{' '}
                         {new Date(contribution.created_at).toLocaleDateString('fr-FR')}
                       </Text>
@@ -366,14 +370,14 @@ export default function AdminScreen() {
 
                   {/* Syllables */}
                   <View style={styles.syllablesSection}>
-                    <Text style={styles.syllablesTitle}>Syllabes :</Text>
+                    <Text style={[styles.syllablesTitle, { color: colors.text }]}>Syllabes :</Text>
                     {contribution.syllables.map((syllable: any, index: number) => {
                       const handSignImage = handSigns.find(s => s.key === syllable.hand_sign_key);
                       const positionImage = handPositions.find(p => p.configuration_number === syllable.hand_position_config);
                       
                       return (
-                        <View key={index} style={styles.syllableItem}>
-                          <Text style={styles.syllableText}>
+                        <View key={index} style={[styles.syllableItem, { backgroundColor: colors.background, borderColor: colors.border }]}>
+                          <Text style={[styles.syllableText, { color: colors.text }]}>
                             {syllable.text}
                             {syllable.consonne && ` (${syllable.consonne})`}
                           </Text>
@@ -381,10 +385,10 @@ export default function AdminScreen() {
                           <View style={styles.syllableImagesRow}>
                             {syllable.hand_sign_key && handSignImage && (
                               <View style={styles.syllableImageContainer}>
-                                <Text style={styles.syllableImageLabel}>Configuration: {syllable.hand_sign_key}</Text>
+                                <Text style={[styles.syllableImageLabel, { color: colors.textSecondary }]}>Configuration: {syllable.hand_sign_key}</Text>
                                 <Image
                                   source={{ uri: handSignImage.image_url }}
-                                  style={styles.syllableImage}
+                                  style={[styles.syllableImage, { width: 160, height: 160 }]}
                                   resizeMode="contain"
                                 />
                               </View>
@@ -392,10 +396,10 @@ export default function AdminScreen() {
                             
                             {syllable.hand_position_config && positionImage && (
                               <View style={styles.syllableImageContainer}>
-                                <Text style={styles.syllableImageLabel}>Position: {positionImage.description}</Text>
+                                <Text style={[styles.syllableImageLabel, { color: colors.textSecondary }]}>Position: {positionImage.description}</Text>
                                 <Image
                                   source={{ uri: positionImage.image_url }}
-                                  style={styles.syllableImage}
+                                  style={[styles.syllableImage, { width: 160, height: 160 }]}
                                   resizeMode="contain"
                                 />
                               </View>
@@ -444,11 +448,11 @@ export default function AdminScreen() {
             {/* Search Bar */}
             <View style={styles.searchSection}>
               <TextInput
-                style={styles.searchInput}
+                style={[styles.searchInput, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 placeholder="Rechercher un utilisateur..."
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.textSecondary}
               />
             </View>
 
@@ -456,17 +460,17 @@ export default function AdminScreen() {
             {filteredUsers.length === 0 ? (
               <View style={styles.emptyState}>
                 <Text style={styles.emptyIcon}>👥</Text>
-                <Text style={styles.emptyText}>Aucun utilisateur trouvé</Text>
+                <Text style={[styles.emptyText, { color: colors.textSecondary }]}>Aucun utilisateur trouvé</Text>
               </View>
             ) : (
               filteredUsers.map((u) => (
-                <View key={u.user_id} style={styles.userCard}>
+                <View key={u.user_id} style={[styles.userCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                   <View style={styles.userInfo}>
-                    <Text style={styles.userName}>{u.username}</Text>
-                    <Text style={styles.userMeta}>
+                    <Text style={[styles.userName, { color: colors.text }]}>{u.username}</Text>
+                    <Text style={[styles.userMeta, { color: colors.textSecondary }]}>
                       Niveau {u.level} • {u.total_points} XP • Streak: {u.current_streak}
                     </Text>
-                    <Text style={styles.userDate}>
+                    <Text style={[styles.userDate, { color: colors.textSecondary }]}>
                       Inscrit le {new Date(u.created_at).toLocaleDateString('fr-FR')}
                     </Text>
                   </View>

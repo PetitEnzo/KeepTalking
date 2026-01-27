@@ -102,7 +102,7 @@
         "voyelle": "e",
         "hand_sign_key": "M",
         "hand_position_config": 2,
-        "description": "Main à l'écart du visage - Configuration M"
+        "description": "Main au niveau du menton - Configuration J"
       },
       {
         "text": "R",
@@ -114,11 +114,11 @@
       },
       {
         "text": "CI",
-        "consonne": "C",
+        "consonne": "S",
         "voyelle": "i",
-        "hand_sign_key": "K",
-        "hand_position_config": 3,
-        "description": "Main à côté de la bouche - Configuration K (C)"
+        "hand_sign_key": "R",
+        "hand_position_config": 4,
+        "description": "Main sous l'œil - Configuration R (S)"
       }
     ]
   },
@@ -287,15 +287,15 @@
         "voyelle": "e",
         "hand_sign_key": "L",
         "hand_position_config": 2,
-        "description": "Main à l'écart du visage - Configuration L"
+        "description": "Main au niveau du menton - Configuration J"
       },
       {
         "text": "Y",
-        "consonne": "Y",
+        "consonne": "ILLE",
         "voyelle": null,
-        "hand_sign_key": "L",
+        "hand_sign_key": "ING",
         "hand_position_config": null,
-        "description": "Configuration L seule (Y)"
+        "description": "Configuration ING seule (ILLE)"
       }
     ]
   },
@@ -305,20 +305,28 @@
     "difficulty": "intermediate",
     "syllables": [
       {
-        "text": "JAR",
+        "text": "JA",
         "consonne": "J",
-        "voyelle": "ar",
+        "voyelle": "a",
         "hand_sign_key": "J",
         "hand_position_config": 4,
-        "description": "Main au niveau du menton - Configuration J"
+        "description": "Main à l'écart du visage - Configuration J (main en V LLE NG)"
+      },
+      {
+        "text": "R",
+        "consonne": "R",
+        "voyelle": null,
+        "hand_sign_key": "R",
+        "hand_position_config": null,
+        "description": "Configuration R seule (trois doigts et demi, pouce rentré S R)"
       },
       {
         "text": "DIN",
         "consonne": "D",
         "voyelle": "in",
         "hand_sign_key": "J",
-        "hand_position_config": 1,
-        "description": "Main sous l'œil - Configuration J (D)"
+        "hand_position_config": 4,
+        "description": "Main sous l'œil - Configuration J (index levé)"
       }
     ]
   },
@@ -341,7 +349,7 @@
         "voyelle": "o",
         "hand_sign_key": "K",
         "hand_position_config": 2,
-        "description": "Main à l'écart du visage - Configuration K (C)"
+        "description": "Main au niveau du menton - Configuration J"
       },
       {
         "text": "LE",
@@ -368,11 +376,11 @@
       },
       {
         "text": "SON",
-        "consonne": "S",
+        "consonne": "Z",
         "voyelle": "on",
-        "hand_sign_key": "R",
-        "hand_position_config": 3,
-        "description": "Main à côté de la bouche - Configuration R (S)"
+        "hand_sign_key": "K",
+        "hand_position_config": 0,
+        "description": "Main à côté de la bouche - Configuration K (Z - deux doigts levés)"
       }
     ]
   },
@@ -482,11 +490,11 @@
         "description": "Main à côté de la bouche - Configuration B"
       },
       {
-        "text": "SOU",
-        "consonne": "S",
+        "text": "ZOU",
+        "consonne": "Z",
         "voyelle": "ou",
-        "hand_sign_key": "R",
-        "hand_position_config": 4,
+        "hand_sign_key": "Z",
+        "hand_position_config": 5,
         "description": "Main au niveau du menton - Configuration R (S)"
       }
     ]
