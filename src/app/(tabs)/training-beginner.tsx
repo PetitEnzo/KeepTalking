@@ -8,7 +8,7 @@ import { estimateHandConfiguration } from '../../utils/syllableMatcher';
 
 interface HandSign {
   configuration_number: number;
-  consonnes: string;
+  consonnes: string[];
   description: string;
   image_url: string;
 }
@@ -162,24 +162,25 @@ export default function TrainingBeginnerScreen() {
     }
 
     // Vérifier si la configuration correspond à la cible
-    const targetConsonnes = currentSign.consonnes.split(', ').map(c => c.trim());
+    const targetConsonnes: string[] = Array.isArray(currentSign.consonnes) 
+      ? currentSign.consonnes 
+      : (currentSign.consonnes as any).split(', ').map((c: string) => c.trim());
     const detectedConfig: string = configResult.config.trim();
     const detectionConfidence: number = configResult.confidence;
 
-    console.log(`🖐️ Détecté: "${detectedConfig}" | Cible: Configuration ${currentSign.configuration_number} (${currentSign.consonnes}) | Confiance détection: ${detectionConfidence}%`);
+    console.log(`🖐️ Détecté: "${detectedConfig}" | Cible: Configuration ${currentSign.configuration_number} (${targetConsonnes.join(', ')}) | Confiance détection: ${detectionConfidence}%`);
 
     // Debug détaillé de chaque consonne
-    console.log(`🔍 DEBUG SPLIT: consonnes brutes="${currentSign.consonnes}"`);
     console.log(`🔍 DEBUG ARRAY: targetConsonnes=`, targetConsonnes);
     console.log(`🔍 DEBUG DETECTED: detectedConfig="${detectedConfig}" (length: ${detectedConfig.length}, charCodes: ${Array.from(detectedConfig).map(ch => ch.charCodeAt(0))})`);
-    targetConsonnes.forEach((c, i) => {
+    targetConsonnes.forEach((c: string, i: number) => {
       const match = c === detectedConfig;
-      console.log(`  [${i}] "${c}" (length: ${c.length}, charCodes: ${Array.from(c).map(ch => ch.charCodeAt(0))}) === "${detectedConfig}" ? ${match}`);
+      console.log(`  [${i}] "${c}" (length: ${c.length}, charCodes: ${Array.from(c).map((ch: string) => ch.charCodeAt(0))}) === "${detectedConfig}" ? ${match}`);
     });
 
     // Vérifier si la configuration détectée est dans le groupe de consonnes cibles
     // Normaliser et comparer en insensible à la casse pour éviter les problèmes de comparaison
-    const isMatch = targetConsonnes.some(c => c.toUpperCase() === detectedConfig.toUpperCase());
+    const isMatch = targetConsonnes.some((c: string) => c.toUpperCase() === detectedConfig.toUpperCase());
     
     console.log(`🔍 DEBUG: detectedConfig="${detectedConfig}" (length: ${detectedConfig.length}), targetConsonnes=${JSON.stringify(targetConsonnes)}, isMatch=${isMatch}`);
 
@@ -393,7 +394,7 @@ export default function TrainingBeginnerScreen() {
                   Configuration à reproduire
                 </Text>
                 <Text style={[styles.currentSignKey, { color: colors.text }]}>
-                  {currentSign.consonnes}
+                  {Array.isArray(currentSign.consonnes) ? currentSign.consonnes.join(', ') : currentSign.consonnes}
                 </Text>
                 <Text style={[styles.configDescription, { color: colors.textSecondary }]}>
                   {currentSign.description}

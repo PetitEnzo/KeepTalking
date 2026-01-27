@@ -918,7 +918,9 @@ export default function LessonScreen() {
       if (!handSignsError && handSigns) {
         handSigns.forEach((sign: any) => {
           // Mapper chaque consonne du groupe à l'image_url
-          const consonnes = sign.consonnes.split(', ').map((c: string) => c.trim());
+          const consonnes: string[] = Array.isArray(sign.consonnes) 
+            ? sign.consonnes 
+            : sign.consonnes.split(', ').map((c: string) => c.trim());
           consonnes.forEach((consonne: string) => {
             console.log(`  - ${consonne}: ${sign.image_url}`);
             imageMap[consonne] = sign.image_url;

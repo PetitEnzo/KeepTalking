@@ -66,13 +66,15 @@ export default function GameScreen() {
         
         const signs: HandSign[] = data.map((sign: any) => {
           // Extraire les consonnes depuis la colonne consonnes
-          const consonnes = sign.consonnes.split(', ').map((c: string) => c.trim());
+          const consonnes: string[] = Array.isArray(sign.consonnes) 
+            ? sign.consonnes 
+            : sign.consonnes.split(', ').map((c: string) => c.trim());
           
           console.log(`📋 Configuration ${sign.configuration_number} | Description: "${sign.description}" | Consonnes valides:`, consonnes);
           
           return {
             key: consonnes[0], // Utiliser la première consonne comme clé
-            label: sign.consonnes,
+            label: consonnes.join(', '),
             description: sign.description,
             image_url: sign.image_url,
             consonnes: consonnes,

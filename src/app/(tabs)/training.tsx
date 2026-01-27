@@ -155,10 +155,15 @@ export default function TrainingScreen() {
 
       if (signsData) {
         // Mapper pour garder la compatibilité avec l'interface existante
-        const mappedSigns = signsData.map((sign: any) => ({
-          key: sign.consonnes.split(', ')[0],
-          image_url: sign.image_url,
-        }));
+        const mappedSigns = signsData.map((sign: any) => {
+          const consonnes: string[] = Array.isArray(sign.consonnes) 
+            ? sign.consonnes 
+            : sign.consonnes.split(', ').map((c: string) => c.trim());
+          return {
+            key: consonnes[0],
+            image_url: sign.image_url,
+          };
+        });
         setHandSigns(mappedSigns);
       }
 

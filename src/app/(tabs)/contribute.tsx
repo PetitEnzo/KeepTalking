@@ -74,11 +74,16 @@ export default function ContributeScreen() {
         .order('configuration_number', { ascending: true });
 
       if (!handSignsError && handSignsData) {
-        const configs: HandConfig[] = handSignsData.map((sign: any) => ({
-          key: sign.consonnes.split(', ')[0], // Utiliser la première consonne comme clé
-          name: sign.consonnes,
-          image_url: sign.image_url,
-        }));
+        const configs: HandConfig[] = handSignsData.map((sign: any) => {
+          const consonnes: string[] = Array.isArray(sign.consonnes) 
+            ? sign.consonnes 
+            : sign.consonnes.split(', ').map((c: string) => c.trim());
+          return {
+            key: consonnes[0], // Utiliser la première consonne comme clé
+            name: consonnes.join(', '),
+            image_url: sign.image_url,
+          };
+        });
         setHandConfigs(configs);
       }
 
