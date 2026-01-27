@@ -193,18 +193,18 @@ export function estimateHandConfiguration(landmarks) {
     }
   }
   
-  // Configuration L (3 doigts) - Pouce + Index + Auriculaire (signe "I love you")
+  // Configuration G (3 doigts) - Pouce + Index + Majeur
   // Configuration R (3 doigts) - Index + Majeur + Annulaire
   else if (fingersExtended === 3) {
-    if (thumb && index && !middle && !ring && pinky) {
-      config = 'L';
-      confidence = 100; // Pattern exact L
+    if (thumb && index && middle && !ring && !pinky) {
+      config = 'G';
+      confidence = 100; // Pattern exact G (pouce + index + majeur)
     } else if (!thumb && index && middle && ring && !pinky) {
       config = 'R';
       confidence = 100; // Pattern exact R (index + majeur + annulaire)
-    } else if (thumb && index && pinky) {
-      config = 'L';
-      confidence = 90; // Pattern proche L
+    } else if (thumb && index && middle) {
+      config = 'G';
+      confidence = 90; // Pattern proche G
     } else if (index && middle && ring) {
       config = 'R';
       confidence = 90; // Pattern proche R
@@ -214,7 +214,7 @@ export function estimateHandConfiguration(landmarks) {
         config = 'R';
         confidence = 70;
       } else {
-        config = 'L';
+        config = 'G';
         confidence = 70;
       }
     }
@@ -281,10 +281,14 @@ export function estimateHandConfiguration(landmarks) {
         config = 'K';
         confidence = 90;
       }
-    } else if (thumb && index) {
-      // Pouce + Index = pourrait être L mal détecté
+    } else if (thumb && index && !middle && !ring && !pinky) {
+      // Pouce + Index = Configuration L
       config = 'L';
-      confidence = 60;
+      confidence = 100;
+    } else if (thumb && index) {
+      // Pouce + Index avec tolérance
+      config = 'L';
+      confidence = 85;
     } else {
       config = 'K';
       confidence = 70;
@@ -309,16 +313,12 @@ export function estimateHandConfiguration(landmarks) {
     }
   }
   
-  // Configuration G (0 doigts) - Poing fermé
+  // Poing fermé (0 doigts) - Aucune configuration LFPC standard
   else if (fingersExtended === 0) {
-    const allFolded = fingerStates.every(f => !f.extended);
-    if (allFolded) {
-      config = 'G'; // Poing fermé = G
-      confidence = 100;
-    } else {
-      config = 'G';
-      confidence = 80;
-    }
+    // Si aucun doigt levé, c'est probablement une erreur de détection
+    // ou une position de repos - on favorise J (index) par défaut
+    config = 'J';
+    confidence = 30;
   }
   
   // Cas ambigus ou incertains
