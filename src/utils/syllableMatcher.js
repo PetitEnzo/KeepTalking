@@ -422,15 +422,15 @@ function analyzeFingerStates(landmarks) {
     // Utiliser un ratio plutôt que des coordonnées absolues
     const extensionRatio = tipToWrist / (pipToWrist + 0.001); // +0.001 pour éviter division par 0
     
-    // Seuil adapté par doigt (PLUS TOLÉRANT pour meilleure détection)
+    // Seuil adapté par doigt (ÉQUILIBRÉ pour éviter faux positifs)
     let extended = false;
     
     if (index === 0) {
-      // Pouce: seuil assoupli
-      extended = extensionRatio > 1.15;
+      // Pouce: seuil équilibré
+      extended = extensionRatio > 1.18;
     } else {
-      // Autres doigts: seuil assoupli
-      extended = extensionRatio > 1.10;
+      // Autres doigts: seuil équilibré
+      extended = extensionRatio > 1.13;
     }
 
     return {
