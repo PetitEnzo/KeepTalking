@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import { View, Text, Pressable, ScrollView, Image, StyleSheet } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -42,6 +42,7 @@ const getAvatarImageSource = (avatarId: string) => {
 export default function TabsLayout() {
   const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const pathname = usePathname();
   const [userAvatar, setUserAvatar] = useState<string>('👤');
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -105,6 +106,13 @@ export default function TabsLayout() {
     router.push(path as any);
   };
 
+  const isActive = (path: string) => {
+    if (path === '/(tabs)' || path === '/(tabs)/') {
+      return pathname === '/' || pathname === '/(tabs)' || pathname === '/(tabs)/';
+    }
+    return pathname?.includes(path.replace('/(tabs)/', ''));
+  };
+
   return (
     <View style={styles.container}>
       {/* Sidebar */}
@@ -151,66 +159,98 @@ export default function TabsLayout() {
             
             <Pressable 
               onPress={() => navigateTo('/(tabs)')}
-              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+              style={({ pressed }) => [
+                styles.navItem, 
+                pressed && styles.navItemPressed,
+                isActive('/(tabs)') && styles.navItemActive
+              ]}
             >
               <Text style={styles.navIcon}>🏠</Text>
-              <Text style={styles.navText}>Accueil</Text>
+              <Text style={[styles.navText, isActive('/(tabs)') && styles.navTextActive]}>Accueil</Text>
             </Pressable>
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/lessons')}
-              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+              style={({ pressed }) => [
+                styles.navItem, 
+                pressed && styles.navItemPressed,
+                isActive('/lessons') && styles.navItemActive
+              ]}
             >
               <Text style={styles.navIcon}>📚</Text>
-              <Text style={styles.navText}>Leçons</Text>
+              <Text style={[styles.navText, isActive('/lessons') && styles.navTextActive]}>Leçons</Text>
             </Pressable>
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/training-beginner')}
-              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+              style={({ pressed }) => [
+                styles.navItem, 
+                pressed && styles.navItemPressed,
+                isActive('/training-beginner') && styles.navItemActive
+              ]}
             >
               <Text style={styles.navIcon}>🖐️</Text>
-              <Text style={styles.navText}>Entraînement Débutant</Text>
+              <Text style={[styles.navText, isActive('/training-beginner') && styles.navTextActive]}>Entraînement Débutant</Text>
             </Pressable>
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/training')}
-              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+              style={({ pressed }) => [
+                styles.navItem, 
+                pressed && styles.navItemPressed,
+                isActive('/training') && !isActive('/training-beginner') && styles.navItemActive
+              ]}
             >
               <Text style={styles.navIcon}>🎯</Text>
-              <Text style={styles.navText}>Entraînement Avancé</Text>
+              <Text style={[styles.navText, isActive('/training') && !isActive('/training-beginner') && styles.navTextActive]}>Entraînement Avancé</Text>
             </Pressable>
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/contribute')}
-              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+              style={({ pressed }) => [
+                styles.navItem, 
+                pressed && styles.navItemPressed,
+                isActive('/contribute') && styles.navItemActive
+              ]}
             >
               <Text style={styles.navIcon}>✍️</Text>
-              <Text style={styles.navText}>Ajouter un mot</Text>
+              <Text style={[styles.navText, isActive('/contribute') && styles.navTextActive]}>Ajouter un mot</Text>
             </Pressable>
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/game')}
-              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+              style={({ pressed }) => [
+                styles.navItem, 
+                pressed && styles.navItemPressed,
+                isActive('/game') && styles.navItemActive
+              ]}
             >
               <Text style={styles.navIcon}>🎮</Text>
-              <Text style={styles.navText}>Jeu</Text>
+              <Text style={[styles.navText, isActive('/game') && styles.navTextActive]}>Jeu</Text>
             </Pressable>
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/basics')}
-              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+              style={({ pressed }) => [
+                styles.navItem, 
+                pressed && styles.navItemPressed,
+                isActive('/basics') && styles.navItemActive
+              ]}
             >
               <Text style={styles.navIcon}>📖</Text>
-              <Text style={styles.navText}>Les bases du code</Text>
+              <Text style={[styles.navText, isActive('/basics') && styles.navTextActive]}>Les bases du code</Text>
             </Pressable>
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/profile')}
-              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+              style={({ pressed }) => [
+                styles.navItem, 
+                pressed && styles.navItemPressed,
+                isActive('/profile') && styles.navItemActive
+              ]}
             >
               <Text style={styles.navIcon}>👤</Text>
-              <Text style={styles.navText}>Profil</Text>
+              <Text style={[styles.navText, isActive('/profile') && styles.navTextActive]}>Profil</Text>
             </Pressable>
           </View>
 
@@ -220,19 +260,27 @@ export default function TabsLayout() {
             
             <Pressable 
               onPress={() => navigateTo('/(tabs)/about')}
-              style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+              style={({ pressed }) => [
+                styles.navItem, 
+                pressed && styles.navItemPressed,
+                isActive('/about') && styles.navItemActive
+              ]}
             >
               <Text style={styles.navIcon}>ℹ️</Text>
-              <Text style={styles.navText}>À propos</Text>
+              <Text style={[styles.navText, isActive('/about') && styles.navTextActive]}>À propos</Text>
             </Pressable>
 
             {isAdmin && (
               <Pressable 
                 onPress={() => navigateTo('/(tabs)/admin')}
-                style={({ pressed }) => [styles.navItem, pressed && styles.navItemPressed]}
+                style={({ pressed }) => [
+                  styles.navItem, 
+                  pressed && styles.navItemPressed,
+                  isActive('/admin') && styles.navItemActive
+                ]}
               >
                 <Text style={styles.navIcon}>🛡️</Text>
-                <Text style={styles.navText}>Administration</Text>
+                <Text style={[styles.navText, isActive('/admin') && styles.navTextActive]}>Administration</Text>
               </Pressable>
             )}
           </View>
@@ -377,6 +425,20 @@ const styles = StyleSheet.create({
   },
   navItemPressed: {
     backgroundColor: '#1E293B',
+  },
+  navItemActive: {
+    backgroundColor: '#2563EB',
+    borderLeftWidth: 4,
+    borderLeftColor: '#60A5FA',
+    shadowColor: '#3B82F6',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  navTextActive: {
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
   navIcon: {
     fontSize: 24,
