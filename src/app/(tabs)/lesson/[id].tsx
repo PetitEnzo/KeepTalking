@@ -1675,16 +1675,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 24,
+    padding: 16,
+    maxWidth: 1200,
+    width: '100%',
+    alignSelf: 'center',
   },
   sectionContainer: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#0F172A',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   sectionContent: {
     fontSize: 16,
@@ -1694,7 +1697,7 @@ const styles = StyleSheet.create({
   infoBox: {
     backgroundColor: '#EFF6FF',
     borderRadius: 16,
-    padding: 24,
+    padding: 20,
     borderWidth: 2,
     borderColor: '#DBEAFE',
   },
@@ -1756,8 +1759,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   optionImage: {
-    width: 360,
-    height: 360,
+    width: 300,
+    height: 300,
   },
   optionImageLabel: {
     fontSize: 14,
@@ -1796,7 +1799,7 @@ const styles = StyleSheet.create({
   practiceBox: {
     backgroundColor: '#F0FDF4',
     borderRadius: 16,
-    padding: 24,
+    padding: 20,
     borderWidth: 2,
     borderColor: '#BBF7D0',
     alignItems: 'center',
@@ -1845,14 +1848,14 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: 20,
+    marginVertical: 16,
     backgroundColor: '#F8FAFC',
     borderRadius: 12,
-    padding: 16,
+    padding: 12,
   },
   handImage: {
-    width: 600,
-    height: 600,
+    width: 500,
+    height: 500,
   },
   navigation: {
     flexDirection: 'row',
