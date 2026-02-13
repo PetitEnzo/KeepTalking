@@ -557,14 +557,6 @@ export default function TrainingScreen() {
                 )}
               </View>
 
-              {/* Stats sous le mot sur mobile */}
-              {isMobile && (
-                <View style={[styles.statCard, styles.statCardMobile, { backgroundColor: colors.card }]}>
-                  <Text style={[styles.statLabel, styles.statLabelMobile, { color: colors.textSecondary }]}>Mots validés</Text>
-                  <Text style={[styles.statValue, styles.statValueMobile, { color: colors.success }]}>{validatedWordsCount}</Text>
-                </View>
-              )}
-
               {/* Sur mobile: syllabe AVANT progression */}
               <View style={[styles.syllablesList, isMobile && styles.syllablesListMobile]}>
                 {currentWord.syllables.map((syllable, index) => {
@@ -597,6 +589,14 @@ export default function TrainingScreen() {
                   );
                 })}
               </View>
+
+              {/* Stats après la syllabe card sur mobile */}
+              {isMobile && (
+                <View style={[styles.statCard, styles.statCardMobile, { backgroundColor: colors.card }]}>
+                  <Text style={[styles.statLabel, styles.statLabelMobile, { color: colors.textSecondary }]}>Mots validés</Text>
+                  <Text style={[styles.statValue, styles.statValueMobile, { color: colors.success }]}>{validatedWordsCount}</Text>
+                </View>
+              )}
 
               <View style={styles.skipButtonsContainer}>
                 <Pressable 

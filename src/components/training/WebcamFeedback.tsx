@@ -501,13 +501,33 @@ export default function WebcamFeedback({
           </View>
         </>
       ) : (
-        <View style={styles.cameraOffContainer}>
-          <Text style={styles.cameraOffIcon}>📷</Text>
-          <Text style={styles.cameraOffTitle}>Webcam désactivée</Text>
-          <Text style={styles.cameraOffText}>
-            Cliquez sur le bouton ci-dessus pour activer votre webcam et commencer l'entraînement
-          </Text>
-        </View>
+        <>
+          {!isMobileOrTablet && (
+            <View style={styles.cameraOffContainer}>
+              <Text style={styles.cameraOffIcon}>📷</Text>
+              <Text style={styles.cameraOffTitle}>Webcam désactivée</Text>
+              <Text style={styles.cameraOffText}>
+                Cliquez sur le bouton ci-dessus pour activer votre webcam et commencer l'entraînement
+              </Text>
+            </View>
+          )}
+          
+          {/* Bouton activer caméra sur mobile quand elle est éteinte */}
+          {isMobileOrTablet && (
+            <View style={styles.cameraOffContainerMobile}>
+              <Pressable 
+                style={({ pressed }) => [
+                  styles.activateCameraButton,
+                  pressed && styles.toggleButtonPressed
+                ]}
+                onPress={toggleCamera}
+              >
+                <Text style={styles.activateCameraIcon}>📷</Text>
+                <Text style={styles.activateCameraText}>Activer la caméra</Text>
+              </Pressable>
+            </View>
+          )}
+        </>
       )}
     </View>
   );
@@ -713,6 +733,37 @@ const styles = StyleSheet.create({
   },
   webcamToggleIcon: {
     fontSize: 28,
+  },
+  cameraOffContainerMobile: {
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 200,
+  },
+  activateCameraButton: {
+    backgroundColor: '#3B82F6',
+    borderRadius: 50,
+    width: 120,
+    height: 120,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
+  },
+  activateCameraIcon: {
+    fontSize: 48,
+    marginBottom: 8,
+  },
+  activateCameraText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    textAlign: 'center',
   },
   orientationHint: {
     position: 'absolute',
