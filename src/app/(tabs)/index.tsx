@@ -5,6 +5,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
 import { router } from 'expo-router';
 import HoverableCard from '../../components/common/HoverableCard';
+import BadgeDisplay from '../../components/BadgeDisplay';
 
 type UserProfile = 'deaf' | 'hearing' | 'family' | 'professional' | null;
 type UserLevel = 'beginner' | 'intermediate' | 'advanced' | null;
@@ -17,6 +18,7 @@ export default function HomeScreen() {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Réponses du questionnaire
   const [profile, setProfile] = useState<UserProfile>(null);
@@ -34,12 +36,15 @@ export default function HomeScreen() {
     try {
       const { data, error } = await supabase
         .from('users')
-        .select('user_profile, user_level, user_goal')
+        .select('user_id, user_profile, user_level, user_goal')
         .eq('auth_user_id', user.id)
         .single();
 
-      if (data && data.user_profile) {
-        setHasCompletedOnboarding(true);
+      if (data) {
+        setUserId(data.user_id);
+        if (data.user_profile) {
+          setHasCompletedOnboarding(true);
+        }
       }
     } catch (error) {
       console.error('Erreur vérification onboarding:', error);
@@ -53,9 +58,9 @@ export default function HomeScreen() {
 
     try {
       const { data } = await supabase
-        .from('users_profiles')
+        .from('users')
         .select('current_streak')
-        .eq('id', user.id)
+        .eq('auth_user_id', user.id)
         .single();
 
       if (data) {
@@ -113,6 +118,13 @@ export default function HomeScreen() {
             </View>
           </View>
 
+          {/* Badges */}
+          {userId && (
+            <View style={[styles.badgesSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <BadgeDisplay userId={userId} maxDisplay={5} showTitle={true} />
+            </View>
+          )}
+
           {/* Description de l'application */}
           <View style={[styles.descriptionSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Text style={[styles.descriptionTitle, { color: colors.text }]}>Bienvenue sur Keep Talking ! 👋</Text>
@@ -139,7 +151,7 @@ export default function HomeScreen() {
           {/* Grille de cartes */}
           <View style={styles.cardsGrid}>
             <HoverableCard 
-              style={styles.gridCard}
+              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/lessons')}
             >
@@ -151,7 +163,7 @@ export default function HomeScreen() {
             </HoverableCard>
 
             <HoverableCard 
-              style={styles.gridCard}
+              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/training-beginner')}
             >
@@ -163,7 +175,7 @@ export default function HomeScreen() {
             </HoverableCard>
 
             <HoverableCard 
-              style={styles.gridCard}
+              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/training')}
             >
@@ -175,7 +187,7 @@ export default function HomeScreen() {
             </HoverableCard>
 
             <HoverableCard 
-              style={styles.gridCard}
+              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/contribute')}
             >
@@ -187,7 +199,7 @@ export default function HomeScreen() {
             </HoverableCard>
 
             <HoverableCard 
-              style={styles.gridCard}
+              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/basics')}
             >
@@ -199,7 +211,7 @@ export default function HomeScreen() {
             </HoverableCard>
 
             <HoverableCard 
-              style={styles.gridCard}
+              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/game')}
             >
@@ -754,11 +766,9 @@ const styles = StyleSheet.create({
   gridCard: {
     width: '32%',
     minWidth: 280,
-    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 24,
     borderWidth: 2,
-    borderColor: '#E2E8F0',
     alignItems: 'center',
   },
   gridCardPressed: {
@@ -771,7 +781,6 @@ const styles = StyleSheet.create({
   gridCardHovered: {
     transform: [{ translateY: -10 }, { scale: 1.02 }],
     borderColor: '#3B82F6',
-    backgroundColor: '#F0F9FF',
     boxShadow: '0 12px 16px rgba(59, 130, 246, 0.3)',
     elevation: 12,
   },
@@ -785,6 +794,14 @@ const styles = StyleSheet.create({
     color: '#0F172A',
     marginBottom: 8,
     textAlign: 'center',
+  },
+  badgesSection: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#BFDBFE',
   },
   gridCardDescription: {
     fontSize: 14,

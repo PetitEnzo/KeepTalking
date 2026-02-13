@@ -54,7 +54,7 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       {
         type: 'text',
         title: 'Comment ça fonctionne ?',
-        content: 'Chaque syllabe est codée par une **configuration de main** (pour la consonne) et une **position** (pour la voyelle).\n\nPar exemple, pour dire "papa" :\n- "pa" = configuration P + position A\n- "pa" = configuration P + position A',
+        content: 'Chaque syllabe est codée par une configuration de main (pour la consonne) et une position (pour la voyelle).\n\nPar exemple, pour dire "papa" :\n- "pa" = configuration P + position A\n- "pa" = configuration P + position A',
       },
       {
         type: 'info',
@@ -146,10 +146,10 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       },
       {
         type: 'image',
-        title: 'Configuration 6 : Trois doigts spéciaux',
+        title: 'Configuration 6 : Trois doigts et demi',
         imageKey: 'S',
         imageUrl: 'LOAD_FROM_DB',
-        content: 'Consonnes : S, R\n\nAuriculaire annulaire et majeur, index demi fermé.\n\nUtilisé pour : "Soleil", "Rue"',
+        content: 'Consonnes : S, R\n\nAuriculaire, annulaire et majeur, index demi fermé.\n\nUtilisé pour : "Soleil", "Rue"',
       },
       {
         type: 'image',
@@ -483,21 +483,25 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       {
         type: 'text',
         title: 'Exercice 4 : AUJOURD\'HUI (difficile)',
-        content: 'Un mot long avec plusieurs syllabes : AUJOURD\'HUI\n\nDécomposition : AU-JOUR-D\'HUI\n\nAU :\n- Voyelle AU → Position à l\'écart du visage (pas de consonne initiale)\n\nJOUR :\n- J → Configuration J\n- OU → Position au niveau du menton\n- R → Configuration R\n\nHUI :\n- H muet (pas de geste)\n- UI → Configuration B + Position sous l\'œil',
+        imageKey: 'aujourdhui',
+        imageUrl: 'LOAD_FROM_DB',
+        content: 'Un mot long avec plusieurs syllabes : AUJOURD\'HUI\n\nDécomposition : AU-JOUR-D-HUI\n\nAU :\n- Voyelle O → Position à l\'écart du visage (pas de consonne initiale)\n\nJOUR :\n- J → Configuration J\n- OU → Position au niveau du menton\n- R → Configuration R\n\nD :\n- Consonne D sans position au visage\n\nHUI :\n- OU → Configuration L (L, CH, GN, OU)\n- I → Position à côté de la bouche',
       },
       {
         type: 'multipart_quiz',
-        question: 'Pour coder "JOUR" dans "AUJOURD\'HUI", sélectionnez la configuration et la position :',
+        question: 'Pour coder "JOU" dans "AUJOURD\'HUI", sélectionnez la configuration et la position :',
         configurationOptions: ['M', 'J', 'B', 'L'],
         positionOptions: ['LOAD_POSITION_1', 'LOAD_POSITION_2', 'LOAD_POSITION_3', 'LOAD_POSITION_4', 'LOAD_POSITION_5'],
         correctConfiguration: 1,
         correctPosition: 3,
-        explanation: 'Pour "JOUR" : Configuration J + Position 4 (Main au niveau du menton pour OU).\n\nDans les mots longs, gardez un rythme régulier et ne précipitez pas les transitions.',
+        explanation: 'Pour "JOU" : Configuration J + Position 4 (Main au niveau du menton pour OU).\n\nDans les mots longs, gardez un rythme régulier et ne précipitez pas les transitions.',
       },
       {
         type: 'text',
         title: 'Exercice 5 : PEUT-ÊTRE (difficile)',
-        content: 'Un mot avec une liaison délicate : PEUT-ÊTRE\n\nDécomposition : PEUT-Ê-TRE\n\nPEUT :\n- P → Configuration J\n- EU → Position sous l\'œil\n- T → Configuration M (M, T, F)\n\nÊTRE :\n- Ê → Position au niveau du cou\n- T → Configuration M\n- R → Configuration R\n- E → Position à l\'écart',
+        imageKey: 'peutetre',
+        imageUrl: 'LOAD_FROM_DB',
+        content: 'Un mot avec une liaison délicate : PEUT-ÊTRE\n\nDécomposition : PEU-TÉ-T-R\n\nPEU :\n- P → Configuration J\n- EU → Position sous l\'œil\n\nTÉ :\n- T → Configuration M (M, T, F)\n- É → Position au niveau du menton\n\nT :\n- T → Configuration M\n\nR :\n- R → Configuration R',
       },
       {
         type: 'multipart_quiz',
@@ -537,6 +541,8 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
         type: 'text',
         title: 'Phrase 1 : "Bonjour, comment ça va ?"',
         content: 'Commençons par une phrase de salutation classique.\n\nDécomposition :\n- BONJOUR : BON-JOUR > BOn > JOU > R\n- COMMENT : KO-MAN\n- ÇA : SA\n- VA : VA\n\nAstuce : Marquez une micro-pause entre chaque mot, comme à l\'oral.',
+        imageKey: 'bonjour_comment_ca_va',
+        imageUrl: 'LOAD_FROM_DB',
       },
       {
         type: 'multipart_quiz',
@@ -550,7 +556,9 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       {
         type: 'text',
         title: 'Phrase 2 : "Je voudrais un café"',
-        content: 'Une phrase utile au quotidien !\n\nDécomposition :\n- JE : JE\n- VOUDRAIS : VOU-R-Ré\n- UN : UN\n- CAFÉ : CA-FÉ\n\nPoint clé : Les liaisons ne se codent pas en LFPC, on suit la prononciation naturelle.',
+        content: 'Une phrase utile au quotidien !\n\nDécomposition :\n- JE : JE\n- VOUDRAIS : VOU-D-Ré\n- UN : UN\n- CAFÉ : CA-FÉ\n\nPoint clé : Les liaisons ne se codent pas en LFPC, on suit la prononciation naturelle.',
+        imageKey: 'je_voudrais_un_cafe',
+        imageUrl: 'LOAD_FROM_DB',
       },
       {
         type: 'multipart_quiz',
@@ -565,6 +573,8 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
         type: 'text',
         title: 'Phrase 3 : "Quelle heure est-il ?"',
         content: 'Une question fréquente.\n\nDécomposition :\n- QUELLE : Ké-L\n- HEURE : EU-R (H muet)\n- EST : EST\n- IL : IL\n\nRappel : Le H muet ne se code pas, on passe directement à la voyelle.',
+        imageKey: 'quelle_heure_est_t_il',
+        imageUrl: 'LOAD_FROM_DB',
       },
       {
         type: 'quiz',
@@ -576,7 +586,9 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       {
         type: 'text',
         title: 'Phrase 4 : "Merci beaucoup"',
-        content: 'Expression de politesse essentielle.\n\nDécomposition :\n- MERCI : ME-R-CI\n- BEAUCOUP : BO-KOU\n\nAstuce : Dans BEAUCOUP, le son "BO" utilise la configuration B et la position Côté. Le "KOU" combine la configuration K avec la position Gorge.',
+        content: 'Expression de politesse essentielle.\n\nDécomposition :\n- MERCI : ME-R-CI\n- BEAUCOUP : BO-KOU',
+        imageKey: 'merci_beaucoup',
+        imageUrl: 'LOAD_FROM_DB',
       },
       {
         type: 'multipart_quiz',
@@ -591,6 +603,8 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
         type: 'text',
         title: 'Phrase 5 : "Je ne comprends pas"',
         content: 'Phrase importante pour la communication.\n\nDécomposition :\n- JE : JE\n- NE : NE\n- COMPRENDS : KON-P-RAN\n- PAS : PA\n\nPoint clé : En LFPC, chaque syllabe doit être codée distinctement. Décomposez bien "COMPRENDS" en trois parties : KON, P, RAN.',
+        imageKey: 'je_ne_comprends_pas',
+        imageUrl: 'LOAD_FROM_DB',
       },
       {
         type: 'multipart_quiz',
@@ -645,28 +659,11 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       {
         type: 'text',
         title: 'Les 3 piliers de la fluidité',
-        content: '1. **Précision** : Chaque geste doit rester clair\n\n2. **Vitesse** : Adapter le rythme à la parole naturelle\n\n3. **Économie de mouvement** : Minimiser les déplacements inutiles',
-      },
-      {
-        type: 'info',
-        title: 'Exercice 1 : Transitions rapides',
-        content: 'Pratiquez les transitions entre positions :\n\nPosition 1 → Position 5 (vertical)\nPosition 2 → Position 3 (horizontal)\nPosition 4 → Position 1 (diagonal)\n\nObjectif : Passer d\'une position à l\'autre en moins de 0.3 seconde tout en restant précis.',
+        content: '1. Précision : Chaque geste doit rester clair\n\n2. Vitesse : Adapter le rythme à la parole naturelle\n\n3. Économie de mouvement : Minimiser les déplacements inutiles',
       },
       {
         type: 'text',
-        title: 'Technique : Le chemin le plus court',
-        content: 'Pour améliorer votre vitesse, suivez toujours le chemin le plus court entre deux positions.\n\nExemple : Pour passer de la position 5 (cou) à la position 1 (œil), remontez en ligne droite plutôt que de faire un détour.\n\nÉvitez les mouvements circulaires inutiles.',
-      },
-      {
-        type: 'quiz',
-        question: 'Quel est le principe clé pour des transitions rapides ?',
-        options: ['Faire de grands mouvements', 'Suivre le chemin le plus court', 'Marquer des pauses entre chaque position', 'Bouger très lentement'],
-        correctAnswer: 1,
-        explanation: 'Le chemin le plus court permet d\'économiser du temps et de l\'énergie tout en restant précis.',
-      },
-      {
-        type: 'text',
-        title: 'Exercice 2 : Mots rapides',
+        title: 'Exercice 1 : Mots rapides',
         content: 'Pratiquez ces mots en augmentant progressivement la vitesse :\n\n• PAPA (facile)\n• BONJOUR (moyen)\n• TÉLÉPHONE (difficile)\n• AUJOURD\'HUI (très difficile)\n\nChronométrez-vous : visez 1 seconde par syllabe au début, puis 0.5 seconde.',
       },
       {
@@ -675,18 +672,13 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
         content: '❌ Aller trop vite au détriment de la précision\n❌ Négliger les consonnes finales\n❌ Faire des mouvements trop amples\n❌ Perdre la synchronisation avec la parole\n❌ Se crisper (restez détendu !)',
       },
       {
-        type: 'text',
-        title: 'Exercice 3 : Phrases en rythme',
-        content: 'Codez ces phrases à vitesse normale de conversation :\n\n1. "Comment tu t\'appelles ?"\n2. "Je m\'appelle Marie"\n3. "Enchanté de te rencontrer"\n\nObjectif : Maintenir un rythme constant du début à la fin de la phrase.',
-      },
-      {
         type: 'multipart_quiz',
         question: 'Dans "APPELLES" (tu t\'appelles), pour coder "PE", sélectionnez :',
         configurationOptions: ['M', 'J', 'B', 'L'],
         positionOptions: ['Main à côté de la bouche', 'Main à l\'écart du visage', 'Main au niveau du cou', 'Main au niveau du menton', 'Main sous l\'œil'],
         correctConfiguration: 1,
-        correctPosition: 1,
-        explanation: 'Pour "PE" : Configuration J (pour P) + Position "Main à l\'écart du visage" (pour E).\n\nDans un mot rapide, gardez la même précision qu\'en lent.',
+        correctPosition: 3,
+        explanation: 'Pour "PE" : Configuration J (pour P) + Position "Main au niveau du menton" (pour E).\n\nDans un mot rapide, gardez la même précision qu\'en lent.',
       },
       {
         type: 'text',
@@ -696,7 +688,7 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       {
         type: 'info',
         title: 'Programme d\'entraînement',
-        content: 'Semaine 1 : Transitions isolées (10 min/jour)\nSemaine 2 : Mots simples en vitesse (15 min/jour)\nSemaine 3 : Phrases courtes (20 min/jour)\nSemaine 4 : Conversations (25 min/jour)\n\nProgressez à votre rythme, la régularité est plus importante que l\'intensité.',
+        content: 'N\'hésite pas à t\'entraîner sur les entraînements débutant pour bien mémoriser les différentes positions et configurations !\n\nProgressez à votre rythme, la régularité est plus importante que l\'intensité.',
       },
       {
         type: 'practice',
@@ -721,7 +713,7 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       {
         type: 'text',
         title: 'Dialogue 1 : Conversation téléphonique',
-        content: '**Personne A** : "Allô, c\'est Marie. Est-ce que je pourrais parler à Monsieur Dupont ?"\n\n**Personne B** : "Bonjour Marie, je suis désolé mais il est en réunion. Voulez-vous laisser un message ?"\n\nPoint clé : Gérer les changements d\'interlocuteur et les phrases interrogatives.',
+        content: 'Personne A : "Allô, c\'est Marie. Est-ce que je pourrais parler à Monsieur Dupont ?"\n\nPersonne B : "Bonjour Marie, je suis désolé mais il est en réunion. Voulez-vous laisser un message ?"\n\nPoint clé : Gérer les changements d\'interlocuteur et les phrases interrogatives.',
       },
       {
         type: 'quiz',
@@ -747,7 +739,7 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       {
         type: 'text',
         title: 'Dialogue 2 : Débat d\'idées',
-        content: '**A** : "Je pense que le changement climatique est le plus grand défi de notre époque"\n\n**B** : "Certes, mais n\'oublions pas les inégalités sociales qui touchent des millions de personnes"\n\nDifficulté : Vocabulaire abstrait et phrases argumentatives.',
+        content: 'A : "Je pense que le changement climatique est le plus grand défi de notre époque"\n\nB : "Certes, mais n\'oublions pas les inégalités sociales qui touchent des millions de personnes"\n\nDifficulté : Vocabulaire abstrait et phrases argumentatives.',
       },
       {
         type: 'text',
@@ -781,7 +773,7 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       {
         type: 'practice',
         title: 'Entraînement conversations',
-        content: 'Exercices pratiques :\n\n1. **Débat** : Choisissez un sujet et argumentez (pour/contre)\n\n2. **Récit** : Racontez votre journée d\'hier en détail\n\n3. **Interview** : Simulez une interview professionnelle\n\n4. **Explication** : Expliquez un concept complexe\n\nObjectif : Tenir une conversation de 5 minutes en LFPC fluide.\n\nFélicitations ! Vous êtes capable de gérer des conversations complexes ! 🗣️',
+        content: 'Exercices pratiques :\n\n1. Débat : Choisissez un sujet et argumentez (pour/contre)\n\n2. Récit : Racontez votre journée d\'hier en détail\n\n3. Interview : Simulez une interview professionnelle\n\n4. Explication : Expliquez un concept complexe\n\nObjectif : Tenir une conversation de 5 minutes en LFPC fluide.\n\nFélicitations ! Vous êtes capable de gérer des conversations complexes ! 🗣️',
       },
     ],
   },
@@ -866,12 +858,12 @@ const lessonContent: { [key: string]: { title: string; sections: LessonSection[]
       {
         type: 'text',
         title: 'Expressions régionales',
-        content: 'Certaines expressions varient selon les régions :\n\n**Nord** : "Avoir la frite" (être en forme)\n**Sud** : "Faire caguer" (ennuyer)\n**Belgique** : "Avoir son bic" (être de mauvaise humeur)\n**Suisse** : "Faire la nique" (se moquer)\n\nLe LFPC s\'adapte à toutes les variantes régionales !',
+        content: 'Certaines expressions varient selon les régions :\n\nNord : "Avoir la frite" (être en forme)\nSud : "Faire caguer" (ennuyer)\nBelgique : "Avoir son bic" (être de mauvaise humeur)\nSuisse : "Faire la nique" (se moquer)\n\nLe LFPC s\'adapte à toutes les variantes régionales !',
       },
       {
         type: 'practice',
         title: 'Félicitations ! 🎭',
-        content: 'Vous avez terminé toutes les leçons de LFPC !\n\nVous maîtrisez maintenant :\n✓ Les 8 configurations de main\n✓ Les 5 positions autour du visage\n✓ Les mots simples et complexes\n✓ Les phrases et conversations\n✓ La fluidité et le rythme\n✓ Les expressions idiomatiques\n\n**Mission finale** :\nUtilisez le LFPC dans votre quotidien ! Pratiquez avec vos proches, codez vos pensées, regardez des vidéos en LFPC.\n\nLa pratique régulière est la clé de la maîtrise.\n\nBravo pour votre parcours ! Vous êtes maintenant un codeur LFPC accompli ! 🌟',
+        content: 'Vous avez terminé toutes les leçons de LFPC !\n\nVous maîtrisez maintenant :\n✓ Les 8 configurations de main\n✓ Les 5 positions autour du visage\n✓ Les mots simples et complexes\n✓ Les phrases et conversations\n✓ La fluidité et le rythme\n✓ Les expressions idiomatiques\n\nMission finale :\nUtilisez le LFPC dans votre quotidien ! Pratiquez avec vos proches, codez vos pensées, regardez des vidéos en LFPC.\n\nLa pratique régulière est la clé de la maîtrise.\n\nBravo pour votre parcours ! Vous êtes maintenant un codeur LFPC accompli ! 🌟',
       },
     ],
   },
@@ -890,6 +882,7 @@ export default function LessonScreen() {
   const [score, setScore] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
   const [lessonWithImages, setLessonWithImages] = useState<{ title: string; sections: LessonSection[] } | null>(null);
+  const [hoveredOption, setHoveredOption] = useState<number | string | null>(null);
 
   const lesson = lessonContent[id as string];
 
@@ -974,6 +967,23 @@ export default function LessonScreen() {
 
       // Remplacer les URLs dans les sections
       const updatedSections = lesson.sections.map((section, index) => {
+        // Charger les images pour les sections text avec imageKey
+        if (section.type === 'text' && section.imageKey && section.imageUrl === 'LOAD_FROM_DB') {
+          // Mapper les noms de fichiers corrects (avec majuscules)
+          const fileNameMap: { [key: string]: string } = {
+            'aujourdhui': 'Aujourd\'hui.png',
+            'peutetre': 'peutetre.png'
+          };
+          const fileName = fileNameMap[section.imageKey] || `${section.imageKey}.png`;
+          const { data } = supabase.storage.from('Word').getPublicUrl(fileName);
+          const imageUrl = data.publicUrl;
+          console.log(`  📄 Section text ${index}: ${section.imageKey} -> ${fileName} -> ${imageUrl}`);
+          return {
+            ...section,
+            imageUrl: imageUrl
+          };
+        }
+        
         if (section.type === 'image' && section.imageKey && section.imageUrl === 'LOAD_FROM_DB') {
           const newUrl = imageMap[section.imageKey];
           console.log(`  Section ${index}: ${section.imageKey} -> ${newUrl || 'NOT FOUND'}`);
@@ -1243,43 +1253,41 @@ export default function LessonScreen() {
 
           // Mettre à jour le streak à chaque fin de leçon
           const today = new Date().toISOString().split('T')[0];
-          const { data: profileData } = await supabase
-            .from('users_profiles')
-            .select('last_activity_date, current_streak')
-            .eq('id', user.id)
+          const { data: userData } = await supabase
+            .from('users')
+            .select('last_practice_date, current_streak, user_id')
+            .eq('auth_user_id', user.id)
             .single();
 
-          const lastActivity = profileData?.last_activity_date;
+          const lastActivity = userData?.last_practice_date;
           const yesterday = new Date();
           yesterday.setDate(yesterday.getDate() - 1);
           const yesterdayStr = yesterday.toISOString().split('T')[0];
 
-          let newStreak = profileData?.current_streak || 0;
+          let newStreak = userData?.current_streak || 0;
           
           // Si c'est déjà aujourd'hui, on garde le streak actuel (pas de changement)
           if (lastActivity === today) {
-            newStreak = profileData?.current_streak || 0;
+            newStreak = userData?.current_streak || 0;
           }
           // Si la dernière activité était hier, on incrémente
           else if (lastActivity === yesterdayStr) {
             newStreak += 1;
           } 
-          // Si la dernière activité n'était pas hier ni aujourd'hui, le streak est cassé (sera géré par un job serveur à minuit)
-          // Pour l'instant on garde le streak actuel, il sera réinitialisé à 0 à minuit par le serveur
+          // Si la dernière activité n'était pas hier ni aujourd'hui, le streak est cassé
           else {
-            newStreak = profileData?.current_streak || 0;
+            newStreak = 1; // Recommencer à 1
           }
 
-          console.log('📊 Mise à jour streak:', { lastActivity, today, yesterdayStr, currentStreak: profileData?.current_streak, newStreak });
+          console.log('📊 Mise à jour streak:', { lastActivity, today, yesterdayStr, currentStreak: userData?.current_streak, newStreak });
 
           const { error: streakError } = await supabase
-            .from('users_profiles')
-            .upsert({
-              id: user.id,
-              username: user.user_metadata?.username || user.email?.split('@')[0] || 'user',
-              last_activity_date: today,
+            .from('users')
+            .update({
               current_streak: newStreak,
-            });
+              last_practice_date: today,
+            })
+            .eq('auth_user_id', user.id);
 
           if (streakError) {
             console.error('❌ Erreur streak:', streakError);
@@ -1346,9 +1354,18 @@ export default function LessonScreen() {
     switch (section.type) {
       case 'text':
         return (
-          <View style={[styles.sectionContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <View style={[styles.sectionContainer, styles.textBox, { backgroundColor: colors.card, borderColor: colors.primary }]}>
             {section.title && <Text style={[styles.sectionTitle, { color: colors.text }]}>{section.title}</Text>}
-            <Text style={[styles.sectionContent, { color: colors.textSecondary }]}>{section.content}</Text>
+            <Text style={[styles.sectionContent, { color: colors.text }]}>{section.content}</Text>
+            {section.imageUrl && (
+              <View style={[styles.imageContainer, { backgroundColor: colors.card }]}>
+                <Image 
+                  source={{ uri: section.imageUrl }} 
+                  style={styles.handImage}
+                  resizeMode="contain"
+                />
+              </View>
+            )}
           </View>
         );
 
@@ -1365,7 +1382,7 @@ export default function LessonScreen() {
         return (
           <View style={styles.sectionContainer}>
             <Text style={styles.quizTitle}>Question</Text>
-            <Text style={styles.quizQuestion}>{section.question}</Text>
+            <Text style={[styles.quizQuestion, { color: colors.text }]}>{section.question}</Text>
             
             <View style={styles.optionsContainer}>
               {section.options?.map((option, index) => (
@@ -1379,7 +1396,11 @@ export default function LessonScreen() {
                     selectedAnswer === index && styles.optionButtonSelected,
                     showExplanation && index === section.correctAnswer && styles.optionButtonCorrect,
                     showExplanation && selectedAnswer === index && index !== section.correctAnswer && styles.optionButtonWrong,
+                    hoveredOption === index && !showExplanation && styles.optionButtonHovered,
                   ]}
+                  // @ts-ignore
+                  onMouseEnter={() => setHoveredOption(index)}
+                  onMouseLeave={() => setHoveredOption(null)}
                 >
                   {section.optionImageUrls && section.optionImageUrls[index] ? (
                     <View style={styles.optionImageContainer}>
@@ -1454,16 +1475,26 @@ export default function LessonScreen() {
         );
 
       case 'image':
-        console.log('🖼️ Rendering image section:', { title: section.title, imageUrl: section.imageUrl, hasContent: !!section.content });
+        console.log('🖼️ Rendering image section:', { title: section.title, imageUrl: section.imageUrl, imageKey: section.imageKey, hasContent: !!section.content });
+        
+        // Déterminer la source de l'image
+        let imageSource;
+        const isVoyellesAll = section.imageUrl === 'LOCAL_ASSET' && section.imageKey === 'voyelles_all';
+        if (isVoyellesAll) {
+          imageSource = require('../../../../assets/images/voyelles_all.jpg');
+        } else if (section.imageUrl) {
+          imageSource = { uri: section.imageUrl };
+        }
+        
         return (
           <View style={styles.sectionContainer}>
-            {section.title && <Text style={styles.sectionTitle}>{section.title}</Text>}
-            {section.content && <Text style={styles.sectionContent}>{section.content}</Text>}
-            {section.imageUrl && (
-              <View style={styles.imageContainer}>
+            {section.title && <Text style={[styles.sectionTitle, { color: colors.text }]}>{section.title}</Text>}
+            {section.content && <Text style={[styles.sectionContent, { color: colors.text }]}>{section.content}</Text>}
+            {imageSource && (
+              <View style={[styles.imageContainer, { backgroundColor: colors.card }]}>
                 <Image 
-                  source={{ uri: section.imageUrl }} 
-                  style={styles.handImage}
+                  source={imageSource} 
+                  style={isVoyellesAll ? styles.voyellesAllImage : styles.handImage}
                   resizeMode="contain"
                 />
               </View>
@@ -1483,10 +1514,10 @@ export default function LessonScreen() {
         return (
           <View style={styles.sectionContainer}>
             <Text style={styles.quizTitle}>Question</Text>
-            <Text style={styles.quizQuestion}>{section.question}</Text>
+            <Text style={[styles.quizQuestion, { color: colors.text }]}>{section.question}</Text>
             
             {/* Section Configuration */}
-            <Text style={styles.multipartSectionTitle}>Choisissez la configuration :</Text>
+            <Text style={[styles.multipartSectionTitle, { color: colors.text }]}>Choisissez la configuration :</Text>
             <View style={styles.optionsContainer}>
               {section.configurationImageUrls?.map((imageUrl, index) => (
                 <Pressable
@@ -1499,7 +1530,11 @@ export default function LessonScreen() {
                     selectedConfiguration === index && styles.optionButtonSelected,
                     showExplanation && index === section.correctConfiguration && styles.optionButtonCorrect,
                     showExplanation && selectedConfiguration === index && index !== section.correctConfiguration && styles.optionButtonWrong,
+                    hoveredOption === `config-${index}` && !showExplanation && styles.optionButtonHovered,
                   ]}
+                  // @ts-ignore
+                  onMouseEnter={() => setHoveredOption(`config-${index}`)}
+                  onMouseLeave={() => setHoveredOption(null)}
                 >
                   <View style={styles.optionImageContainer}>
                     <Image 
@@ -1515,7 +1550,7 @@ export default function LessonScreen() {
             {/* Section Position - uniquement si positionOptions existe */}
             {hasPosition && (
               <>
-                <Text style={styles.multipartSectionTitle}>Choisissez la position :</Text>
+                <Text style={[styles.multipartSectionTitle, { color: colors.text }]}>Choisissez la position :</Text>
                 <View style={styles.optionsContainer}>
                   {section.positionOptions?.map((position, index) => (
                     <Pressable
@@ -1527,7 +1562,11 @@ export default function LessonScreen() {
                         selectedPosition === index && styles.optionButtonSelected,
                         showExplanation && index === section.correctPosition && styles.optionButtonCorrect,
                         showExplanation && selectedPosition === index && index !== section.correctPosition && styles.optionButtonWrong,
+                        hoveredOption === `pos-${index}` && !showExplanation && styles.optionButtonHovered,
                       ]}
+                      // @ts-ignore
+                      onMouseEnter={() => setHoveredOption(`pos-${index}`)}
+                      onMouseLeave={() => setHoveredOption(null)}
                     >
                       <Text style={[
                         styles.optionText,
@@ -1599,13 +1638,13 @@ export default function LessonScreen() {
       </ScrollView>
 
       {/* Navigation */}
-      <View style={styles.navigation}>
+      <View style={[styles.navigation, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
         <Pressable
           onPress={handlePrevious}
           disabled={currentSection === 0}
-          style={[styles.navButton, styles.navButtonSecondary, currentSection === 0 && styles.navButtonDisabled]}
+          style={[styles.navButton, styles.navButtonSecondary, { backgroundColor: colors.border }]}
         >
-          <Text style={[styles.navButtonText, styles.navButtonTextSecondary]}>← Précédent</Text>
+          <Text style={[styles.navButtonText, styles.navButtonTextSecondary, { color: colors.text }]}>&larr; Précédent</Text>
         </Pressable>
 
         <Pressable
@@ -1617,7 +1656,7 @@ export default function LessonScreen() {
             section.type === 'quiz' && !showExplanation && styles.navButtonDisabled
           ]}
         >
-          <Text style={styles.navButtonText}>
+          <Text style={[styles.navButtonText, styles.navButtonTextPrimary]}>
             {isLastSection ? 'Terminer' : 'Suivant →'}
           </Text>
         </Pressable>
@@ -1675,46 +1714,45 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 16,
-    maxWidth: 1200,
-    width: '100%',
+    padding: 24,
+    maxWidth: 1400,
+    width: '85%',
     alignSelf: 'center',
   },
   sectionContainer: {
-    marginBottom: 20,
+    marginBottom: 28,
   },
   sectionTitle: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#0F172A',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   sectionContent: {
-    fontSize: 18,
-    color: '#475569',
-    lineHeight: 32,
+    fontSize: 20,
+    lineHeight: 36,
+  },
+  textBox: {
+    borderRadius: 16,
+    padding: 36,
+    borderWidth: 2,
   },
   infoBox: {
-    backgroundColor: '#EFF6FF',
     borderRadius: 16,
-    padding: 20,
+    padding: 36,
     borderWidth: 2,
-    borderColor: '#DBEAFE',
   },
   infoIcon: {
-    fontSize: 40,
-    marginBottom: 16,
+    fontSize: 48,
+    marginBottom: 20,
   },
   infoTitle: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#1E3A8A',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   infoContent: {
-    fontSize: 18,
-    color: '#1E40AF',
-    lineHeight: 28,
+    fontSize: 20,
+    lineHeight: 32,
   },
   quizTitle: {
     fontSize: 14,
@@ -1724,20 +1762,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   quizQuestion: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#0F172A',
-    marginBottom: 24,
+    marginBottom: 28,
   },
   optionsContainer: {
     gap: 12,
   },
   optionButton: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 2,
-    borderColor: '#E2E8F0',
+    borderRadius: 16,
+    padding: 28,
+    borderWidth: 3,
+    borderColor: '#3B82F6',
+    minHeight: 90,
   },
   optionButtonSelected: {
     borderColor: '#2563EB',
@@ -1751,6 +1789,11 @@ const styles = StyleSheet.create({
     borderColor: '#EF4444',
     backgroundColor: '#FEE2E2',
   },
+  optionButtonHovered: {
+    borderColor: '#60A5FA',
+    backgroundColor: '#EFF6FF',
+    transform: [{ scale: 1.02 }],
+  },
   optionButtonWithImage: {
     padding: 8,
   },
@@ -1759,18 +1802,19 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   optionImage: {
-    width: 400,
-    height: 400,
+    width: 340,
+    height: 340,
   },
   optionImageLabel: {
-    fontSize: 14,
-    color: '#475569',
-    fontWeight: '500',
+    fontSize: 18,
+    fontWeight: '600',
     textAlign: 'center',
+    color: '#1F2937',
   },
   optionText: {
-    fontSize: 16,
-    color: '#475569',
+    fontSize: 22,
+    fontWeight: '500',
+    color: '#1F2937',
   },
   optionTextSelected: {
     color: '#1E40AF',
@@ -1799,26 +1843,26 @@ const styles = StyleSheet.create({
   practiceBox: {
     backgroundColor: '#F0FDF4',
     borderRadius: 16,
-    padding: 20,
+    padding: 36,
     borderWidth: 2,
     borderColor: '#BBF7D0',
     alignItems: 'center',
   },
   practiceIcon: {
-    fontSize: 56,
-    marginBottom: 20,
+    fontSize: 64,
+    marginBottom: 24,
   },
   practiceTitle: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
     color: '#166534',
-    marginBottom: 16,
+    marginBottom: 20,
     textAlign: 'center',
   },
   practiceContent: {
-    fontSize: 18,
+    fontSize: 20,
     color: '#15803D',
-    lineHeight: 28,
+    lineHeight: 32,
     textAlign: 'center',
   },
   scoreBox: {
@@ -1849,21 +1893,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 16,
-    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     padding: 12,
   },
   handImage: {
-    width: 600,
-    height: 600,
+    width: 510,
+    height: 510,
+  },
+  voyellesAllImage: {
+    width: 816,
+    height: 816,
   },
   navigation: {
     flexDirection: 'row',
     gap: 12,
     padding: 16,
-    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
   },
   navButton: {
     flex: 1,
@@ -1874,9 +1919,7 @@ const styles = StyleSheet.create({
   navButtonPrimary: {
     backgroundColor: '#2563EB',
   },
-  navButtonSecondary: {
-    backgroundColor: '#F1F5F9',
-  },
+  navButtonSecondary: {},
   navButtonDisabled: {
     opacity: 0.5,
   },
@@ -1905,11 +1948,10 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   multipartSectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#0F172A',
-    marginTop: 20,
-    marginBottom: 12,
+    marginTop: 24,
+    marginBottom: 16,
   },
   submitButton: {
     backgroundColor: '#2563EB',

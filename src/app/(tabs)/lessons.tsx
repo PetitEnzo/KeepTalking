@@ -64,35 +64,36 @@ const lessons: Lesson[] = [
     id: '6',
     title: 'Phrases courantes',
     description: 'Construisez des phrases complètes',
-    duration: '25 min',
+    duration: '10 min',
     level: 'intermediate',
     emoji: '💭',
   },
-  {
-    id: '7',
-    title: 'Fluidité et rythme',
-    description: 'Améliorez votre vitesse d\'exécution',
-    duration: '20 min',
-    level: 'intermediate',
-    emoji: '⚡',
-  },
-  // Avancé
-  {
-    id: '8',
-    title: 'Conversations complexes',
-    description: 'Dialogues élaborés et nuancés',
-    duration: '30 min',
-    level: 'advanced',
-    emoji: '🗣️',
-  },
-  {
-    id: '9',
-    title: 'Expressions idiomatiques',
-    description: 'Expressions et tournures spécifiques',
-    duration: '25 min',
-    level: 'advanced',
-    emoji: '🎭',
-  },
+  // Masqué temporairement - à terminer plus tard
+  // {
+  //   id: '7',
+  //   title: 'Fluidité et rythme',
+  //   description: 'Améliorez votre vitesse d\'exécution',
+  //   duration: '20 min',
+  //   level: 'intermediate',
+  //   emoji: '⚡',
+  // },
+  // Avancé - Masqué temporairement - à terminer plus tard
+  // {
+  //   id: '8',
+  //   title: 'Conversations complexes',
+  //   description: 'Dialogues élaborés et nuancés',
+  //   duration: '30 min',
+  //   level: 'advanced',
+  //   emoji: '🗣️',
+  // },
+  // {
+  //   id: '9',
+  //   title: 'Expressions idiomatiques',
+  //   description: 'Expressions et tournures spécifiques',
+  //   duration: '25 min',
+  //   level: 'advanced',
+  //   emoji: '🎭',
+  // },
 ];
 
 export default function LessonsScreen() {
@@ -166,7 +167,7 @@ export default function LessonsScreen() {
 
         {/* Filtres de niveau */}
         <View style={styles.filterContainer}>
-          {(['beginner', 'intermediate', 'advanced'] as LessonLevel[]).map((level) => (
+          {(['beginner', 'intermediate'] as LessonLevel[]).map((level) => (
             <Pressable
               key={level}
               onPress={() => setSelectedLevel(level)}
@@ -216,24 +217,26 @@ export default function LessonsScreen() {
         {/* Bandeau de félicitations pour avoir complété les leçons intermédiaires */}
         {selectedLevel === 'intermediate' &&
          completedLessonIds.has('5') && 
-         completedLessonIds.has('6') && 
-         completedLessonIds.has('7') && (
+         completedLessonIds.has('6') && (
           <View style={styles.congratsBanner}>
             <Text style={styles.congratsEmoji}>🎉</Text>
             <View style={styles.congratsContent}>
-              <Text style={styles.congratsTitle}>Bravo !</Text>
+              <Text style={styles.congratsTitle}>Félicitations !</Text>
               <Text style={styles.congratsText}>
-                Vous avez terminé toutes les leçons intermédiaires ! Vous maîtrisez maintenant les bases du LFPC. Prêt pour le niveau avancé ?
+                Vous avez terminé toutes les leçons intermédiaire ! Vous êtes maintenant prêt à passer aux entrainements !
               </Text>
               <Text style={styles.congratsHint}>
-                💡 Les leçons intermédiaires restent disponibles pour vous entraîner quand vous le souhaitez.
+                💡 N'hésitez pas à revenir sur ces leçons quand vous en avez besoin pour réviser les bases.
+              </Text>
+              <Text style={styles.congratsText}>
+                D'autres leçons avancées arriveront bientôt !
               </Text>
               <Pressable 
                 style={styles.congratsButton}
-                onPress={() => setSelectedLevel('advanced')}
+                onPress={() => router.push('/training-beginner')}
               >
                 <Text style={styles.congratsButtonText}>
-                  Découvrir les leçons avancées →
+                  Découvrir les entrainements →
                 </Text>
               </Pressable>
             </View>

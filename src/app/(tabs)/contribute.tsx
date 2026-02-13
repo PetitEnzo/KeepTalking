@@ -30,13 +30,16 @@ const HAND_CONFIG_KEYS = ['M', 'J', 'B', 'L', 'K', 'S', 'G', 'ING'];
 // Consonnes par configuration de main (basé sur la base de données)
 const CONSONNES_BY_CONFIG: { [key: string]: string[] } = {
   'M': ['M', 'T', 'F'],
-  'J': ['P', 'J', 'D'],
+  'P': ['P', 'J', 'D'], // Config 2 - clé peut être P, J ou D
+  'J': ['P', 'J', 'D'], // Config 2 - clé peut être P, J ou D
+  'D': ['P', 'J', 'D'], // Config 2 - clé peut être P, J ou D
   'B': ['B', 'N', 'UI'],
   'L': ['L', 'CH', 'GN', 'OU'],
   'K': ['K', 'V', 'Z'],
   'S': ['S', 'R'],
   'G': ['G'],
-  'ING': ['ING', 'LLE'],
+  'ING': ['ING', 'LLE'], // Config 8 - clé peut être ING ou LLE
+  'LLE': ['ING', 'LLE'], // Config 8 - clé peut être ING ou LLE
 };
 
 export default function ContributeScreen() {
@@ -140,14 +143,11 @@ export default function ContributeScreen() {
       return;
     }
 
-    if (!currentSyllable.hand_position_config) {
-      Alert.alert('Erreur', 'Veuillez sélectionner une position du visage');
-      return;
-    }
+    // Note: hand_position_config peut être null (choix "Aucune" est valide)
 
     // Générer la description automatiquement
     const position = facePositions.find(p => p.configuration_number === currentSyllable.hand_position_config);
-    const positionDescription = position?.description || 'Position inconnue';
+    const positionDescription = position?.description || 'Aucune';
     const configName = currentSyllable.hand_sign_key;
     const description = `${positionDescription} - Configuration ${configName}`;
 
@@ -292,14 +292,20 @@ export default function ContributeScreen() {
     );
   }
 
+  const canSubmit = word.trim() !== '' && syllables.length > 0;
+  const canAddSyllable = currentSyllable.text.trim() !== '' && 
+                         currentSyllable.hand_sign_key !== null && 
+                         currentSyllable.consonne !== null;
+  // Note: hand_position_config peut être null ("Aucune" est un choix valide)
+
   return (
     <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.content}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.headerTitle, { color: colors.text }]}>✍️ Ajouter un mot</Text>
+          <Text style={[styles.headerTitle, { color: colors.text }]}>✍️ Ajouter un mot ou une phrase</Text>
           <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
-            Contribuez à la communauté en ajoutant de nouveaux mots LFPC
+            Contribuez à la communauté en ajoutant de nouveaux mots ou phrases LFPC
           </Text>
         </View>
 
@@ -315,14 +321,20 @@ export default function ContributeScreen() {
 
         {/* Word Input */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Mot à ajouter</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Mot ou phrase à ajouter</Text>
           <TextInput
             style={[styles.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.text }]}
             value={word}
             onChangeText={setWord}
             placeholder="Entrez le mot (ex: Chocolat)"
             placeholderTextColor={colors.textSecondary}
+            editable={syllables.length === 0}
           />
+          {syllables.length > 0 && (
+            <Text style={[styles.helperText, { color: colors.textSecondary }]}>
+              ⚠️ Le mot ou la phrase ne peut plus être modifié après l'ajout d'une syllabe
+            </Text>
+          )}
         </View>
 
         {/* Difficulty Selection */}
@@ -336,8 +348,10 @@ export default function ContributeScreen() {
                   styles.difficultyButton,
                   { backgroundColor: colors.card, borderColor: colors.border },
                   difficulty === level && styles.difficultyButtonActive,
+                  syllables.length > 0 && { opacity: 0.5 },
                 ]}
-                onPress={() => setDifficulty(level)}
+                onPress={() => syllables.length === 0 && setDifficulty(level)}
+                disabled={syllables.length > 0}
               >
                 <Text
                   style={[
@@ -353,6 +367,11 @@ export default function ContributeScreen() {
               </Pressable>
             ))}
           </View>
+          {syllables.length > 0 && (
+            <Text style={[styles.helperText, { color: colors.textSecondary }]}>
+              ⚠️ La difficulté ne peut plus être modifiée après l'ajout d'une syllabe
+            </Text>
+          )}
         </View>
 
         {/* Current Syllable Input */}
@@ -494,7 +513,14 @@ export default function ContributeScreen() {
             </View>
           )}
           
-          <Pressable style={styles.addButton} onPress={addSyllable}>
+          <Pressable 
+            style={[
+              styles.addButton,
+              !canAddSyllable && styles.addButtonDisabled
+            ]} 
+            onPress={addSyllable}
+            disabled={!canAddSyllable}
+          >
             <Text style={styles.addButtonText}>➕ Ajouter la syllabe</Text>
           </Pressable>
         </View>
@@ -538,12 +564,15 @@ export default function ContributeScreen() {
 
         {/* Submit Button */}
         <Pressable
-          style={styles.submitButton}
+          style={[
+            styles.submitButton,
+            (!canSubmit || loading) && styles.submitButtonDisabled
+          ]}
           onPress={submitWord}
-          disabled={loading}
+          disabled={!canSubmit || loading}
         >
           <Text style={styles.submitButtonText}>
-            {loading ? '⏳ Envoi en cours...' : '🚀 Soumettre le mot'}
+            {loading ? 'Envoi en cours...' : 'Soumettre le mot ou la phrase'}
           </Text>
         </Pressable>
 
@@ -684,6 +713,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',
+  },
+  addButtonDisabled: {
+    backgroundColor: '#9CA3AF',
+    opacity: 0.6,
   },
   addButtonText: {
     fontSize: 16,
@@ -895,6 +928,12 @@ const styles = StyleSheet.create({
   positionEmoji: {
     fontSize: 24,
     marginRight: 12,
+  },
+  helperText: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 8,
+    fontStyle: 'italic',
   },
   positionImage: {
     width: 80,

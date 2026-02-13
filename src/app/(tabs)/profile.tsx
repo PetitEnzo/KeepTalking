@@ -4,6 +4,7 @@ import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
+import BadgeDisplay from '../../components/BadgeDisplay';
 
 interface LessonProgress {
   lesson_id: string;
@@ -83,6 +84,7 @@ export default function ProfileScreen() {
   const [currentXP, setCurrentXP] = useState(0);
   const [xpForNextLevel, setXpForNextLevel] = useState(100);
   const [userStats, setUserStats] = useState<any>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     loadUserProgress();
@@ -100,6 +102,7 @@ export default function ProfileScreen() {
         .single();
 
       if (userData) {
+        setUserId(userData.user_id);
         const currentLevel = userData.level || 1;
         const totalXP = userData.total_points || 0;
         
@@ -223,9 +226,6 @@ export default function ProfileScreen() {
             ) : (
               <Text style={styles.avatar}>{selectedAvatar}</Text>
             )}
-            <View style={styles.editBadge}>
-              <Text style={[styles.title, { color: colors.text }]}>👤 Mon Profil</Text>
-            </View>
           </Pressable>
           
           <Text style={[styles.username, { color: colors.text }]}>
@@ -272,6 +272,13 @@ export default function ProfileScreen() {
             {xpForNextLevel - currentXP} XP pour atteindre le niveau {userLevel + 1}
           </Text>
         </View>
+
+        {/* Badges */}
+        {userId && (
+          <View style={[styles.badgesSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <BadgeDisplay userId={userId} showTitle={true} />
+          </View>
+        )}
 
         {/* Sources d'XP */}
         <View style={[styles.xpSourcesSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -721,6 +728,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 8,
+  },
+  badgesSection: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#BFDBFE',
   },
   modalCloseButton: {
     backgroundColor: '#F1F5F9',

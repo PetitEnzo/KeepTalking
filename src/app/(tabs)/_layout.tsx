@@ -45,6 +45,7 @@ export default function TabsLayout() {
   const pathname = usePathname();
   const [userAvatar, setUserAvatar] = useState<string>('👤');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   useEffect(() => {
     loadUserAvatar();
@@ -162,8 +163,12 @@ export default function TabsLayout() {
               style={({ pressed }) => [
                 styles.navItem, 
                 pressed && styles.navItemPressed,
-                isActive('/(tabs)') && styles.navItemActive
+                isActive('/(tabs)') && styles.navItemActive,
+                hoveredItem === 'home' && !isActive('/(tabs)') && styles.navItemHovered
               ]}
+              // @ts-ignore
+              onMouseEnter={() => setHoveredItem('home')}
+              onMouseLeave={() => setHoveredItem(null)}
             >
               <Text style={styles.navIcon}>🏠</Text>
               <Text style={[styles.navText, isActive('/(tabs)') && styles.navTextActive]}>Accueil</Text>
@@ -174,8 +179,12 @@ export default function TabsLayout() {
               style={({ pressed }) => [
                 styles.navItem, 
                 pressed && styles.navItemPressed,
-                isActive('/lessons') && styles.navItemActive
+                isActive('/lessons') && styles.navItemActive,
+                hoveredItem === 'lessons' && !isActive('/lessons') && styles.navItemHovered
               ]}
+              // @ts-ignore
+              onMouseEnter={() => setHoveredItem('lessons')}
+              onMouseLeave={() => setHoveredItem(null)}
             >
               <Text style={styles.navIcon}>📚</Text>
               <Text style={[styles.navText, isActive('/lessons') && styles.navTextActive]}>Leçons</Text>
@@ -186,8 +195,12 @@ export default function TabsLayout() {
               style={({ pressed }) => [
                 styles.navItem, 
                 pressed && styles.navItemPressed,
-                isActive('/training-beginner') && styles.navItemActive
+                isActive('/training-beginner') && styles.navItemActive,
+                hoveredItem === 'training-beginner' && !isActive('/training-beginner') && styles.navItemHovered
               ]}
+              // @ts-ignore
+              onMouseEnter={() => setHoveredItem('training-beginner')}
+              onMouseLeave={() => setHoveredItem(null)}
             >
               <Text style={styles.navIcon}>🖐️</Text>
               <Text style={[styles.navText, isActive('/training-beginner') && styles.navTextActive]}>Entraînement Débutant</Text>
@@ -198,8 +211,12 @@ export default function TabsLayout() {
               style={({ pressed }) => [
                 styles.navItem, 
                 pressed && styles.navItemPressed,
-                isActive('/training') && !isActive('/training-beginner') && styles.navItemActive
+                isActive('/training') && !isActive('/training-beginner') && styles.navItemActive,
+                hoveredItem === 'training' && !isActive('/training') && styles.navItemHovered
               ]}
+              // @ts-ignore
+              onMouseEnter={() => setHoveredItem('training')}
+              onMouseLeave={() => setHoveredItem(null)}
             >
               <Text style={styles.navIcon}>🎯</Text>
               <Text style={[styles.navText, isActive('/training') && !isActive('/training-beginner') && styles.navTextActive]}>Entraînement Avancé</Text>
@@ -210,8 +227,12 @@ export default function TabsLayout() {
               style={({ pressed }) => [
                 styles.navItem, 
                 pressed && styles.navItemPressed,
-                isActive('/contribute') && styles.navItemActive
+                isActive('/contribute') && styles.navItemActive,
+                hoveredItem === 'contribute' && !isActive('/contribute') && styles.navItemHovered
               ]}
+              // @ts-ignore
+              onMouseEnter={() => setHoveredItem('contribute')}
+              onMouseLeave={() => setHoveredItem(null)}
             >
               <Text style={styles.navIcon}>✍️</Text>
               <Text style={[styles.navText, isActive('/contribute') && styles.navTextActive]}>Ajouter un mot</Text>
@@ -222,8 +243,12 @@ export default function TabsLayout() {
               style={({ pressed }) => [
                 styles.navItem, 
                 pressed && styles.navItemPressed,
-                isActive('/game') && styles.navItemActive
+                isActive('/game') && styles.navItemActive,
+                hoveredItem === 'game' && !isActive('/game') && styles.navItemHovered
               ]}
+              // @ts-ignore
+              onMouseEnter={() => setHoveredItem('game')}
+              onMouseLeave={() => setHoveredItem(null)}
             >
               <Text style={styles.navIcon}>🎮</Text>
               <Text style={[styles.navText, isActive('/game') && styles.navTextActive]}>Jeu</Text>
@@ -234,8 +259,12 @@ export default function TabsLayout() {
               style={({ pressed }) => [
                 styles.navItem, 
                 pressed && styles.navItemPressed,
-                isActive('/basics') && styles.navItemActive
+                isActive('/basics') && styles.navItemActive,
+                hoveredItem === 'basics' && !isActive('/basics') && styles.navItemHovered
               ]}
+              // @ts-ignore
+              onMouseEnter={() => setHoveredItem('basics')}
+              onMouseLeave={() => setHoveredItem(null)}
             >
               <Text style={styles.navIcon}>📖</Text>
               <Text style={[styles.navText, isActive('/basics') && styles.navTextActive]}>Les bases du code</Text>
@@ -246,8 +275,12 @@ export default function TabsLayout() {
               style={({ pressed }) => [
                 styles.navItem, 
                 pressed && styles.navItemPressed,
-                isActive('/profile') && styles.navItemActive
+                isActive('/profile') && styles.navItemActive,
+                hoveredItem === 'profile' && !isActive('/profile') && styles.navItemHovered
               ]}
+              // @ts-ignore
+              onMouseEnter={() => setHoveredItem('profile')}
+              onMouseLeave={() => setHoveredItem(null)}
             >
               <Text style={styles.navIcon}>👤</Text>
               <Text style={[styles.navText, isActive('/profile') && styles.navTextActive]}>Profil</Text>
@@ -263,8 +296,12 @@ export default function TabsLayout() {
               style={({ pressed }) => [
                 styles.navItem, 
                 pressed && styles.navItemPressed,
-                isActive('/about') && styles.navItemActive
+                isActive('/about') && styles.navItemActive,
+                hoveredItem === 'about' && !isActive('/about') && styles.navItemHovered
               ]}
+              // @ts-ignore
+              onMouseEnter={() => setHoveredItem('about')}
+              onMouseLeave={() => setHoveredItem(null)}
             >
               <Text style={styles.navIcon}>ℹ️</Text>
               <Text style={[styles.navText, isActive('/about') && styles.navTextActive]}>À propos</Text>
@@ -276,8 +313,12 @@ export default function TabsLayout() {
                 style={({ pressed }) => [
                   styles.navItem, 
                   pressed && styles.navItemPressed,
-                  isActive('/admin') && styles.navItemActive
+                  isActive('/admin') && styles.navItemActive,
+                  hoveredItem === 'admin' && !isActive('/admin') && styles.navItemHovered
                 ]}
+                // @ts-ignore
+                onMouseEnter={() => setHoveredItem('admin')}
+                onMouseLeave={() => setHoveredItem(null)}
               >
                 <Text style={styles.navIcon}>🛡️</Text>
                 <Text style={[styles.navText, isActive('/admin') && styles.navTextActive]}>Administration</Text>
@@ -290,12 +331,27 @@ export default function TabsLayout() {
         <View style={styles.themeSection}>
           <Pressable 
             onPress={toggleTheme}
-            style={({ pressed }) => [styles.themeButton, pressed && styles.themeButtonPressed]}
+            style={styles.themeToggleContainer}
           >
-            <Text style={styles.themeIcon}>{theme === 'light' ? '🌙' : '☀️'}</Text>
-            <Text style={styles.themeText}>
-              {theme === 'light' ? 'Mode nuit' : 'Mode jour'}
-            </Text>
+            <View style={[
+              styles.themeToggle,
+              theme === 'dark' && styles.themeToggleDark
+            ]}>
+              <View style={[
+                styles.themeToggleCircle,
+                theme === 'dark' && styles.themeToggleCircleDark
+              ]}>
+                <Text style={styles.themeToggleIcon}>
+                  {theme === 'light' ? '☀️' : '🌙'}
+                </Text>
+              </View>
+              <Text style={[
+                styles.themeToggleText,
+                theme === 'dark' && styles.themeToggleTextDark
+              ]}>
+                {theme === 'light' ? 'MODE CLAIR' : 'MODE SOMBRE'}
+              </Text>
+            </View>
           </Pressable>
         </View>
 
@@ -436,6 +492,11 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
+  navItemHovered: {
+    backgroundColor: '#1E293B',
+    borderLeftWidth: 2,
+    borderLeftColor: '#475569',
+  },
   navTextActive: {
     fontWeight: '700',
     color: '#FFFFFF',
@@ -454,26 +515,52 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#334155',
   },
-  themeButton: {
-    backgroundColor: '#475569',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+  themeToggleContainer: {
+    alignItems: 'center',
+  },
+  themeToggle: {
+    width: 200,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#E5E7EB',
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 8,
+    position: 'relative',
+  },
+  themeToggleDark: {
+    backgroundColor: '#1F2937',
+    justifyContent: 'flex-end',
+  },
+  themeToggleCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#D1D5DB',
+    position: 'absolute',
+    left: 8,
   },
-  themeButtonPressed: {
-    backgroundColor: '#334155',
+  themeToggleCircleDark: {
+    left: 148,
+    borderColor: '#374151',
   },
-  themeIcon: {
+  themeToggleIcon: {
     fontSize: 20,
-    marginRight: 8,
   },
-  themeText: {
+  themeToggleText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#1F2937',
+    marginLeft: 60,
+  },
+  themeToggleTextDark: {
     color: '#FFFFFF',
-    fontWeight: '500',
-    fontSize: 16,
+    marginLeft: 12,
+    marginRight: 60,
   },
   signOutSection: {
     padding: 16,

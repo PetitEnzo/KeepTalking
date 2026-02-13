@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { checkBadgesAfterXP } from './badgeService';
 
 export interface XPResult {
   new_xp: number;
@@ -25,6 +26,11 @@ export async function addExperience(
     if (error) {
       console.error('Error adding experience:', error);
       return null;
+    }
+
+    // Check for badge unlocks after XP gain
+    if (data?.[0]) {
+      checkBadgesAfterXP(userId);
     }
 
     return data?.[0] || null;

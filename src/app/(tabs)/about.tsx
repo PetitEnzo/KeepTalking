@@ -57,36 +57,13 @@ export default function AboutTabScreen() {
           </Text>
         </View>
 
-        <View style={styles.statsSection}>
-          <Text style={[styles.sectionTitle, { color: '#FFFFFF' }]}>
-            Notre Impact
-          </Text>
-          
-          <View style={styles.statsRow}>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>500+</Text>
-              <Text style={styles.statLabel}>Utilisateurs actifs</Text>
-            </View>
-
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>10K+</Text>
-              <Text style={styles.statLabel}>Leçons complétées</Text>
-            </View>
-
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>2K+</Text>
-              <Text style={styles.statLabel}>Heures d'apprentissage</Text>
-            </View>
-          </View>
-        </View>
-
         <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
             Contact
           </Text>
           <Text style={[styles.text, { color: colors.textSecondary }]}>
-            Pour toute question ou suggestion, n'hésitez pas à nous contacter à :{'\n'}
-            contact@keeptalking.fr
+            Pour toute question ou suggestion, n'hésitez pas à me contacter à :{'\n'}
+            enzopetit33800@gmail.com
           </Text>
         </View>
 
@@ -118,53 +95,24 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   section: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 24,
     marginBottom: 24,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 2,
   },
   sectionTitle: {
     fontSize: 24,
-    fontWeight: '600',
-    color: '#0F172A',
+    fontWeight: '700',
     marginBottom: 16,
   },
   text: {
     fontSize: 16,
-    color: '#64748B',
     lineHeight: 24,
-  },
-  statsSection: {
-    backgroundColor: '#2563EB',
-    borderRadius: 16,
-    padding: 24,
-    marginBottom: 24,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 16,
-    justifyContent: 'space-around',
-  },
-  statCard: {
-    alignItems: 'center',
-    minWidth: 120,
-  },
-  statNumber: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 8,
-  },
-  statLabel: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.9)',
-    textAlign: 'center',
   },
   footer: {
     paddingTop: 24,

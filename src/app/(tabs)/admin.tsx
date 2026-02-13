@@ -219,6 +219,26 @@ export default function AdminScreen() {
     }
   };
 
+  const deleteContribution = async (contributionId: string) => {
+    console.log('🟢 deleteContribution FUNCTION CALLED with ID:', contributionId);
+    try {
+      console.log('🟡 Calling Supabase delete...');
+      const { error } = await supabase
+        .from('word_contributions')
+        .delete()
+        .eq('contribution_id', contributionId);
+
+      console.log('🟡 Supabase response - error:', error);
+      if (error) throw error;
+
+      console.log('✅ Delete successful, reloading contributions...');
+      loadContributions();
+    } catch (error: any) {
+      console.error('❌ Error deleting contribution:', error);
+      Alert.alert('Erreur', error.message || 'Impossible de supprimer le mot');
+    }
+  };
+
   const updateUserRole = async (userId: string, newRole: 'apprenant' | 'admin') => {
     try {
       const { error } = await supabase
@@ -421,34 +441,45 @@ export default function AdminScreen() {
                   </View>
 
                   {/* Action Buttons */}
-                  {contribution.status === 'pending' && (
-                    <View style={styles.actionButtons}>
-                      <Pressable
-                        style={styles.approveButton}
-                        onPress={() =>
-                          updateContributionStatus(
-                            contribution.contribution_id,
-                            'approved',
-                            contribution.user_id
-                          )
-                        }
-                      >
-                        <Text style={styles.approveButtonText}>✅ Approuver</Text>
-                      </Pressable>
-                      <Pressable
-                        style={styles.rejectButton}
-                        onPress={() =>
-                          updateContributionStatus(
-                            contribution.contribution_id,
-                            'rejected',
-                            contribution.user_id
-                          )
-                        }
-                      >
-                        <Text style={styles.rejectButtonText}>❌ Rejeter</Text>
-                      </Pressable>
-                    </View>
-                  )}
+                  <View style={styles.actionButtons}>
+                    {contribution.status === 'pending' && (
+                      <>
+                        <Pressable
+                          style={styles.approveButton}
+                          onPress={() =>
+                            updateContributionStatus(
+                              contribution.contribution_id,
+                              'approved',
+                              contribution.user_id
+                            )
+                          }
+                        >
+                          <Text style={styles.approveButtonText}>✅ Approuver</Text>
+                        </Pressable>
+                        <Pressable
+                          style={styles.rejectButton}
+                          onPress={() =>
+                            updateContributionStatus(
+                              contribution.contribution_id,
+                              'rejected',
+                              contribution.user_id
+                            )
+                          }
+                        >
+                          <Text style={styles.rejectButtonText}>❌ Rejeter</Text>
+                        </Pressable>
+                      </>
+                    )}
+                    <Pressable
+                      style={styles.deleteButton}
+                      onPress={() => {
+                        console.log('🔴 DELETE BUTTON CLICKED!', contribution.contribution_id);
+                        deleteContribution(contribution.contribution_id);
+                      }}
+                    >
+                      <Text style={styles.deleteButtonText}>🗑️ Supprimer</Text>
+                    </Pressable>
+                  </View>
                 </View>
               ))
             )}
@@ -717,6 +748,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rejectButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  deleteButton: {
+    flex: 1,
+    backgroundColor: '#6B7280',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+  },
+  deleteButtonText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',
