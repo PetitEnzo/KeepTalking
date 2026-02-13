@@ -371,37 +371,39 @@ export default function WebcamFeedback({
 
   return (
     <View style={styles.container}>
-      {/* Boutons de contrôle */}
-      <View style={styles.controlButtons}>
-        <Pressable 
-          style={({ pressed }) => [
-            styles.toggleButton,
-            isCameraEnabled ? styles.toggleButtonOn : styles.toggleButtonOff,
-            pressed && styles.toggleButtonPressed
-          ]}
-          onPress={toggleCamera}
-        >
-          <Text style={styles.toggleIcon}>{isCameraEnabled ? '📹' : '📷'}</Text>
-          <Text style={styles.toggleText}>
-            {isCameraEnabled ? 'Désactiver la webcam' : 'Activer la webcam'}
-          </Text>
-        </Pressable>
-
-        {isCameraEnabled && (
+      {/* Boutons de contrôle - Desktop uniquement */}
+      {!isMobileOrTablet && (
+        <View style={styles.controlButtons}>
           <Pressable 
             style={({ pressed }) => [
-              styles.flipButton,
+              styles.toggleButton,
+              isCameraEnabled ? styles.toggleButtonOn : styles.toggleButtonOff,
               pressed && styles.toggleButtonPressed
             ]}
-            onPress={toggleFlip}
+            onPress={toggleCamera}
           >
-            <Text style={styles.toggleIcon}>🔄</Text>
+            <Text style={styles.toggleIcon}>{isCameraEnabled ? '📹' : '📷'}</Text>
             <Text style={styles.toggleText}>
-              {isCameraFlipped ? 'Vue normale' : 'Effet miroir'}
+              {isCameraEnabled ? 'Désactiver la webcam' : 'Activer la webcam'}
             </Text>
           </Pressable>
-        )}
-      </View>
+
+          {isCameraEnabled && (
+            <Pressable 
+              style={({ pressed }) => [
+                styles.flipButton,
+                pressed && styles.toggleButtonPressed
+              ]}
+              onPress={toggleFlip}
+            >
+              <Text style={styles.toggleIcon}>🔄</Text>
+              <Text style={styles.toggleText}>
+                {isCameraFlipped ? 'Vue normale' : 'Effet miroir'}
+              </Text>
+            </Pressable>
+          )}
+        </View>
+      )}
 
       {isCameraEnabled ? (
         <>
@@ -455,6 +457,20 @@ export default function WebcamFeedback({
                 </View>
               )}
             </View>
+
+            {/* Bouton activer/désactiver webcam - Mobile uniquement (overlay) */}
+            {isMobileOrTablet && (
+              <Pressable 
+                style={({ pressed }) => [
+                  styles.webcamToggleButton,
+                  { backgroundColor: isCameraEnabled ? '#10B981' : '#3B82F6' },
+                  pressed && styles.toggleButtonPressed
+                ]}
+                onPress={toggleCamera}
+              >
+                <Text style={styles.webcamToggleIcon}>{isCameraEnabled ? '📹' : '📷'}</Text>
+              </Pressable>
+            )}
 
             {/* Barre de confiance */}
             <View style={styles.confidenceOverlay}>
@@ -675,6 +691,25 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     color: '#1F2937',
+  },
+  webcamToggleButton: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    borderRadius: 50,
+    width: 56,
+    height: 56,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  webcamToggleIcon: {
+    fontSize: 28,
   },
   orientationHint: {
     position: 'absolute',
