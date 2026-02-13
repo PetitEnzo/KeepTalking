@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, useWindowDimensions } from 'react-native';
 
 // Déclarer les types globaux pour TensorFlow.js
 declare global {
@@ -27,6 +27,9 @@ export default function WebcamFeedback({
   onDetection,
   detectFace = true, // Par défaut, détection de visage activée
 }: WebcamFeedbackProps) {
+  const { width } = useWindowDimensions();
+  const isMobileOrTablet = width < 1024;
+  
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isCameraEnabled, setIsCameraEnabled] = useState(false);
