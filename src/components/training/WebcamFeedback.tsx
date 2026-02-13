@@ -440,26 +440,28 @@ export default function WebcamFeedback({
               height={360}
             />
 
-            {/* Overlay de statut */}
-            <View style={styles.statusOverlay}>
-              <View style={[
-                styles.statusBadge,
-                { backgroundColor: isDetecting ? '#10B981' : '#EF4444' }
-              ]}>
-                <Text style={styles.statusDot}>●</Text>
-                <Text style={styles.statusText}>
-                  {isDetecting ? 'Main détectée' : 'Aucune main'}
-                </Text>
-              </View>
-
-              {handedness && (
-                <View style={styles.handednessBadge}>
-                  <Text style={styles.handednessText}>
-                    Main {handedness === 'Left' ? 'gauche' : 'droite'}
+            {/* Overlay de statut - Desktop uniquement */}
+            {!isMobileOrTablet && (
+              <View style={styles.statusOverlay}>
+                <View style={[
+                  styles.statusBadge,
+                  { backgroundColor: isDetecting ? '#10B981' : '#EF4444' }
+                ]}>
+                  <Text style={styles.statusDot}>●</Text>
+                  <Text style={styles.statusText}>
+                    {isDetecting ? 'Main détectée' : 'Aucune main'}
                   </Text>
                 </View>
-              )}
-            </View>
+
+                {handedness && (
+                  <View style={styles.handednessBadge}>
+                    <Text style={styles.handednessText}>
+                      Main {handedness === 'Left' ? 'gauche' : 'droite'}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            )}
 
             {/* Bouton activer/désactiver webcam - Mobile uniquement (overlay) */}
             {isMobileOrTablet && (
@@ -514,18 +516,16 @@ export default function WebcamFeedback({
           
           {/* Bouton activer caméra sur mobile quand elle est éteinte */}
           {isMobileOrTablet && (
-            <View style={styles.cameraOffContainerMobile}>
-              <Pressable 
-                style={({ pressed }) => [
-                  styles.activateCameraButton,
-                  pressed && styles.toggleButtonPressed
-                ]}
-                onPress={toggleCamera}
-              >
-                <Text style={styles.activateCameraIcon}>📷</Text>
-                <Text style={styles.activateCameraText}>Activer la caméra</Text>
-              </Pressable>
-            </View>
+            <Pressable 
+              style={({ pressed }) => [
+                styles.activateCameraButtonMobile,
+                pressed && styles.toggleButtonPressed
+              ]}
+              onPress={toggleCamera}
+            >
+              <Text style={styles.activateCameraIconMobile}>📷</Text>
+              <Text style={styles.activateCameraTextMobile}>Activer la caméra</Text>
+            </Pressable>
           )}
         </>
       )}
@@ -734,36 +734,29 @@ const styles = StyleSheet.create({
   webcamToggleIcon: {
     fontSize: 28,
   },
-  cameraOffContainerMobile: {
-    backgroundColor: '#F3F4F6',
-    borderRadius: 12,
-    padding: 20,
+  activateCameraButtonMobile: {
+    backgroundColor: '#10B981',
+    borderRadius: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 200,
-  },
-  activateCameraButton: {
-    backgroundColor: '#3B82F6',
-    borderRadius: 50,
-    width: 120,
-    height: 120,
-    justifyContent: 'center',
-    alignItems: 'center',
+    gap: 12,
+    width: '100%',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  activateCameraIcon: {
-    fontSize: 48,
-    marginBottom: 8,
+  activateCameraIconMobile: {
+    fontSize: 24,
   },
-  activateCameraText: {
-    fontSize: 14,
+  activateCameraTextMobile: {
+    fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',
-    textAlign: 'center',
   },
   orientationHint: {
     position: 'absolute',
