@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
@@ -14,6 +14,8 @@ type UserGoal = 'communication' | 'professional' | 'family' | 'curiosity' | null
 export default function HomeScreen() {
   const { user } = useAuth();
   const { colors } = useTheme();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const [step, setStep] = useState(1);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -104,7 +106,7 @@ export default function HomeScreen() {
   if (hasCompletedOnboarding) {
     return (
       <ScrollView style={[styles.completedContainer, { backgroundColor: colors.background }]}>
-        <View style={styles.completedContent}>
+        <View style={[styles.completedContent, isMobile && styles.completedContentMobile]}>
           <Text style={[styles.welcomeTitle, { color: colors.text }]}>
             Bienvenue {user?.user_metadata?.username || 'Utilisateur'} ! 👋
           </Text>
@@ -552,6 +554,10 @@ const styles = StyleSheet.create({
   },
   completedContent: {
     padding: 20,
+  },
+  completedContentMobile: {
+    padding: 12,
+    paddingTop: 8,
   },
   welcomeTitle: {
     fontSize: 28,

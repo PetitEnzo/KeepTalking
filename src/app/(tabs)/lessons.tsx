@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -98,7 +98,9 @@ const lessons: Lesson[] = [
 
 export default function LessonsScreen() {
   const { user } = useAuth();
-  const { colors } = useTheme();
+  const { theme, colors } = useTheme();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const [selectedLevel, setSelectedLevel] = useState<LessonLevel>('beginner');
   const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(new Set());
   const [failedLessonIds, setFailedLessonIds] = useState<Set<string>>(new Set());
@@ -192,18 +194,18 @@ export default function LessonsScreen() {
          completedLessonIds.has('2') && 
          completedLessonIds.has('3') && 
          completedLessonIds.has('4') && (
-          <View style={styles.congratsBanner}>
-            <Text style={styles.congratsEmoji}>🎉</Text>
+          <View style={[styles.congratsBanner, isMobile && styles.congratsBannerMobile]}>
+            <Text style={[styles.congratsEmoji, isMobile && styles.congratsEmojiMobile]}>🎉</Text>
             <View style={styles.congratsContent}>
-              <Text style={styles.congratsTitle}>Félicitations !</Text>
-              <Text style={styles.congratsText}>
+              <Text style={[styles.congratsTitle, isMobile && styles.congratsTitleMobile]}>Félicitations !</Text>
+              <Text style={[styles.congratsText, isMobile && styles.congratsTextMobile]}>
                 Vous avez terminé toutes les leçons débutant ! Vous êtes maintenant prêt à passer aux leçons intermédiaires.
               </Text>
-              <Text style={styles.congratsHint}>
+              <Text style={[styles.congratsHint, isMobile && styles.congratsHintMobile]}>
                 💡 N'hésitez pas à revenir sur ces leçons quand vous en avez besoin pour réviser les bases.
               </Text>
               <Pressable 
-                style={styles.congratsButton}
+                style={[styles.congratsButton, isMobile && styles.congratsButtonMobile]}
                 onPress={() => setSelectedLevel('intermediate')}
               >
                 <Text style={styles.congratsButtonText}>
@@ -218,21 +220,21 @@ export default function LessonsScreen() {
         {selectedLevel === 'intermediate' &&
          completedLessonIds.has('5') && 
          completedLessonIds.has('6') && (
-          <View style={styles.congratsBanner}>
-            <Text style={styles.congratsEmoji}>🎉</Text>
+          <View style={[styles.congratsBanner, isMobile && styles.congratsBannerMobile]}>
+            <Text style={[styles.congratsEmoji, isMobile && styles.congratsEmojiMobile]}>🎉</Text>
             <View style={styles.congratsContent}>
-              <Text style={styles.congratsTitle}>Félicitations !</Text>
-              <Text style={styles.congratsText}>
+              <Text style={[styles.congratsTitle, isMobile && styles.congratsTitleMobile]}>Félicitations !</Text>
+              <Text style={[styles.congratsText, isMobile && styles.congratsTextMobile]}>
                 Vous avez terminé toutes les leçons intermédiaire ! Vous êtes maintenant prêt à passer aux entrainements !
               </Text>
-              <Text style={styles.congratsHint}>
+              <Text style={[styles.congratsHint, isMobile && styles.congratsHintMobile]}>
                 💡 N'hésitez pas à revenir sur ces leçons quand vous en avez besoin pour réviser les bases.
               </Text>
               <Text style={styles.congratsText}>
                 D'autres leçons avancées arriveront bientôt !
               </Text>
               <Pressable 
-                style={styles.congratsButton}
+                style={[styles.congratsButton, isMobile && styles.congratsButtonMobile]}
                 onPress={() => router.push('/training-beginner')}
               >
                 <Text style={styles.congratsButtonText}>
@@ -254,7 +256,7 @@ export default function LessonsScreen() {
               <Text style={styles.congratsText}>
                 Vous maîtrisez maintenant le LFPC de A à Z ! Vous êtes un codeur accompli.
               </Text>
-              <Text style={styles.congratsHint}>
+              <Text style={[styles.congratsHint, isMobile && styles.congratsHintMobile]}>
                 💡 N'hésitez pas à refaire les leçons pour consolider vos acquis, et découvrez (ou redécouvrez) les jeux et l'entraînement pour pratiquer !
               </Text>
               <View style={styles.congratsButtonsRow}>
@@ -546,5 +548,30 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#22C55E',
+  },
+  congratsBannerMobile: {
+    padding: 12,
+    marginBottom: 16,
+  },
+  congratsEmojiMobile: {
+    fontSize: 32,
+  },
+  congratsTitleMobile: {
+    fontSize: 16,
+    marginBottom: 6,
+  },
+  congratsTextMobile: {
+    fontSize: 12,
+    lineHeight: 16,
+    marginBottom: 8,
+  },
+  congratsHintMobile: {
+    fontSize: 11,
+    lineHeight: 14,
+    marginBottom: 12,
+  },
+  congratsButtonMobile: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
 });

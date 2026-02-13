@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, Pressable, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, Image, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
@@ -15,6 +15,8 @@ interface HandSign {
 export default function GameScreen() {
   const { user } = useAuth();
   const { colors } = useTheme();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const [handSigns, setHandSigns] = useState<HandSign[]>([]);
   const [currentSign, setCurrentSign] = useState<HandSign | null>(null);
   const [userInput, setUserInput] = useState('');
@@ -351,11 +353,11 @@ export default function GameScreen() {
 
         {/* Image de la configuration */}
         {currentSign && (
-          <View style={[styles.signCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <View style={[styles.imageContainer, { backgroundColor: colors.background }]}>
+          <View style={[styles.signCard, isMobile && styles.signCardMobile, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={[styles.imageContainer, isMobile && styles.imageContainerMobile, { backgroundColor: colors.background }]}>
               <Image 
                 source={{ uri: currentSign.image_url }}
-                style={styles.signImage}
+                style={[styles.signImage, isMobile && styles.signImageMobile]}
                 resizeMode="contain"
               />
             </View>
@@ -541,6 +543,10 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
+  signCardMobile: {
+    padding: 12,
+    marginBottom: 12,
+  },
   imageContainer: {
     width: '100%',
     height: 300,
@@ -548,9 +554,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 16,
   },
+  imageContainerMobile: {
+    height: 180,
+    marginBottom: 8,
+  },
   signImage: {
     width: 250,
     height: 250,
+  },
+  signImageMobile: {
+    width: 150,
+    height: 150,
   },
   signDescription: {
     fontSize: 16,

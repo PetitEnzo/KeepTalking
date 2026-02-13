@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, StyleSheet, ActivityIndicator, Image, ScrollView } from 'react-native';
+import { View, Text, Pressable, StyleSheet, ActivityIndicator, Image, ScrollView, useWindowDimensions } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
@@ -18,6 +18,8 @@ type TrainingMode = 'unlimited' | 'thirty' | 'timed';
 export default function TrainingBeginnerScreen() {
   const { user } = useAuth();
   const { colors, theme } = useTheme();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const [handSigns, setHandSigns] = useState<HandSign[]>([]);
   const [currentSign, setCurrentSign] = useState<HandSign | null>(null);
   const [validatedCount, setValidatedCount] = useState(0);
@@ -379,10 +381,25 @@ export default function TrainingBeginnerScreen() {
             </View>
           </View>
 
-          <View style={styles.mainLayout}>
-            <View style={styles.leftColumn}>
+          <View style={[styles.mainLayout, isMobile && styles.mainLayoutMobile]}>
+            {/* Sur mobile: webcam en premier, sur desktop: config en premier */}
+            {isMobile && (
+              <View style={styles.mobileWebcamColumn}>
+                <WebcamFeedback
+                  isDetecting={isDetecting}
+                  handedness={null}
+                  confidence={matchResult.confidence}
+                  feedback={matchResult.feedback}
+                  onDetection={handleDetectionResults}
+                  detectFace={false}
+                />
+              </View>
+            )}
+
+            <View style={[styles.leftColumn, isMobile && styles.mobileConfigColumn]}>
               <View style={[
-                styles.currentSignCard, 
+                styles.currentSignCard,
+                isMobile && styles.currentSignCardMobile,
                 { 
                   backgroundColor: matchResult.confidence > 60 
                     ? (theme === 'dark' ? '#065f46' : '#D1FAE5')
@@ -393,15 +410,27 @@ export default function TrainingBeginnerScreen() {
                 <Text style={[styles.currentSignLabel, { color: colors.textSecondary }]}>
                   Configuration à reproduire
                 </Text>
-                <Text style={[styles.currentSignKey, { color: colors.text }]}>
+                <Text style={[
+                  styles.currentSignKey,
+                  isMobile && styles.currentSignKeyMobile,
+                  { color: colors.text }
+                ]}>
                   {Array.isArray(currentSign.consonnes) ? currentSign.consonnes.join(', ') : currentSign.consonnes}
                 </Text>
-                <Text style={[styles.configDescription, { color: colors.textSecondary }]}>
+                <Text style={[
+                  styles.configDescription,
+                  isMobile && styles.configDescriptionMobile,
+                  { color: colors.textSecondary }
+                ]}>
                   {currentSign.description}
                 </Text>
                 
                 {showImageHelp && currentSign.image_url && (
-                  <View style={[styles.signImageContainer, { backgroundColor: colors.background }]}>
+                  <View style={[
+                    styles.signImageContainer,
+                    isMobile && styles.signImageContainerMobile,
+                    { backgroundColor: colors.background }
+                  ]}>
                     <Image 
                       source={{ uri: currentSign.image_url }}
                       style={styles.signImage}
@@ -410,7 +439,11 @@ export default function TrainingBeginnerScreen() {
                   </View>
                 )}
 
-                <Text style={[styles.instructionText, { color: colors.textSecondary }]}>
+                <Text style={[
+                  styles.instructionText,
+                  isMobile && styles.instructionTextMobile,
+                  { color: colors.textSecondary }
+                ]}>
                   Reproduisez cette configuration avec votre main devant la caméra
                 </Text>
               </View>
@@ -440,17 +473,19 @@ export default function TrainingBeginnerScreen() {
               </View>
             </View>
 
-            <View style={styles.rightColumn}>
-              <WebcamFeedback
-                isDetecting={isDetecting}
-                handedness={null}
-                confidence={matchResult.confidence}
-                feedback={matchResult.feedback}
-                onDetection={handleDetectionResults}
-                detectFace={false}
-              />
+            {/* Sur desktop uniquement: webcam + instructions à droite */}
+            {!isMobile && (
+              <View style={styles.rightColumn}>
+                <WebcamFeedback
+                  isDetecting={isDetecting}
+                  handedness={null}
+                  confidence={matchResult.confidence}
+                  feedback={matchResult.feedback}
+                  onDetection={handleDetectionResults}
+                  detectFace={false}
+                />
 
-              <View style={[styles.instructionsCard, { backgroundColor: colors.card }]}>
+                <View style={[styles.instructionsCard, { backgroundColor: colors.card }]}>
                 <Text style={[styles.instructionsTitle, { color: colors.text }]}>💡 Conseils</Text>
                 <Text style={[styles.instructionsText, { color: colors.textSecondary }]}>
                   • Placez votre main bien visible{'\n'}
@@ -458,8 +493,9 @@ export default function TrainingBeginnerScreen() {
                   • Bon éclairage requis{'\n'}
                   • Précision minimale : 60%
                 </Text>
+                </View>
               </View>
-            </View>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -580,15 +616,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 20,
   },
+  mainLayoutMobile: {
+    flexDirection: 'column',
+    gap: 16,
+  },
+  mobileWebcamColumn: {
+    width: '100%',
+    marginBottom: 16,
+  },
+  mobileConfigColumn: {
+    width: '100%',
+  },
   leftColumn: {
     flex: 1,
   },
   buttonGroup: {
     flexDirection: 'row',
     gap: 12,
+    flexWrap: 'wrap',
   },
   skipButton: {
     flex: 1,
+    minWidth: 120,
   },
   rightColumn: {
     flex: 1,
@@ -600,6 +649,11 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     alignItems: 'center',
   },
+  currentSignCardMobile: {
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+  },
   currentSignLabel: {
     fontSize: 14,
     marginBottom: 8,
@@ -610,11 +664,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
   },
+  currentSignKeyMobile: {
+    fontSize: 48,
+    marginBottom: 6,
+  },
   configDescription: {
     fontSize: 14,
     marginBottom: 16,
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  configDescriptionMobile: {
+    fontSize: 12,
+    marginBottom: 12,
   },
   signImageContainer: {
     width: 200,
@@ -625,6 +687,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 16,
   },
+  signImageContainerMobile: {
+    width: 140,
+    height: 140,
+    padding: 12,
+    marginBottom: 12,
+  },
   signImage: {
     width: '100%',
     height: '100%',
@@ -634,10 +702,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
   },
+  instructionTextMobile: {
+    fontSize: 12,
+  },
   button: {
+    flex: 1,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
+    minWidth: 120,
   },
   buttonText: {
     fontSize: 16,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
@@ -40,6 +40,8 @@ type TrainingMode = 'unlimited' | 'thirty' | 'timed';
 export default function TrainingScreen() {
   const { user } = useAuth();
   const { colors, theme } = useTheme();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const [currentWord, setCurrentWord] = useState<TrainingWord | null>(null);
   const [currentSyllableIndex, setCurrentSyllableIndex] = useState(0);
   const [validatedSyllables, setValidatedSyllables] = useState<number[]>([]);
@@ -497,16 +499,20 @@ export default function TrainingScreen() {
       )}
 
       <ScrollView style={styles.contentScroll}>
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <Text style={[styles.headerTitle, { color: colors.text }]}>
-              🎯 Entraînement Avancé {!showImageHelp && '(Mode Expert)'}
-            </Text>
-            <View style={styles.statsRow}>
-              <View style={[styles.statCard, { backgroundColor: colors.card }]}>
-                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Mots validés</Text>
-                <Text style={[styles.statValue, { color: colors.success }]}>{validatedWordsCount}</Text>
-              </View>
+        <View style={[styles.content, isMobile && styles.contentMobile]}>
+          <View style={[styles.header, isMobile && styles.headerMobile]}>
+            {!isMobile && (
+              <Text style={[styles.headerTitle, { color: colors.text }]}>
+                🎯 Entraînement Avancé {!showImageHelp && '(Mode Expert)'}
+              </Text>
+            )}
+            <View style={[styles.statsRow, isMobile && styles.statsRowMobile]}>
+              {!isMobile && (
+                <View style={[styles.statCard, { backgroundColor: colors.card }]}>
+                  <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Mots validés</Text>
+                  <Text style={[styles.statValue, { color: colors.success }]}>{validatedWordsCount}</Text>
+                </View>
+              )}
               
               {selectedMode === 'thirty' && (
                 <View style={[styles.statCard, { backgroundColor: colors.card }]}>
@@ -526,38 +532,57 @@ export default function TrainingScreen() {
             </View>
           </View>
 
-          <View style={styles.mainLayout}>
-            <View style={styles.leftColumn}>
-              <View style={[styles.wordCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Text style={[styles.wordLabel, { color: colors.textSecondary }]}>Mot à coder</Text>
-                <Text style={[styles.wordText, { color: colors.text }]}>{currentWord.word}</Text>
-                <Text style={[styles.wordDecomposition, { color: colors.textSecondary }]}>
-                  {currentWord.syllables.map(s => s.text).join(' - ')}
-                </Text>
+          <View style={[styles.mainLayout, isMobile && styles.mainLayoutMobile]}>
+            {/* Sur mobile: webcam en premier avec overlay intégré */}
+            {isMobile && (
+              <View style={styles.mobileWebcamColumn}>
+                <WebcamFeedback
+                  isDetecting={isDetecting}
+                  handedness={handedness}
+                  confidence={matchResult.confidence}
+                  feedback={matchResult.feedback}
+                  onDetection={handleDetectionResults}
+                />
+              </View>
+            )}
+
+            <View style={[styles.leftColumn, isMobile && styles.mobileSyllableColumn]}>
+              <View style={[styles.wordCard, isMobile && styles.wordCardMobile, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                {!isMobile && <Text style={[styles.wordLabel, { color: colors.textSecondary }]}>Mot à coder</Text>}
+                <Text style={[styles.wordText, isMobile && styles.wordTextMobile, { color: colors.text }]}>{currentWord.word}</Text>
+                {!isMobile && (
+                  <Text style={[styles.wordDecomposition, { color: colors.textSecondary }]}>
+                    {currentWord.syllables.map(s => s.text).join(' - ')}
+                  </Text>
+                )}
               </View>
 
-              <View style={[styles.progressCard, { backgroundColor: colors.card }]}>
-                <Text style={[styles.progressLabel, { color: colors.text }]}>Progression</Text>
-                <View style={[styles.progressBar, { backgroundColor: colors.border }]}>
-                  <View 
-                    style={[
-                      styles.progressFill,
-                      { width: `${(validatedSyllables.length / currentWord.syllables.length) * 100}%` as any }
-                    ]} 
-                  />
+              {/* Stats sous le mot sur mobile */}
+              {isMobile && (
+                <View style={[styles.statCard, styles.statCardMobile, { backgroundColor: colors.card }]}>
+                  <Text style={[styles.statLabel, styles.statLabelMobile, { color: colors.textSecondary }]}>Mots validés</Text>
+                  <Text style={[styles.statValue, styles.statValueMobile, { color: colors.success }]}>{validatedWordsCount}</Text>
                 </View>
-                <Text style={[styles.progressText, { color: colors.textSecondary }]}>
-                  {validatedSyllables.length} / {currentWord.syllables.length} syllabes
-                </Text>
-              </View>
+              )}
 
-              <View style={styles.syllablesList}>
+              {/* Sur mobile: syllabe AVANT progression */}
+              <View style={[styles.syllablesList, isMobile && styles.syllablesListMobile]}>
                 {currentWord.syllables.map((syllable, index) => {
                   let status: 'pending' | 'current' | 'validated' = 'pending';
                   if (validatedSyllables.includes(index)) {
                     status = 'validated';
                   } else if (index === currentSyllableIndex) {
                     status = 'current';
+                  }
+
+                  // Sur mobile: afficher uniquement la syllabe courante (masquer les validées)
+                  if (isMobile && status === 'validated') {
+                    return null;
+                  }
+
+                  // Sur mobile: afficher uniquement la syllabe courante
+                  if (isMobile && status !== 'current') {
+                    return null;
                   }
 
                   return (
@@ -597,16 +622,18 @@ export default function TrainingScreen() {
               </View>
             </View>
 
-            <View style={styles.rightColumn}>
-              <WebcamFeedback
-                isDetecting={isDetecting}
-                handedness={handedness}
-                confidence={matchResult.confidence}
-                feedback={matchResult.feedback}
-                onDetection={handleDetectionResults}
-              />
+            {/* Sur desktop uniquement: webcam + instructions à droite */}
+            {!isMobile && (
+              <View style={styles.rightColumn}>
+                <WebcamFeedback
+                  isDetecting={isDetecting}
+                  handedness={handedness}
+                  confidence={matchResult.confidence}
+                  feedback={matchResult.feedback}
+                  onDetection={handleDetectionResults}
+                />
 
-              <View style={[styles.instructionsCard, { backgroundColor: colors.card }]}>
+                <View style={[styles.instructionsCard, { backgroundColor: colors.card }]}>
                 <Text style={[styles.instructionsTitle, { color: colors.text }]}>💡 Conseils</Text>
                 <Text style={[styles.instructionsText, { color: colors.textSecondary }]}>
                   • Placez votre main bien visible{'\n'}
@@ -614,8 +641,9 @@ export default function TrainingScreen() {
                   • Bon éclairage requis{'\n'}
                   • Précision minimale : 60%
                 </Text>
+                </View>
               </View>
-            </View>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -632,6 +660,10 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
+  },
+  contentMobile: {
+    padding: 0,
+    paddingBottom: 20,
   },
   loadingContainer: {
     flex: 1,
@@ -740,6 +772,9 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 20,
   },
+  headerMobile: {
+    marginBottom: 0,
+  },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -749,23 +784,53 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
   },
+  statsRowMobile: {
+    marginBottom: 4,
+    paddingHorizontal: 8,
+    paddingTop: 8,
+  },
+  statCardSpacer: {
+    height: 0,
+  },
   statCard: {
     flex: 1,
     borderRadius: 12,
     padding: 12,
     alignItems: 'center',
   },
+  statCardMobile: {
+    padding: 6,
+    borderRadius: 8,
+  },
   statLabel: {
     fontSize: 12,
     marginBottom: 4,
+  },
+  statLabelMobile: {
+    fontSize: 10,
+    marginBottom: 2,
   },
   statValue: {
     fontSize: 24,
     fontWeight: 'bold',
   },
+  statValueMobile: {
+    fontSize: 18,
+  },
   mainLayout: {
     flexDirection: 'row',
     gap: 20,
+  },
+  mainLayoutMobile: {
+    flexDirection: 'column',
+    gap: 0,
+  },
+  mobileWebcamColumn: {
+    width: '100%',
+    marginBottom: 4,
+  },
+  mobileSyllableColumn: {
+    width: '100%',
   },
   leftColumn: {
     flex: 1,
@@ -779,27 +844,56 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderWidth: 2,
   },
+  wordCardMobile: {
+    padding: 8,
+    marginBottom: 4,
+    marginHorizontal: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
   wordLabel: {
     fontSize: 14,
     marginBottom: 4,
+  },
+  wordLabelMobile: {
+    fontSize: 11,
+    marginBottom: 2,
   },
   wordText: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 8,
   },
+  wordTextMobile: {
+    fontSize: 22,
+    marginBottom: 0,
+  },
   wordDecomposition: {
     fontSize: 16,
+  },
+  wordDecompositionMobile: {
+    fontSize: 12,
   },
   progressCard: {
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
   },
+  progressCardMobile: {
+    padding: 6,
+    marginBottom: 4,
+    marginHorizontal: 8,
+    borderRadius: 8,
+  },
   progressLabel: {
     fontSize: 14,
     marginBottom: 8,
     fontWeight: '600',
+  },
+  progressLabelMobile: {
+    fontSize: 11,
+    marginBottom: 4,
   },
   progressBar: {
     height: 8,
@@ -815,9 +909,17 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: 'center',
   },
+  progressTextMobile: {
+    fontSize: 10,
+  },
   syllablesList: {
     gap: 12,
     marginBottom: 16,
+  },
+  syllablesListMobile: {
+    gap: 6,
+    marginBottom: 4,
+    paddingHorizontal: 8,
   },
   skipButtonsContainer: {
     gap: 12,

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, Image, ScrollView, Animated, Pressable } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { getUserBadges, loadBadgeImages, Badge } from '../services/badgeService';
 
@@ -7,6 +7,168 @@ interface BadgeDisplayProps {
   userId: string;
   maxDisplay?: number; // Maximum number of badges to display (for home screen)
   showTitle?: boolean;
+}
+
+interface BadgeCardProps {
+  badge: Badge;
+  colors: any;
+}
+
+function BadgeCard({ badge, colors }: BadgeCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  const badgeScaleAnim = useRef(new Animated.Value(1)).current;
+  const badgeRotateX = useRef(new Animated.Value(0)).current;
+  const badgeRotateY = useRef(new Animated.Value(0)).current;
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    Animated.spring(badgeScaleAnim, {
+      toValue: 2.5, // 150% increase = 2.5x scale
+      useNativeDriver: true,
+      friction: 8,
+      tension: 100,
+    }).start();
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    Animated.parallel([
+      Animated.spring(badgeScaleAnim, {
+        toValue: 1,
+        useNativeDriver: true,
+        friction: 8,
+        tension: 100,
+      }),
+      Animated.spring(badgeRotateX, {
+        toValue: 0,
+        useNativeDriver: true,
+        friction: 8,
+        tension: 100,
+      }),
+      Animated.spring(badgeRotateY, {
+        toValue: 0,
+        useNativeDriver: true,
+        friction: 8,
+        tension: 100,
+      }),
+    ]).start();
+  };
+
+  const handleMouseMove = (event: any) => {
+    if (!isHovered) return;
+
+    const card = event.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateXValue = ((y - centerY) / centerY) * -20;
+    const rotateYValue = ((x - centerX) / centerX) * 20;
+
+    Animated.parallel([
+      Animated.spring(badgeRotateX, {
+        toValue: rotateXValue,
+        useNativeDriver: true,
+        friction: 8,
+        tension: 100,
+      }),
+      Animated.spring(badgeRotateY, {
+        toValue: rotateYValue,
+        useNativeDriver: true,
+        friction: 8,
+        tension: 100,
+      }),
+    ]).start();
+  };
+
+  return (
+    <Pressable
+      onHoverIn={handleMouseEnter}
+      onHoverOut={handleMouseLeave}
+      // @ts-ignore - onMouseMove is web-only
+      onMouseMove={handleMouseMove}
+      style={{ zIndex: isHovered ? 9999 : 1 }} // Badge survolé passe au premier plan
+    >
+      <View
+        style={[
+          styles.badgeCard,
+          {
+            backgroundColor: 'rgba(0,0,0,0)', // Transparent RGBA pour Android/iOS
+            borderColor: isHovered ? colors.primary || '#3B82F6' : colors.border,
+            borderWidth: isHovered ? 2 : 1,
+            overflow: 'visible', // Permet au badge de dépasser de la carte
+          },
+        ]}
+      >
+        {badge.image_url ? (
+          <View style={{ backgroundColor: 'rgba(0,0,0,0)', padding: 0, margin: 0 }}>
+            <Animated.Image
+              source={{ uri: badge.image_url }}
+              style={[
+                styles.badgeImage,
+                {
+                  zIndex: 1000, // Badge au premier plan
+                  backgroundColor: 'rgba(0,0,0,0)', // RGBA pour forcer la transparence
+                  transform: [
+                  { scale: badgeScaleAnim },
+                  {
+                    rotateX: badgeRotateX.interpolate({
+                      inputRange: [-20, 20],
+                      outputRange: ['-20deg', '20deg'],
+                    }),
+                  },
+                  {
+                    rotateY: badgeRotateY.interpolate({
+                      inputRange: [-20, 20],
+                      outputRange: ['-20deg', '20deg'],
+                    }),
+                  },
+                  ],
+                },
+              ]}
+              resizeMode="contain"
+            />
+          </View>
+        ) : (
+          <View style={{ backgroundColor: 'rgba(0,0,0,0)', padding: 0, margin: 0 }}>
+            <Animated.Text
+              style={[
+                styles.badgeIcon,
+                {
+                  zIndex: 1000, // Badge au premier plan
+                  backgroundColor: 'rgba(0,0,0,0)', // RGBA pour forcer la transparence
+                  transform: [
+                    { scale: badgeScaleAnim },
+                    {
+                      rotateX: badgeRotateX.interpolate({
+                        inputRange: [-20, 20],
+                        outputRange: ['-20deg', '20deg'],
+                      }),
+                    },
+                    {
+                      rotateY: badgeRotateY.interpolate({
+                        inputRange: [-20, 20],
+                        outputRange: ['-20deg', '20deg'],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
+              {badge.icon}
+            </Animated.Text>
+          </View>
+        )}
+        <Text style={[styles.badgeName, { color: colors.text }]} numberOfLines={2}>
+          {badge.name}
+        </Text>
+        <Text style={[styles.badgeDescription, { color: colors.textSecondary }]} numberOfLines={2}>
+          {badge.description}
+        </Text>
+      </View>
+    </Pressable>
+  );
 }
 
 export default function BadgeDisplay({ userId, maxDisplay, showTitle = true }: BadgeDisplayProps) {
@@ -73,30 +235,11 @@ export default function BadgeDisplay({ userId, maxDisplay, showTitle = true }: B
       <ScrollView 
         horizontal 
         showsHorizontalScrollIndicator={false}
-        style={styles.badgeScroll}
-        contentContainerStyle={styles.badgeScrollContent}
+        style={[styles.badgeScroll, { overflow: 'visible' }]}
+        contentContainerStyle={[styles.badgeScrollContent, { overflow: 'visible' }]}
       >
         {badges.map((badge) => (
-          <View 
-            key={badge.badge_id} 
-            style={[styles.badgeCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-          >
-            {badge.image_url ? (
-              <Image 
-                source={{ uri: badge.image_url }} 
-                style={styles.badgeImage}
-                resizeMode="contain"
-              />
-            ) : (
-              <Text style={styles.badgeIcon}>{badge.icon}</Text>
-            )}
-            <Text style={[styles.badgeName, { color: colors.text }]} numberOfLines={2}>
-              {badge.name}
-            </Text>
-            <Text style={[styles.badgeDescription, { color: colors.textSecondary }]} numberOfLines={2}>
-              {badge.description}
-            </Text>
-          </View>
+          <BadgeCard key={badge.badge_id} badge={badge} colors={colors} />
         ))}
       </ScrollView>
     </View>
@@ -106,6 +249,7 @@ export default function BadgeDisplay({ userId, maxDisplay, showTitle = true }: B
 const styles = StyleSheet.create({
   container: {
     marginVertical: 8,
+    overflow: 'visible', // Permet au badge de sortir du container
   },
   header: {
     flexDirection: 'row',
@@ -133,26 +277,31 @@ const styles = StyleSheet.create({
   },
   badgeScroll: {
     flexGrow: 0,
+    overflow: 'visible', // Permet au badge de sortir du scroll
   },
   badgeScrollContent: {
     paddingRight: 16,
+    paddingTop: 60, // Espace en haut pour que le badge puisse sortir
+    paddingBottom: 60, // Espace en bas pour que le badge puisse sortir
+    overflow: 'visible',
   },
   badgeCard: {
-    width: 120,
-    padding: 12,
+    width: 180, // Augmenté de 50% (120 -> 180)
+    padding: 18, // Augmenté proportionnellement
     borderRadius: 12,
     borderWidth: 1,
     marginRight: 12,
     alignItems: 'center',
   },
   badgeImage: {
-    width: 60,
-    height: 60,
-    marginBottom: 8,
+    width: 90, // Augmenté de 50% (60 -> 90)
+    height: 90,
+    marginBottom: 12,
+    backgroundColor: 'rgba(0,0,0,0)', // Force la transparence dans le style de base
   },
   badgeIcon: {
-    fontSize: 48,
-    marginBottom: 8,
+    fontSize: 72, // Augmenté de 50% (48 -> 72)
+    marginBottom: 12,
   },
   badgeName: {
     fontSize: 12,

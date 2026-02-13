@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Stack, usePathname } from 'expo-router';
-import { View, Text, Pressable, ScrollView, Image, StyleSheet } from 'react-native';
+import { View, Text, Pressable, ScrollView, Image, StyleSheet, useWindowDimensions, Modal, TouchableWithoutFeedback } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { router } from 'expo-router';
@@ -43,9 +43,14 @@ export default function TabsLayout() {
   const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
+  const { width } = useWindowDimensions();
   const [userAvatar, setUserAvatar] = useState<string>('👤');
   const [isAdmin, setIsAdmin] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  const isMobile = width < 768;
+  const isTablet = width >= 768 && width < 1024;
 
   useEffect(() => {
     loadUserAvatar();
@@ -105,6 +110,14 @@ export default function TabsLayout() {
 
   const navigateTo = (path: string) => {
     router.push(path as any);
+    // Fermer la sidebar sur mobile après navigation
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   const isActive = (path: string) => {
@@ -114,18 +127,19 @@ export default function TabsLayout() {
     return pathname?.includes(path.replace('/(tabs)/', ''));
   };
 
-  return (
-    <View style={styles.container}>
-      {/* Sidebar */}
-      <View style={styles.sidebar}>
-        {/* Logo */}
-        <View style={styles.logoSection}>
-          <Image
-            source={require('../../../assets/images/logoWhiteBlack.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </View>
+  // Sidebar visible en permanence sur desktop, en modal sur mobile/tablette
+  const SidebarContent = () => (
+    <View style={[styles.sidebar, (isMobile || isTablet) && styles.sidebarMobile]}>
+        {/* Logo - Desktop only */}
+        {!isMobile && !isTablet && (
+          <View style={styles.logoSection}>
+            <Image
+              source={require('../../../assets/images/logoWhiteBlack.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
+        )}
 
         {/* User Info */}
         <View style={styles.userSection}>
@@ -152,8 +166,18 @@ export default function TabsLayout() {
           </View>
         </View>
 
+        {/* Close Button - Mobile/Tablet only */}
+        {(isMobile || isTablet) && (
+          <Pressable
+            onPress={() => setIsSidebarOpen(false)}
+            style={styles.closeButton}
+          >
+            <Text style={styles.closeButtonText}>✕</Text>
+          </Pressable>
+        )}
+
         {/* Navigation */}
-        <ScrollView style={styles.navScroll}>
+        <ScrollView style={styles.navScroll} contentContainerStyle={styles.navScrollContent}>
           {/* Groupe: Navigation principale */}
           <View style={styles.navGroup}>
             <Text style={styles.groupTitle}>NAVIGATION</Text>
@@ -164,11 +188,11 @@ export default function TabsLayout() {
                 styles.navItem, 
                 pressed && styles.navItemPressed,
                 isActive('/(tabs)') && styles.navItemActive,
-                hoveredItem === 'home' && !isActive('/(tabs)') && styles.navItemHovered
+                !isMobile && !isTablet && hoveredItem === 'home' && !isActive('/(tabs)') && styles.navItemHovered
               ]}
               // @ts-ignore
-              onMouseEnter={() => setHoveredItem('home')}
-              onMouseLeave={() => setHoveredItem(null)}
+              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('home') : undefined}
+              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
             >
               <Text style={styles.navIcon}>🏠</Text>
               <Text style={[styles.navText, isActive('/(tabs)') && styles.navTextActive]}>Accueil</Text>
@@ -180,11 +204,11 @@ export default function TabsLayout() {
                 styles.navItem, 
                 pressed && styles.navItemPressed,
                 isActive('/lessons') && styles.navItemActive,
-                hoveredItem === 'lessons' && !isActive('/lessons') && styles.navItemHovered
+                !isMobile && !isTablet && hoveredItem === 'lessons' && !isActive('/lessons') && styles.navItemHovered
               ]}
               // @ts-ignore
-              onMouseEnter={() => setHoveredItem('lessons')}
-              onMouseLeave={() => setHoveredItem(null)}
+              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('lessons') : undefined}
+              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
             >
               <Text style={styles.navIcon}>📚</Text>
               <Text style={[styles.navText, isActive('/lessons') && styles.navTextActive]}>Leçons</Text>
@@ -196,11 +220,11 @@ export default function TabsLayout() {
                 styles.navItem, 
                 pressed && styles.navItemPressed,
                 isActive('/training-beginner') && styles.navItemActive,
-                hoveredItem === 'training-beginner' && !isActive('/training-beginner') && styles.navItemHovered
+                !isMobile && !isTablet && hoveredItem === 'training-beginner' && !isActive('/training-beginner') && styles.navItemHovered
               ]}
               // @ts-ignore
-              onMouseEnter={() => setHoveredItem('training-beginner')}
-              onMouseLeave={() => setHoveredItem(null)}
+              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('training-beginner') : undefined}
+              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
             >
               <Text style={styles.navIcon}>🖐️</Text>
               <Text style={[styles.navText, isActive('/training-beginner') && styles.navTextActive]}>Entraînement Débutant</Text>
@@ -212,11 +236,11 @@ export default function TabsLayout() {
                 styles.navItem, 
                 pressed && styles.navItemPressed,
                 isActive('/training') && !isActive('/training-beginner') && styles.navItemActive,
-                hoveredItem === 'training' && !isActive('/training') && styles.navItemHovered
+                !isMobile && !isTablet && hoveredItem === 'training' && !isActive('/training') && styles.navItemHovered
               ]}
               // @ts-ignore
-              onMouseEnter={() => setHoveredItem('training')}
-              onMouseLeave={() => setHoveredItem(null)}
+              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('training') : undefined}
+              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
             >
               <Text style={styles.navIcon}>🎯</Text>
               <Text style={[styles.navText, isActive('/training') && !isActive('/training-beginner') && styles.navTextActive]}>Entraînement Avancé</Text>
@@ -228,11 +252,11 @@ export default function TabsLayout() {
                 styles.navItem, 
                 pressed && styles.navItemPressed,
                 isActive('/contribute') && styles.navItemActive,
-                hoveredItem === 'contribute' && !isActive('/contribute') && styles.navItemHovered
+                !isMobile && !isTablet && hoveredItem === 'contribute' && !isActive('/contribute') && styles.navItemHovered
               ]}
               // @ts-ignore
-              onMouseEnter={() => setHoveredItem('contribute')}
-              onMouseLeave={() => setHoveredItem(null)}
+              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('contribute') : undefined}
+              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
             >
               <Text style={styles.navIcon}>✍️</Text>
               <Text style={[styles.navText, isActive('/contribute') && styles.navTextActive]}>Ajouter un mot</Text>
@@ -244,11 +268,11 @@ export default function TabsLayout() {
                 styles.navItem, 
                 pressed && styles.navItemPressed,
                 isActive('/game') && styles.navItemActive,
-                hoveredItem === 'game' && !isActive('/game') && styles.navItemHovered
+                !isMobile && !isTablet && hoveredItem === 'game' && !isActive('/game') && styles.navItemHovered
               ]}
               // @ts-ignore
-              onMouseEnter={() => setHoveredItem('game')}
-              onMouseLeave={() => setHoveredItem(null)}
+              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('game') : undefined}
+              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
             >
               <Text style={styles.navIcon}>🎮</Text>
               <Text style={[styles.navText, isActive('/game') && styles.navTextActive]}>Jeu</Text>
@@ -260,11 +284,11 @@ export default function TabsLayout() {
                 styles.navItem, 
                 pressed && styles.navItemPressed,
                 isActive('/basics') && styles.navItemActive,
-                hoveredItem === 'basics' && !isActive('/basics') && styles.navItemHovered
+                !isMobile && !isTablet && hoveredItem === 'basics' && !isActive('/basics') && styles.navItemHovered
               ]}
               // @ts-ignore
-              onMouseEnter={() => setHoveredItem('basics')}
-              onMouseLeave={() => setHoveredItem(null)}
+              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('basics') : undefined}
+              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
             >
               <Text style={styles.navIcon}>📖</Text>
               <Text style={[styles.navText, isActive('/basics') && styles.navTextActive]}>Les bases du code</Text>
@@ -276,11 +300,11 @@ export default function TabsLayout() {
                 styles.navItem, 
                 pressed && styles.navItemPressed,
                 isActive('/profile') && styles.navItemActive,
-                hoveredItem === 'profile' && !isActive('/profile') && styles.navItemHovered
+                !isMobile && !isTablet && hoveredItem === 'profile' && !isActive('/profile') && styles.navItemHovered
               ]}
               // @ts-ignore
-              onMouseEnter={() => setHoveredItem('profile')}
-              onMouseLeave={() => setHoveredItem(null)}
+              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('profile') : undefined}
+              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
             >
               <Text style={styles.navIcon}>👤</Text>
               <Text style={[styles.navText, isActive('/profile') && styles.navTextActive]}>Profil</Text>
@@ -297,11 +321,11 @@ export default function TabsLayout() {
                 styles.navItem, 
                 pressed && styles.navItemPressed,
                 isActive('/about') && styles.navItemActive,
-                hoveredItem === 'about' && !isActive('/about') && styles.navItemHovered
+                !isMobile && !isTablet && hoveredItem === 'about' && !isActive('/about') && styles.navItemHovered
               ]}
               // @ts-ignore
-              onMouseEnter={() => setHoveredItem('about')}
-              onMouseLeave={() => setHoveredItem(null)}
+              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('about') : undefined}
+              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
             >
               <Text style={styles.navIcon}>ℹ️</Text>
               <Text style={[styles.navText, isActive('/about') && styles.navTextActive]}>À propos</Text>
@@ -314,11 +338,11 @@ export default function TabsLayout() {
                   styles.navItem, 
                   pressed && styles.navItemPressed,
                   isActive('/admin') && styles.navItemActive,
-                  hoveredItem === 'admin' && !isActive('/admin') && styles.navItemHovered
+                  !isMobile && !isTablet && hoveredItem === 'admin' && !isActive('/admin') && styles.navItemHovered
                 ]}
                 // @ts-ignore
-                onMouseEnter={() => setHoveredItem('admin')}
-                onMouseLeave={() => setHoveredItem(null)}
+                onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('admin') : undefined}
+                onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
               >
                 <Text style={styles.navIcon}>🛡️</Text>
                 <Text style={[styles.navText, isActive('/admin') && styles.navTextActive]}>Administration</Text>
@@ -366,9 +390,39 @@ export default function TabsLayout() {
           </Pressable>
         </View>
       </View>
+  );
+
+  return (
+    <View style={[styles.container, (isMobile || isTablet) && styles.containerMobile]}>
+      {/* Bandeau menu pour mobile/tablette */}
+      {(isMobile || isTablet) && (
+        <Pressable 
+          style={styles.mobileMenuBar}
+          onPress={toggleSidebar}
+        >
+          <Text style={styles.hamburgerIcon}>☰</Text>
+          <Text style={styles.mobileMenuTitle}>Menu</Text>
+        </Pressable>
+      )}
+
+      {/* Sidebar - Desktop: always visible, Mobile/Tablet: modal */}
+      {isMobile || isTablet ? (
+        <Modal
+          visible={isSidebarOpen}
+          transparent={false}
+          animationType="slide"
+          onRequestClose={() => setIsSidebarOpen(false)}
+        >
+          <View style={styles.fullScreenModal}>
+            <SidebarContent />
+          </View>
+        </Modal>
+      ) : (
+        <SidebarContent />
+      )}
 
       {/* Main Content */}
-      <View style={styles.mainContent}>
+      <View style={[styles.mainContent, (isMobile || isTablet) && styles.mainContentFullWidth]}>
         <Stack
           screenOptions={{
             headerShown: false,
@@ -394,10 +448,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#F1F5F9',
   },
+  containerMobile: {
+    flexDirection: 'column',
+  },
   sidebar: {
     width: 288,
     backgroundColor: '#0F172A',
     flexDirection: 'column',
+    height: '100%',
   },
   logoSection: {
     padding: 24,
@@ -458,7 +516,10 @@ const styles = StyleSheet.create({
   },
   navScroll: {
     flex: 1,
+  },
+  navScrollContent: {
     padding: 16,
+    paddingBottom: 32,
   },
   navGroup: {
     marginBottom: 24,
@@ -590,5 +651,92 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
+  },
+  mainContentFullWidth: {
+    width: '100%',
+    paddingTop: 0,
+  },
+  sidebarMobile: {
+    width: '100%',
+    height: '100%',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    width: 40,
+    height: 40,
+    backgroundColor: '#1E293B',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10001,
+  },
+  closeButtonText: {
+    fontSize: 24,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  hamburgerContainer: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    zIndex: 10000,
+  },
+  hamburgerButton: {
+    width: 48,
+    height: 48,
+    backgroundColor: '#2563EB',
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  hamburgerButtonPressed: {
+    backgroundColor: '#1D4ED8',
+    transform: [{ scale: 0.95 }],
+  },
+  hamburgerIcon: {
+    fontSize: 24,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  mobileMenuBar: {
+    width: '100%',
+    height: 56,
+    backgroundColor: '#2563EB',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    zIndex: 1000,
+  },
+  mobileMenuTitle: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+  fullScreenModal: {
+    flex: 1,
+    backgroundColor: '#0F172A',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-start',
+  },
+  modalSidebar: {
+    width: '80%',
+    maxWidth: 320,
+    height: '100%',
   },
 });
