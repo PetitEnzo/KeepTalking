@@ -1684,15 +1684,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#0F172A',
-    marginBottom: 12,
+    marginBottom: 16,
   },
   sectionContent: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#475569',
-    lineHeight: 28,
+    lineHeight: 32,
   },
   infoBox: {
     backgroundColor: '#EFF6FF',
@@ -1702,19 +1702,19 @@ const styles = StyleSheet.create({
     borderColor: '#DBEAFE',
   },
   infoIcon: {
-    fontSize: 32,
-    marginBottom: 12,
+    fontSize: 40,
+    marginBottom: 16,
   },
   infoTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#1E3A8A',
-    marginBottom: 12,
+    marginBottom: 16,
   },
   infoContent: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#1E40AF',
-    lineHeight: 24,
+    lineHeight: 28,
   },
   quizTitle: {
     fontSize: 14,
@@ -1724,7 +1724,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   quizQuestion: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#0F172A',
     marginBottom: 24,
@@ -1759,8 +1759,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   optionImage: {
-    width: 300,
-    height: 300,
+    width: 400,
+    height: 400,
   },
   optionImageLabel: {
     fontSize: 14,
@@ -1805,20 +1805,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   practiceIcon: {
-    fontSize: 48,
-    marginBottom: 16,
+    fontSize: 56,
+    marginBottom: 20,
   },
   practiceTitle: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#166534',
-    marginBottom: 12,
+    marginBottom: 16,
     textAlign: 'center',
   },
   practiceContent: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#15803D',
-    lineHeight: 24,
+    lineHeight: 28,
     textAlign: 'center',
   },
   scoreBox: {
@@ -1854,8 +1854,8 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   handImage: {
-    width: 500,
-    height: 500,
+    width: 600,
+    height: 600,
   },
   navigation: {
     flexDirection: 'row',
@@ -1899,7 +1899,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   errorText: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#EF4444',
     textAlign: 'center',
     marginTop: 8,

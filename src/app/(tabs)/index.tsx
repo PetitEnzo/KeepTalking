@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
 import { router } from 'expo-router';
+import HoverableCard from '../../components/common/HoverableCard';
 
 type UserProfile = 'deaf' | 'hearing' | 'family' | 'professional' | null;
 type UserLevel = 'beginner' | 'intermediate' | 'advanced' | null;
@@ -137,12 +138,9 @@ export default function HomeScreen() {
 
           {/* Grille de cartes */}
           <View style={styles.cardsGrid}>
-            <Pressable 
-              style={({ pressed }) => [
-                styles.gridCard,
-                { backgroundColor: colors.card, borderColor: colors.border },
-                pressed && styles.gridCardPressed
-              ]}
+            <HoverableCard 
+              style={styles.gridCard}
+              hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/lessons')}
             >
               <Text style={styles.gridCardIcon}>📚</Text>
@@ -150,14 +148,11 @@ export default function HomeScreen() {
               <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
                 Apprenez les bases du LFPC étape par étape
               </Text>
-            </Pressable>
+            </HoverableCard>
 
-            <Pressable 
-              style={({ pressed }) => [
-                styles.gridCard,
-                { backgroundColor: colors.card, borderColor: colors.border },
-                pressed && styles.gridCardPressed
-              ]}
+            <HoverableCard 
+              style={styles.gridCard}
+              hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/training-beginner')}
             >
               <Text style={styles.gridCardIcon}>🖐️</Text>
@@ -165,14 +160,11 @@ export default function HomeScreen() {
               <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
                 Pratiquez les configurations de main de base
               </Text>
-            </Pressable>
+            </HoverableCard>
 
-            <Pressable 
-              style={({ pressed }) => [
-                styles.gridCard,
-                { backgroundColor: colors.card, borderColor: colors.border },
-                pressed && styles.gridCardPressed
-              ]}
+            <HoverableCard 
+              style={styles.gridCard}
+              hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/training')}
             >
               <Text style={styles.gridCardIcon}>🎯</Text>
@@ -180,14 +172,11 @@ export default function HomeScreen() {
               <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
                 Codez des mots complets avec détection en temps réel
               </Text>
-            </Pressable>
+            </HoverableCard>
 
-            <Pressable 
-              style={({ pressed }) => [
-                styles.gridCard,
-                { backgroundColor: colors.card, borderColor: colors.border },
-                pressed && styles.gridCardPressed
-              ]}
+            <HoverableCard 
+              style={styles.gridCard}
+              hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/contribute')}
             >
               <Text style={styles.gridCardIcon}>✍️</Text>
@@ -195,14 +184,11 @@ export default function HomeScreen() {
               <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
                 Contribuez en proposant de nouveaux mots à coder
               </Text>
-            </Pressable>
+            </HoverableCard>
 
-            <Pressable 
-              style={({ pressed }) => [
-                styles.gridCard,
-                { backgroundColor: colors.card, borderColor: colors.border },
-                pressed && styles.gridCardPressed
-              ]}
+            <HoverableCard 
+              style={styles.gridCard}
+              hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/basics')}
             >
               <Text style={styles.gridCardIcon}>📖</Text>
@@ -210,14 +196,11 @@ export default function HomeScreen() {
               <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
                 Découvrez les fondamentaux du LFPC
               </Text>
-            </Pressable>
+            </HoverableCard>
 
-            <Pressable 
-              style={({ pressed }) => [
-                styles.gridCard,
-                { backgroundColor: colors.card, borderColor: colors.border },
-                pressed && styles.gridCardPressed
-              ]}
+            <HoverableCard 
+              style={styles.gridCard}
+              hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/game')}
             >
               <Text style={styles.gridCardIcon}>🎮</Text>
@@ -225,7 +208,7 @@ export default function HomeScreen() {
               <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
                 Apprenez en vous amusant avec nos mini-jeux
               </Text>
-            </Pressable>
+            </HoverableCard>
           </View>
         </View>
       </ScrollView>
@@ -782,20 +765,14 @@ const styles = StyleSheet.create({
     transform: [{ translateY: -10 }, { scale: 1.02 }],
     borderColor: '#3B82F6',
     backgroundColor: '#F0F9FF',
-    shadowColor: '#3B82F6',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
+    boxShadow: '0 12px 16px rgba(59, 130, 246, 0.3)',
     elevation: 12,
   },
   gridCardHovered: {
     transform: [{ translateY: -10 }, { scale: 1.02 }],
     borderColor: '#3B82F6',
     backgroundColor: '#F0F9FF',
-    shadowColor: '#3B82F6',
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
+    boxShadow: '0 12px 16px rgba(59, 130, 246, 0.3)',
     elevation: 12,
   },
   gridCardIcon: {
