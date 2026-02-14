@@ -107,6 +107,17 @@ export default function HomeScreen() {
     return (
       <ScrollView style={[styles.completedContainer, { backgroundColor: colors.background }]}>
         <View style={[styles.completedContent, isMobile && styles.completedContentMobile]}>
+          {/* Bannière d'avertissement */}
+          <View style={[styles.warningBanner, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={styles.warningIcon}>⚠️</Text>
+            <View style={styles.warningContent}>
+              <Text style={[styles.warningTitle, { color: colors.error }]}>Application en développement</Text>
+              <Text style={[styles.warningText, { color: colors.textSecondary }]}>
+                Cette application est un complément d'apprentissage et ne remplace pas les cours de LFPC. Des erreurs peuvent être présentes. N'hésitez pas à nous signaler tout problème !
+              </Text>
+            </View>
+          </View>
+
           <Text style={[styles.welcomeTitle, { color: colors.text }]}>
             Bienvenue {user?.user_metadata?.username || 'Utilisateur'} ! 👋
           </Text>
@@ -138,17 +149,6 @@ export default function HomeScreen() {
               <BadgeDisplay userId={userId} maxDisplay={5} showTitle={true} />
             </View>
           )}
-
-          {/* Bannière d'avertissement */}
-          <View style={[styles.warningBanner, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={styles.warningIcon}>⚠️</Text>
-            <View style={styles.warningContent}>
-              <Text style={[styles.warningTitle, { color: colors.error }]}>Application en développement</Text>
-              <Text style={[styles.warningText, { color: colors.textSecondary }]}>
-                Cette application est un complément d'apprentissage et ne remplace pas les cours de LFPC. Des erreurs peuvent être présentes. N'hésitez pas à nous signaler tout problème !
-              </Text>
-            </View>
-          </View>
 
           {/* Grille de cartes */}
           <View style={styles.cardsGrid}>

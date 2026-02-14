@@ -236,7 +236,7 @@ export default function BadgeDisplay({ userId, maxDisplay, showTitle = true }: B
         <View style={styles.header}>
           <Text style={[styles.title, { color: colors.text }]}>🏆 Badges</Text>
           <Text style={[styles.badgeCount, { color: colors.textSecondary }]}>
-            {badges.length} débloqué{badges.length > 1 ? 's' : ''} sur 10
+            {badges.length} débloqué{badges.length > 1 ? 's' : ''} sur 28
           </Text>
           <Text style={[styles.encouragementText, { color: colors.textSecondary }]}>
             Continuez à vous entraîner pour en débloquer de nouveaux !
