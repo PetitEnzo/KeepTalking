@@ -47,7 +47,12 @@ function RootLayoutNav() {
   return (
     <>
       <StatusBar style="auto" />
-      <Slot />
+      <Slot 
+        screenOptions={{
+          animation: 'none',
+          contentStyle: { backgroundColor: 'transparent' },
+        }}
+      />
     </>
   );
 }

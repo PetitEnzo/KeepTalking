@@ -191,6 +191,18 @@ export default function HomeScreen() {
             <HoverableCard 
               style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
               hoverStyle={styles.gridCardHovered}
+              onPress={() => router.push('/(tabs)/training-expert')}
+            >
+              <Text style={styles.gridCardIcon}>🏆</Text>
+              <Text style={[styles.gridCardTitle, { color: colors.text }]}>Entraînement Expert</Text>
+              <Text style={[styles.gridCardDescription, { color: colors.textSecondary }]}>
+                Codez des phrases ou des mots complexes
+              </Text>
+            </HoverableCard>
+
+            <HoverableCard 
+              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+              hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/contribute')}
             >
               <Text style={styles.gridCardIcon}>✍️</Text>
@@ -770,8 +782,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   gridCard: {
-    width: '32%',
-    minWidth: 280,
+    width: '48%',
+    minWidth: 150,
     borderRadius: 16,
     padding: 24,
     borderWidth: 2,

@@ -15,6 +15,7 @@ interface SyllableCardProps {
   handSignImage?: string;
   handPositionImage?: string;
   handPositionDescription?: string;
+  showImageHelp?: boolean;
 }
 
 export default function SyllableCard({ 
@@ -22,7 +23,8 @@ export default function SyllableCard({
   status, 
   handSignImage, 
   handPositionImage,
-  handPositionDescription
+  handPositionDescription,
+  showImageHelp = true
 }: SyllableCardProps) {
   const { colors, theme } = useTheme();
   const getStatusStyle = () => {
@@ -82,36 +84,40 @@ export default function SyllableCard({
         <Text style={[styles.syllableText, { color: colors.text }]}>{syllable.text}</Text>
       </View>
 
-      <View style={styles.imagesContainer}>
-        {syllable.consonne && handSignImage && (
-          <View style={[styles.imageBox, { backgroundColor: colors.background }]}>
-            <Image 
-              source={{ uri: handSignImage }} 
-              style={styles.image}
-              resizeMode="contain"
-            />
-            <Text style={[styles.imageLabel, { color: colors.textSecondary }]}>
-              Consonne: {syllable.consonne}
-            </Text>
-          </View>
-        )}
+      {showImageHelp && (
+        <>
+          <View style={styles.imagesContainer}>
+            {syllable.consonne && handSignImage && (
+              <View style={[styles.imageBox, { backgroundColor: colors.background }]}>
+                <Image 
+                  source={{ uri: handSignImage }} 
+                  style={styles.image}
+                  resizeMode="contain"
+                />
+                <Text style={[styles.imageLabel, { color: colors.textSecondary }]}>
+                  Consonne: {syllable.consonne}
+                </Text>
+              </View>
+            )}
 
-        {syllable.voyelle && handPositionImage && (
-          <View style={[styles.imageBox, { backgroundColor: colors.background }]}>
-            <Image 
-              source={{ uri: handPositionImage }} 
-              style={styles.image}
-              resizeMode="contain"
-            />
-            <Text style={[styles.imageLabel, { color: colors.textSecondary }]}>
-              Voyelle: {syllable.voyelle}
-            </Text>
+            {syllable.voyelle && handPositionImage && (
+              <View style={[styles.imageBox, { backgroundColor: colors.background }]}>
+                <Image 
+                  source={{ uri: handPositionImage }} 
+                  style={styles.image}
+                  resizeMode="contain"
+                />
+                <Text style={[styles.imageLabel, { color: colors.textSecondary }]}>
+                  Voyelle: {syllable.voyelle}
+                </Text>
+              </View>
+            )}
           </View>
-        )}
-      </View>
 
-      {syllable.description && (
-        <Text style={[styles.description, { color: colors.textSecondary }]}>{syllable.description}</Text>
+          {syllable.description && (
+            <Text style={[styles.description, { color: colors.textSecondary }]}>{syllable.description}</Text>
+          )}
+        </>
       )}
     </View>
   );

@@ -165,12 +165,16 @@ function BadgeCard({ badge, colors }: BadgeCardProps) {
             </Animated.Text>
           </View>
         )}
-        <Text style={[styles.badgeName, { color: colors.text }]} numberOfLines={2}>
-          {badge.name}
-        </Text>
-        <Text style={[styles.badgeDescription, { color: colors.textSecondary }]} numberOfLines={2}>
-          {badge.description}
-        </Text>
+        {!isHovered && (
+          <>
+            <Text style={[styles.badgeName, { color: colors.text }]} numberOfLines={2}>
+              {badge.name}
+            </Text>
+            <Text style={[styles.badgeDescription, { color: colors.textSecondary }]} numberOfLines={2}>
+              {badge.description}
+            </Text>
+          </>
+        )}
       </View>
     </Pressable>
   );

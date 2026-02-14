@@ -96,23 +96,27 @@ export default function WebcamFeedback({
         };
 
         tfScript.onload = () => {
+          console.log('✅ TensorFlow.js chargé');
           tfLoaded = true;
-          checkAllLoaded();
+          // Charger HandPose et BlazeFace seulement après TensorFlow
+          document.head.appendChild(handposeScript);
+          document.head.appendChild(blazefaceScript);
         };
 
         handposeScript.onload = () => {
+          console.log('✅ HandPose chargé');
           handposeLoaded = true;
           checkAllLoaded();
         };
 
         blazefaceScript.onload = () => {
+          console.log('✅ BlazeFace chargé');
           blazefaceLoaded = true;
           checkAllLoaded();
         };
 
+        // Charger TensorFlow en premier
         document.head.appendChild(tfScript);
-        document.head.appendChild(handposeScript);
-        document.head.appendChild(blazefaceScript);
       });
     };
 
@@ -123,9 +127,18 @@ export default function WebcamFeedback({
 
         if (!isActive) return;
         
+        // Attendre un peu pour s'assurer que les scripts sont bien chargés
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         // Charger les modèles HandPose et BlazeFace en parallèle (si nécessaire)
         if (detectFace) {
           console.log('🔄 Chargement HandPose + BlazeFace...');
+          
+          // Vérifier que les modèles sont disponibles
+          if (!window.handpose || !window.blazeface) {
+            throw new Error('Modèles TensorFlow non disponibles');
+          }
+          
           const [handModel, faceModel] = await Promise.all([
             window.handpose.load(),
             window.blazeface.load()
@@ -136,6 +149,12 @@ export default function WebcamFeedback({
           faceRef.current = faceModel;
         } else {
           console.log('🔄 Chargement HandPose uniquement...');
+          
+          // Vérifier que le modèle est disponible
+          if (!window.handpose) {
+            throw new Error('Modèle HandPose non disponible');
+          }
+          
           const handModel = await window.handpose.load();
           console.log('✅ Modèle chargé');
           

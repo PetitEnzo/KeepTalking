@@ -417,13 +417,15 @@ export default function TrainingBeginnerScreen() {
                 ]}>
                   {Array.isArray(currentSign.consonnes) ? currentSign.consonnes.join(', ') : currentSign.consonnes}
                 </Text>
-                <Text style={[
-                  styles.configDescription,
-                  isMobile && styles.configDescriptionMobile,
-                  { color: colors.textSecondary }
-                ]}>
-                  {currentSign.description}
-                </Text>
+                {showImageHelp && (
+                  <Text style={[
+                    styles.configDescription,
+                    isMobile && styles.configDescriptionMobile,
+                    { color: colors.textSecondary }
+                  ]}>
+                    {currentSign.description}
+                  </Text>
+                )}
                 
                 {showImageHelp && currentSign.image_url && (
                   <View style={[

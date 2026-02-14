@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Stack, usePathname } from 'expo-router';
-import { View, Text, Pressable, ScrollView, Image, StyleSheet, useWindowDimensions, Modal, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, Pressable, ScrollView, Image, StyleSheet, useWindowDimensions, Modal, TouchableWithoutFeedback, ImageBackground } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { router } from 'expo-router';
@@ -55,13 +55,6 @@ export default function TabsLayout() {
   useEffect(() => {
     loadUserAvatar();
     checkAdminStatus();
-    
-    // Rafraîchir l'avatar toutes les 2 secondes pour détecter les changements
-    const interval = setInterval(() => {
-      loadUserAvatar();
-    }, 2000);
-
-    return () => clearInterval(interval);
   }, [user]);
 
   const loadUserAvatar = async () => {
@@ -110,8 +103,8 @@ export default function TabsLayout() {
 
   const navigateTo = (path: string) => {
     router.push(path as any);
-    // Fermer la sidebar sur mobile après navigation
-    if (isMobile) {
+    // Fermer la sidebar sur mobile et tablette après navigation
+    if (isMobile || isTablet) {
       setIsSidebarOpen(false);
     }
   };
@@ -129,7 +122,20 @@ export default function TabsLayout() {
 
   // Sidebar visible en permanence sur desktop, en modal sur mobile/tablette
   const SidebarContent = () => (
-    <View style={[styles.sidebar, (isMobile || isTablet) && styles.sidebarMobile]}>
+    <ImageBackground 
+      source={require('../../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
+      style={[
+        styles.sidebar, 
+        (isMobile || isTablet) && styles.sidebarMobile,
+        // @ts-ignore
+        { 
+          WebkitTapHighlightColor: 'transparent',
+          backgroundColor: 'transparent'
+        }
+      ]}
+      imageStyle={{ ...styles.sidebarBackgroundImage, opacity: 1 }}
+      resizeMode="cover"
+    >
         {/* Logo - Desktop only */}
         {!isMobile && !isTablet && (
           <View style={styles.logoSection}>
@@ -177,22 +183,15 @@ export default function TabsLayout() {
         )}
 
         {/* Navigation */}
-        <ScrollView style={styles.navScroll} contentContainerStyle={styles.navScrollContent}>
+        <View style={styles.navScroll}>
           {/* Groupe: Navigation principale */}
           <View style={styles.navGroup}>
             <Text style={styles.groupTitle}>NAVIGATION</Text>
             
             <Pressable 
               onPress={() => navigateTo('/(tabs)')}
-              style={({ pressed }) => [
-                styles.navItem, 
-                pressed && styles.navItemPressed,
-                isActive('/(tabs)') && styles.navItemActive,
-                !isMobile && !isTablet && hoveredItem === 'home' && !isActive('/(tabs)') && styles.navItemHovered
-              ]}
-              // @ts-ignore
-              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('home') : undefined}
-              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
+              style={[styles.navItem, isActive('/(tabs)') && styles.navItemActive]}
+              android_ripple={{ color: 'transparent' }}
             >
               <Text style={styles.navIcon}>🏠</Text>
               <Text style={[styles.navText, isActive('/(tabs)') && styles.navTextActive]}>Accueil</Text>
@@ -200,15 +199,8 @@ export default function TabsLayout() {
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/lessons')}
-              style={({ pressed }) => [
-                styles.navItem, 
-                pressed && styles.navItemPressed,
-                isActive('/lessons') && styles.navItemActive,
-                !isMobile && !isTablet && hoveredItem === 'lessons' && !isActive('/lessons') && styles.navItemHovered
-              ]}
-              // @ts-ignore
-              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('lessons') : undefined}
-              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
+              style={[styles.navItem, isActive('/lessons') && styles.navItemActive]}
+              android_ripple={{ color: 'transparent' }}
             >
               <Text style={styles.navIcon}>📚</Text>
               <Text style={[styles.navText, isActive('/lessons') && styles.navTextActive]}>Leçons</Text>
@@ -216,15 +208,8 @@ export default function TabsLayout() {
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/training-beginner')}
-              style={({ pressed }) => [
-                styles.navItem, 
-                pressed && styles.navItemPressed,
-                isActive('/training-beginner') && styles.navItemActive,
-                !isMobile && !isTablet && hoveredItem === 'training-beginner' && !isActive('/training-beginner') && styles.navItemHovered
-              ]}
-              // @ts-ignore
-              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('training-beginner') : undefined}
-              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
+              style={[styles.navItem, isActive('/training-beginner') && styles.navItemActive]}
+              android_ripple={{ color: 'transparent' }}
             >
               <Text style={styles.navIcon}>🖐️</Text>
               <Text style={[styles.navText, isActive('/training-beginner') && styles.navTextActive]}>Entraînement Débutant</Text>
@@ -232,31 +217,26 @@ export default function TabsLayout() {
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/training')}
-              style={({ pressed }) => [
-                styles.navItem, 
-                pressed && styles.navItemPressed,
-                isActive('/training') && !isActive('/training-beginner') && styles.navItemActive,
-                !isMobile && !isTablet && hoveredItem === 'training' && !isActive('/training') && styles.navItemHovered
-              ]}
-              // @ts-ignore
-              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('training') : undefined}
-              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
+              style={[styles.navItem, isActive('/training') && !isActive('/training-beginner') && !isActive('/training-expert') && styles.navItemActive]}
+              android_ripple={{ color: 'transparent' }}
             >
               <Text style={styles.navIcon}>🎯</Text>
-              <Text style={[styles.navText, isActive('/training') && !isActive('/training-beginner') && styles.navTextActive]}>Entraînement Avancé</Text>
+              <Text style={[styles.navText, isActive('/training') && !isActive('/training-beginner') && !isActive('/training-expert') && styles.navTextActive]}>Entraînement Avancé</Text>
+            </Pressable>
+
+            <Pressable 
+              onPress={() => navigateTo('/(tabs)/training-expert')}
+              style={[styles.navItem, isActive('/training-expert') && styles.navItemActive]}
+              android_ripple={{ color: 'transparent' }}
+            >
+              <Text style={styles.navIcon}>🏆</Text>
+              <Text style={[styles.navText, isActive('/training-expert') && styles.navTextActive]}>Entraînement Expert</Text>
             </Pressable>
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/contribute')}
-              style={({ pressed }) => [
-                styles.navItem, 
-                pressed && styles.navItemPressed,
-                isActive('/contribute') && styles.navItemActive,
-                !isMobile && !isTablet && hoveredItem === 'contribute' && !isActive('/contribute') && styles.navItemHovered
-              ]}
-              // @ts-ignore
-              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('contribute') : undefined}
-              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
+              style={[styles.navItem, isActive('/contribute') && styles.navItemActive]}
+              android_ripple={{ color: 'transparent' }}
             >
               <Text style={styles.navIcon}>✍️</Text>
               <Text style={[styles.navText, isActive('/contribute') && styles.navTextActive]}>Ajouter un mot</Text>
@@ -264,15 +244,8 @@ export default function TabsLayout() {
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/game')}
-              style={({ pressed }) => [
-                styles.navItem, 
-                pressed && styles.navItemPressed,
-                isActive('/game') && styles.navItemActive,
-                !isMobile && !isTablet && hoveredItem === 'game' && !isActive('/game') && styles.navItemHovered
-              ]}
-              // @ts-ignore
-              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('game') : undefined}
-              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
+              style={[styles.navItem, isActive('/game') && styles.navItemActive]}
+              android_ripple={{ color: 'transparent' }}
             >
               <Text style={styles.navIcon}>🎮</Text>
               <Text style={[styles.navText, isActive('/game') && styles.navTextActive]}>Jeu</Text>
@@ -280,15 +253,8 @@ export default function TabsLayout() {
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/basics')}
-              style={({ pressed }) => [
-                styles.navItem, 
-                pressed && styles.navItemPressed,
-                isActive('/basics') && styles.navItemActive,
-                !isMobile && !isTablet && hoveredItem === 'basics' && !isActive('/basics') && styles.navItemHovered
-              ]}
-              // @ts-ignore
-              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('basics') : undefined}
-              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
+              style={[styles.navItem, isActive('/basics') && styles.navItemActive]}
+              android_ripple={{ color: 'transparent' }}
             >
               <Text style={styles.navIcon}>📖</Text>
               <Text style={[styles.navText, isActive('/basics') && styles.navTextActive]}>Les bases du code</Text>
@@ -296,15 +262,8 @@ export default function TabsLayout() {
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/profile')}
-              style={({ pressed }) => [
-                styles.navItem, 
-                pressed && styles.navItemPressed,
-                isActive('/profile') && styles.navItemActive,
-                !isMobile && !isTablet && hoveredItem === 'profile' && !isActive('/profile') && styles.navItemHovered
-              ]}
-              // @ts-ignore
-              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('profile') : undefined}
-              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
+              style={[styles.navItem, isActive('/profile') && styles.navItemActive]}
+              android_ripple={{ color: 'transparent' }}
             >
               <Text style={styles.navIcon}>👤</Text>
               <Text style={[styles.navText, isActive('/profile') && styles.navTextActive]}>Profil</Text>
@@ -317,15 +276,8 @@ export default function TabsLayout() {
             
             <Pressable 
               onPress={() => navigateTo('/(tabs)/about')}
-              style={({ pressed }) => [
-                styles.navItem, 
-                pressed && styles.navItemPressed,
-                isActive('/about') && styles.navItemActive,
-                !isMobile && !isTablet && hoveredItem === 'about' && !isActive('/about') && styles.navItemHovered
-              ]}
-              // @ts-ignore
-              onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('about') : undefined}
-              onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
+              style={[styles.navItem, isActive('/about') && styles.navItemActive]}
+              android_ripple={{ color: 'transparent' }}
             >
               <Text style={styles.navIcon}>ℹ️</Text>
               <Text style={[styles.navText, isActive('/about') && styles.navTextActive]}>À propos</Text>
@@ -334,28 +286,22 @@ export default function TabsLayout() {
             {isAdmin && (
               <Pressable 
                 onPress={() => navigateTo('/(tabs)/admin')}
-                style={({ pressed }) => [
-                  styles.navItem, 
-                  pressed && styles.navItemPressed,
-                  isActive('/admin') && styles.navItemActive,
-                  !isMobile && !isTablet && hoveredItem === 'admin' && !isActive('/admin') && styles.navItemHovered
-                ]}
-                // @ts-ignore
-                onMouseEnter={!isMobile && !isTablet ? () => setHoveredItem('admin') : undefined}
-                onMouseLeave={!isMobile && !isTablet ? () => setHoveredItem(null) : undefined}
+                style={[styles.navItem, isActive('/admin') && styles.navItemActive]}
+                android_ripple={{ color: 'transparent' }}
               >
                 <Text style={styles.navIcon}>🛡️</Text>
                 <Text style={[styles.navText, isActive('/admin') && styles.navTextActive]}>Administration</Text>
               </Pressable>
             )}
           </View>
-        </ScrollView>
+        </View>
 
         {/* Theme Toggle */}
         <View style={styles.themeSection}>
           <Pressable 
             onPress={toggleTheme}
             style={styles.themeToggleContainer}
+            android_ripple={{ color: 'transparent' }}
           >
             <View style={[
               styles.themeToggle,
@@ -383,13 +329,14 @@ export default function TabsLayout() {
         <View style={styles.signOutSection}>
           <Pressable 
             onPress={handleSignOut}
-            style={({ pressed }) => [styles.signOutButton, pressed && styles.signOutButtonPressed]}
+            style={styles.signOutButton}
+            android_ripple={{ color: 'transparent' }}
           >
             <Text style={styles.signOutIcon}>🚪</Text>
             <Text style={styles.signOutText}>Se déconnecter</Text>
           </Pressable>
         </View>
-      </View>
+      </ImageBackground>
   );
 
   return (
@@ -453,20 +400,26 @@ const styles = StyleSheet.create({
   },
   sidebar: {
     width: 288,
-    backgroundColor: '#0F172A',
     flexDirection: 'column',
     height: '100%',
+    backgroundColor: 'rgba(15, 23, 42, 0.85)',
+  },
+  sidebarBackgroundImage: {
+    opacity: 1,
   },
   logoSection: {
-    padding: 24,
+    padding: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#334155',
     alignItems: 'center',
+    paddingLeft: 24,
   },
   logo: {
-    width: 200,
-    height: 200,
-    marginBottom: 16,
+    width: 120,
+    height: 120,
+    marginBottom: 8,
   },
   appTitle: {
     fontSize: 20,
@@ -509,15 +462,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
     fontSize: 16,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   email: {
-    fontSize: 12,
-    color: '#94A3B8',
+    fontSize: 13,
+    color: '#FFFFFF',
+    fontWeight: '500',
+    textShadowColor: 'rgba(0, 0, 0, 0.9)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   navScroll: {
     flex: 1,
-  },
-  navScrollContent: {
     padding: 16,
     paddingBottom: 32,
   },
@@ -527,10 +485,13 @@ const styles = StyleSheet.create({
   groupTitle: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#94A3B8',
+    color: '#E2E8F0',
     textTransform: 'uppercase',
     marginBottom: 12,
     paddingHorizontal: 12,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   navItem: {
     flexDirection: 'row',
@@ -539,9 +500,18 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     marginBottom: 8,
+    backgroundColor: 'transparent',
+    // @ts-ignore
+    cursor: 'pointer',
+    WebkitTapHighlightColor: 'transparent',
   },
   navItemPressed: {
-    backgroundColor: '#1E293B',
+    backgroundColor: 'transparent',
+    opacity: 1,
+  },
+  navItemHovered: {
+    backgroundColor: 'transparent',
+    opacity: 1,
   },
   navItemActive: {
     backgroundColor: '#2563EB',
@@ -552,11 +522,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 8,
     elevation: 4,
-  },
-  navItemHovered: {
-    backgroundColor: '#1E293B',
-    borderLeftWidth: 2,
-    borderLeftColor: '#475569',
   },
   navTextActive: {
     fontWeight: '700',
@@ -570,6 +535,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '500',
     fontSize: 16,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   themeSection: {
     padding: 16,
@@ -648,6 +616,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '600',
     fontSize: 16,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   mainContent: {
     flex: 1,

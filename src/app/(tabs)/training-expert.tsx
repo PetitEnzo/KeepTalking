@@ -185,15 +185,14 @@ export default function TrainingScreen() {
 
   const selectRandomWord = async () => {
     try {
-      const baseWords = trainingWordsData as TrainingWord[];
-      
+      // Entraînement expert : uniquement les mots contributed avec difficulty advanced
       const { data: approvedWords } = await supabase
         .from('word_contributions')
         .select('contribution_id, word, difficulty, syllables')
         .eq('status', 'approved')
-        .in('difficulty', ['beginner', 'intermediate']);
+        .eq('difficulty', 'advanced');
       
-      let allWords = [...baseWords];
+      let allWords: TrainingWord[] = [];
       
       if (approvedWords && approvedWords.length > 0) {
         const contributedWords: TrainingWord[] = approvedWords.map(w => ({
@@ -202,7 +201,7 @@ export default function TrainingScreen() {
           difficulty: w.difficulty,
           syllables: w.syllables as Syllable[],
         }));
-        allWords = [...allWords, ...contributedWords];
+        allWords = contributedWords;
       }
       
       const randomIndex = Math.floor(Math.random() * allWords.length);
@@ -570,6 +569,11 @@ export default function TrainingScreen() {
 
                   // Sur mobile: afficher uniquement la syllabe courante (masquer les validées)
                   if (isMobile && status === 'validated') {
+                    return null;
+                  }
+
+                  // Sur entraînement expert: afficher uniquement la syllabe courante (masquer les validées)
+                  if (status === 'validated') {
                     return null;
                   }
 

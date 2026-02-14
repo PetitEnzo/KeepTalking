@@ -205,8 +205,8 @@ export default function ProfileScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Chargement...</Text>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <Text style={[styles.loadingText, { color: colors.text }]}>Chargement...</Text>
       </View>
     );
   }
@@ -217,7 +217,7 @@ export default function ProfileScreen() {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      <ScrollView style={styles.container}>
+      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.content]}>
         {/* Header avec avatar */}
         <View style={styles.header}>
@@ -431,11 +431,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
     alignItems: 'center',
     justifyContent: 'center',
   },

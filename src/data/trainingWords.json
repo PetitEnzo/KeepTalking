@@ -20,20 +20,12 @@
     "difficulty": "beginner",
     "syllables": [
       {
-        "text": "M",
+        "text": "MIN",
         "consonne": "M",
-        "voyelle": null,
-        "hand_sign_key": "M",
-        "hand_position_config": null,
-        "description": "Configuration M seule"
-      },
-      {
-        "text": "IN",
-        "consonne": null,
         "voyelle": "in",
-        "hand_sign_key": null,
+        "hand_sign_key": "M",
         "hand_position_config": 1,
-        "description": "Main sous l'œil - Position 1"
+        "description": "Main sous l'œil - Configuration M"
       }
     ]
   },
