@@ -88,13 +88,11 @@ export default function SignUpScreen() {
         <View style={styles.card}>
           {/* Logo */}
           <View style={styles.logoContainer}>
-            <View style={styles.logoCircle}>
-              <Image
-                source={require('../../../assets/images/logoColor.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-            </View>
+            <Image
+              source={require('../../../assets/images/logoColor.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
             <Text style={styles.title}>
               Créer un compte
             </Text>
@@ -256,22 +254,12 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 40,
-  },
-  logoCircle: {
-    backgroundColor: '#EFF6FF',
-    padding: 16,
-    borderRadius: 100,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    marginBottom: 32,
   },
   logo: {
     width: 100,
     height: 100,
+    marginBottom: 16,
   },
   title: {
     fontSize: 32,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, Pressable, KeyboardAvoidingView, Platform, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, Pressable, KeyboardAvoidingView, Platform, StyleSheet, ScrollView, ImageBackground } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { TextInput } from '../../components/auth/TextInput';
@@ -74,25 +74,28 @@ export default function ForgotPasswordScreen() {
   }
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
+    <ImageBackground 
+      source={require('../../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
+      style={styles.backgroundImage}
+      resizeMode="cover"
     >
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
       >
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
         <View style={styles.card}>
           {/* Header */}
           <View style={styles.logoContainer}>
-            <View style={styles.logoCircle}>
-              <Image
-                source={require('../../../assets/images/logoWhiteBlack.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-            </View>
+            <Image
+              source={require('../../../assets/images/logoColor.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
             <Text style={styles.title}>
               Mot de passe oublié ?
             </Text>
@@ -135,13 +138,17 @@ export default function ForgotPasswordScreen() {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: 'transparent',
   },
   scrollView: {
     flex: 1,
@@ -155,33 +162,25 @@ const styles = StyleSheet.create({
   card: {
     width: '100%',
     maxWidth: 448,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 24,
     padding: 40,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
   },
   logoContainer: {
     alignItems: 'center',
     marginBottom: 40,
   },
-  logoCircle: {
-    backgroundColor: '#EFF6FF',
-    padding: 16,
-    borderRadius: 100,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
   logo: {
     width: 100,
     height: 100,
+    marginBottom: 16,
   },
   title: {
     fontSize: 28,
