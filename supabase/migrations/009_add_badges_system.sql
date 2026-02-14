@@ -88,8 +88,9 @@ CREATE INDEX IF NOT EXISTS idx_badges_category ON badges(category);
 -- Clear existing badges to avoid duplicates
 DELETE FROM badges;
 
--- Progression Badges (6)
+-- Progression Badges (7)
 INSERT INTO badges (name, description, icon, image_key, unlock_condition, category) VALUES
+('Inscription', 'Vous avez rejoint Keep Talking !', '🎉', 'badge_inscription', '{"type": "always_unlocked"}', 'progression'),
 ('Première Étape', 'Compléter la première leçon', '🎯', 'badge_premiere_etape', '{"type": "lesson_completed", "lesson_id": "1"}', 'progression'),
 ('Apprenti LFPC', 'Atteindre le niveau 5', '📚', 'badge_apprenti_lfpc', '{"type": "level", "value": 5}', 'progression'),
 ('Pratiquant', 'Atteindre le niveau 10', '🎓', 'badge_pratiquant', '{"type": "level", "value": 10}', 'progression'),
@@ -216,6 +217,10 @@ BEGIN
           FROM word_contributions
           WHERE user_id = p_user_id AND status = 'approved'
         );
+      
+      WHEN 'always_unlocked' THEN
+        -- Badge débloqué automatiquement (ex: Inscription)
+        v_should_unlock := true;
       
       ELSE
         -- For other types, we'll handle them in the app logic

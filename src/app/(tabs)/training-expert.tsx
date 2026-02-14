@@ -567,18 +567,8 @@ export default function TrainingScreen() {
                     status = 'current';
                   }
 
-                  // Sur mobile: afficher uniquement la syllabe courante (masquer les validées)
-                  if (isMobile && status === 'validated') {
-                    return null;
-                  }
-
-                  // Sur entraînement expert: afficher uniquement la syllabe courante (masquer les validées)
-                  if (status === 'validated') {
-                    return null;
-                  }
-
-                  // Sur mobile: afficher uniquement la syllabe courante
-                  if (isMobile && status !== 'current') {
+                  // Sur mobile: afficher la syllabe courante et la validée (pour confirmation visuelle)
+                  if (isMobile && status !== 'current' && status !== 'validated') {
                     return null;
                   }
 

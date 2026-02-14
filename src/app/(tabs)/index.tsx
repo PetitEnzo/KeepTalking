@@ -110,6 +110,18 @@ export default function HomeScreen() {
           <Text style={[styles.welcomeTitle, { color: colors.text }]}>
             Bienvenue {user?.user_metadata?.username || 'Utilisateur'} ! 👋
           </Text>
+
+          {/* Description de l'application */}
+          <View style={[styles.descriptionSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.descriptionTitle, { color: colors.text }]}>Bienvenue sur Keep Talking ! 👋</Text>
+            <Text style={[styles.descriptionText, { color: colors.textSecondary }]}>
+              Keep Talking est votre compagnon d'apprentissage de la <Text style={{ fontWeight: '600', color: colors.text }}>Langue française Parlée Complétée (LFPC)</Text>. 
+              Cette application vous permet d'apprendre et de pratiquer le LFPC de manière interactive grâce à la détection en temps réel de vos configurations de main et de visage.
+            </Text>
+            <Text style={[styles.descriptionText, { color: colors.textSecondary, marginTop: 12 }]}>
+              Que vous soyez débutant ou avancé, professionnel ou curieux, nos leçons progressives, exercices pratiques et mini-jeux vous aideront à maîtriser cette méthode de communication essentielle pour l'accessibilité des personnes sourdes et malentendantes.
+            </Text>
+          </View>
           
           {/* Streak */}
           <View style={styles.streakCard}>
@@ -126,18 +138,6 @@ export default function HomeScreen() {
               <BadgeDisplay userId={userId} maxDisplay={5} showTitle={true} />
             </View>
           )}
-
-          {/* Description de l'application */}
-          <View style={[styles.descriptionSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.descriptionTitle, { color: colors.text }]}>Bienvenue sur Keep Talking ! 👋</Text>
-            <Text style={[styles.descriptionText, { color: colors.textSecondary }]}>
-              Keep Talking est votre compagnon d'apprentissage de la <Text style={{ fontWeight: '600', color: colors.text }}>Langue française Parlée Complétée (LFPC)</Text>. 
-              Cette application vous permet d'apprendre et de pratiquer le LFPC de manière interactive grâce à la détection en temps réel de vos configurations de main et de visage.
-            </Text>
-            <Text style={[styles.descriptionText, { color: colors.textSecondary, marginTop: 12 }]}>
-              Que vous soyez débutant ou avancé, professionnel ou curieux, nos leçons progressives, exercices pratiques et mini-jeux vous aideront à maîtriser cette méthode de communication essentielle pour l'accessibilité des personnes sourdes et malentendantes.
-            </Text>
-          </View>
 
           {/* Bannière d'avertissement */}
           <View style={[styles.warningBanner, { backgroundColor: colors.card, borderColor: colors.border }]}>

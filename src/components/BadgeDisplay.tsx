@@ -236,7 +236,10 @@ export default function BadgeDisplay({ userId, maxDisplay, showTitle = true }: B
         <View style={styles.header}>
           <Text style={[styles.title, { color: colors.text }]}>🏆 Badges</Text>
           <Text style={[styles.badgeCount, { color: colors.textSecondary }]}>
-            {badges.length} débloqué{badges.length > 1 ? 's' : ''}
+            {badges.length} débloqué{badges.length > 1 ? 's' : ''} sur 10
+          </Text>
+          <Text style={[styles.encouragementText, { color: colors.textSecondary }]}>
+            Continuez à vous entraîner pour en débloquer de nouveaux !
           </Text>
         </View>
       )}
@@ -261,17 +264,21 @@ const styles = StyleSheet.create({
     overflow: 'visible', // Permet au badge de sortir du container
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: 'column',
     marginBottom: 12,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 4,
   },
   badgeCount: {
     fontSize: 14,
+    marginBottom: 4,
+  },
+  encouragementText: {
+    fontSize: 12,
+    fontStyle: 'italic',
   },
   loadingText: {
     fontSize: 14,
