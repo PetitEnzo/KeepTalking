@@ -59,14 +59,24 @@ export default function HomeScreen() {
     if (!user) return;
 
     try {
-      const { data } = await supabase
-        .from('user_profiles')
-        .select('current_streak')
-        .eq('user_id', user.id)
+      // D'abord récupérer le user_id depuis la table users
+      const { data: userData } = await supabase
+        .from('users')
+        .select('user_id')
+        .eq('auth_user_id', user.id)
         .single();
 
-      if (data) {
-        setCurrentStreak(data.current_streak || 0);
+      if (!userData) return;
+
+      // Puis récupérer le streak depuis user_profiles
+      const { data: profileData } = await supabase
+        .from('user_profiles')
+        .select('current_streak')
+        .eq('user_id', userData.user_id)
+        .single();
+
+      if (profileData) {
+        setCurrentStreak(profileData.current_streak || 0);
       }
     } catch (error) {
       console.error('Erreur chargement streak:', error);

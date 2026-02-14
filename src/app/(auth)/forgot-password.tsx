@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, Pressable, KeyboardAvoidingView, Platform, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, Pressable, KeyboardAvoidingView, Platform, StyleSheet, ScrollView, ImageBackground } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { TextInput } from '../../components/auth/TextInput';
@@ -74,7 +74,11 @@ export default function ForgotPasswordScreen() {
   }
 
   return (
-    <View style={styles.backgroundImage}>
+    <ImageBackground 
+      source={require('../../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
@@ -134,7 +138,7 @@ export default function ForgotPasswordScreen() {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
-    </View>
+    </ImageBackground>
   );
 }
 

@@ -1,10 +1,14 @@
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, ImageBackground } from 'react-native';
 import { Link } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
 export default function TermsScreen() {
   return (
-    <View style={styles.backgroundImage}>
+    <ImageBackground 
+      source={require('../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
       <ScrollView style={styles.container}>
         <StatusBar style="light" />
         
@@ -84,7 +88,7 @@ export default function TermsScreen() {
           </Link>
         </View>
       </ScrollView>
-    </View>
+    </ImageBackground>
   );
 }
 
