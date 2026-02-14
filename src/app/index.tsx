@@ -1,8 +1,13 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, ImageBackground } from 'react-native';
 import { Link } from 'expo-router';
 
 export default function HomeScreen() {
   return (
+    <ImageBackground 
+      source={require('../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
     <View style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.title}>
@@ -39,10 +44,14 @@ export default function HomeScreen() {
         </View>
       </View>
     </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: 'transparent',

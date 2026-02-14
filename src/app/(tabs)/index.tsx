@@ -60,30 +60,22 @@ export default function HomeScreen() {
 
     try {
       // D'abord récupérer le user_id depuis la table users
-      const { data: userData, error: userError } = await supabase
+      const { data: userData } = await supabase
         .from('users')
         .select('user_id')
         .eq('auth_user_id', user.id)
         .single();
 
-      console.log('🔍 DEBUG loadStreak - userData:', userData, 'error:', userError);
-
-      if (!userData) {
-        console.log('❌ Pas de userData trouvé');
-        return;
-      }
+      if (!userData) return;
 
       // Puis récupérer le streak depuis user_profiles
-      const { data: profileData, error: profileError } = await supabase
+      const { data: profileData } = await supabase
         .from('user_profiles')
         .select('current_streak')
         .eq('user_id', userData.user_id)
         .single();
 
-      console.log('🔍 DEBUG loadStreak - profileData:', profileData, 'error:', profileError);
-
       if (profileData) {
-        console.log('✅ Setting streak to:', profileData.current_streak);
         setCurrentStreak(profileData.current_streak || 0);
       }
     } catch (error) {

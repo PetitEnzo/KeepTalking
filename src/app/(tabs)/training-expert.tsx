@@ -547,7 +547,15 @@ export default function TrainingScreen() {
             )}
 
             <View style={[styles.leftColumn, isMobile && styles.mobileSyllableColumn]}>
-              <View style={[styles.wordCard, isMobile && styles.wordCardMobile, { backgroundColor: colors.card, borderColor: colors.border }]}>
+              <View style={[
+                styles.wordCard, 
+                isMobile && styles.wordCardMobile, 
+                { 
+                  backgroundColor: colors.card, 
+                  borderColor: validatedSyllables.length > 0 ? '#10B981' : colors.border,
+                  borderWidth: validatedSyllables.length > 0 ? 3 : 1,
+                }
+              ]}>
                 {!isMobile && <Text style={[styles.wordLabel, { color: colors.textSecondary }]}>Mot à coder</Text>}
                 <Text style={[styles.wordText, isMobile && styles.wordTextMobile, { color: colors.text }]}>{currentWord.word}</Text>
                 {!isMobile && (

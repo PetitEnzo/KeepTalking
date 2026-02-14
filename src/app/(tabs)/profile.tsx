@@ -253,11 +253,6 @@ export default function ProfileScreen() {
           </View>
           
           <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.statValue, { color: colors.text }]}>🔥 {streak}</Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Jours de suite</Text>
-          </View>
-          
-          <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Text style={[styles.statValue, { color: colors.text }]}>{userStats?.total_words_contributed || 0}</Text>
             <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Mots contribués</Text>
           </View>
