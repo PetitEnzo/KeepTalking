@@ -260,12 +260,12 @@ export default function BadgeDisplay({ userId, maxDisplay, showTitle = true }: B
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 8,
+    marginVertical: 4,
     overflow: 'visible', // Permet au badge de sortir du container
   },
   header: {
     flexDirection: 'column',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   title: {
     fontSize: 18,
@@ -297,17 +297,19 @@ const styles = StyleSheet.create({
   },
   badgeScrollContent: {
     paddingRight: 16,
-    paddingTop: 60, // Espace en haut pour que le badge puisse sortir
-    paddingBottom: 60, // Espace en bas pour que le badge puisse sortir
+    paddingTop: 40, // Espace en haut pour que le badge puisse sortir
+    paddingBottom: 40, // Espace en bas pour que le badge puisse sortir
     overflow: 'visible',
   },
   badgeCard: {
     width: 180, // Augmenté de 50% (120 -> 180)
+    height: 180, // Hauteur fixe pour uniformiser toutes les cards
     padding: 18, // Augmenté proportionnellement
     borderRadius: 12,
     borderWidth: 1,
     marginRight: 12,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   badgeImage: {
     width: 90, // Augmenté de 50% (60 -> 90)

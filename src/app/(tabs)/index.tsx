@@ -60,9 +60,9 @@ export default function HomeScreen() {
 
     try {
       const { data } = await supabase
-        .from('users')
+        .from('user_profiles')
         .select('current_streak')
-        .eq('auth_user_id', user.id)
+        .eq('user_id', user.id)
         .single();
 
       if (data) {
