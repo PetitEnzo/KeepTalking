@@ -34,8 +34,8 @@ export default function AboutScreen() {
           </Text>
 
           <Link href="/" asChild>
-            <Pressable style={({ pressed }) => [styles.ctaButton, pressed && styles.ctaButtonPressed]}>
-              <Text style={styles.ctaButtonText}>
+            <Pressable style={({ pressed }) => [styles.ctaButtonHero, pressed && styles.ctaButtonPressed]}>
+              <Text style={styles.ctaButtonHeroText}>
                 Commencer gratuitement
               </Text>
             </Pressable>
@@ -133,21 +133,6 @@ export default function AboutScreen() {
         </View>
       </View>
 
-      {/* SECTION MISSION */}
-      <View style={styles.missionSection}>
-        <View style={styles.sectionContent}>
-          <Text style={styles.missionTitle}>
-            Notre mission
-          </Text>
-
-          <View style={styles.missionQuote}>
-            <Text style={styles.missionQuoteText}>
-              "Rendre l'apprentissage du LfPC accessible à tous, partout, à tout moment"
-            </Text>
-          </View>
-        </View>
-      </View>
-
       {/* CTA FINAL */}
       <View style={styles.ctaSection}>
         <View style={styles.sectionContent}>
@@ -180,6 +165,21 @@ export default function AboutScreen() {
               </Text>
             </Pressable>
           </Link>
+        </View>
+      </View>
+
+      {/* SECTION MISSION */}
+      <View style={styles.missionSection}>
+        <View style={styles.sectionContent}>
+          <Text style={styles.missionTitle}>
+            Notre mission
+          </Text>
+
+          <View style={styles.missionQuote}>
+            <Text style={styles.missionQuoteText}>
+              "Rendre l'apprentissage du LfPC accessible à tous, partout, à tout moment"
+            </Text>
+          </View>
         </View>
       </View>
 
@@ -251,19 +251,21 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
   },
-  ctaButton: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    paddingHorizontal: 48,
-    paddingVertical: 20,
+  ctaButtonHero: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    borderRadius: 12,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
   },
   ctaButtonPressed: {
     opacity: 0.8,
   },
-  ctaButtonText: {
-    color: '#2563EB',
+  ctaButtonHeroText: {
+    color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   
   // SECTIONS

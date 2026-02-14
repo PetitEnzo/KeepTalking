@@ -58,7 +58,7 @@ export default function LoginScreen() {
           <View style={styles.logoContainer}>
             <View style={styles.logoCircle}>
               <Image
-                source={require('../../../assets/images/logoWhiteBlack.png')}
+                source={require('../../../assets/images/logoColor.png')}
                 style={styles.logo}
                 resizeMode="contain"
               />
