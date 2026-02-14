@@ -97,24 +97,22 @@ export default function LoginScreen() {
             </View>
           </View>
 
-          {/* Action Buttons */}
-          <View style={styles.actionsContainer}>
-            {/* Forgot Password Link */}
-            <Link href="/(auth)/forgot-password" asChild>
-              <Pressable style={styles.forgotPassword}>
-                <Text style={styles.forgotPasswordText}>
-                  Mot de passe oublié ?
-                </Text>
-              </Pressable>
-            </Link>
+          {/* Forgot Password Link */}
+          <Link href="/(auth)/forgot-password" asChild>
+            <Pressable style={styles.forgotPassword}>
+              <Text style={styles.forgotPasswordText}>
+                Mot de passe oublié ?
+              </Text>
+            </Pressable>
+          </Link>
 
-            <AuthButton
-              title="Se connecter"
-              onPress={handleLogin}
-              loading={loading}
-              variant="primary"
-            />
-          </View>
+          {/* Action Button */}
+          <AuthButton
+            title="Se connecter"
+            onPress={handleLogin}
+            loading={loading}
+            variant="primary"
+          />
 
           {/* Sign Up Link */}
           <View style={styles.signupContainer}>
@@ -156,14 +154,16 @@ const styles = StyleSheet.create({
   card: {
     width: '100%',
     maxWidth: 448,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 24,
     padding: 40,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
   },
   logoContainer: {
     alignItems: 'center',
