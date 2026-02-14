@@ -89,20 +89,20 @@ function BadgeCard({ badge, colors }: BadgeCardProps) {
       // @ts-ignore - onMouseMove is web-only
       onMouseMove={handleMouseMove}
       style={{ 
-        zIndex: isHovered ? 99999 : 1,
+        zIndex: isHovered ? 999999 : 1,
         position: 'relative',
-        elevation: isHovered ? 99999 : 1,
+        elevation: isHovered ? 999999 : 1,
       }}
     >
       <View
         style={[
           styles.badgeCard,
           {
-            backgroundColor: isHovered ? 'rgba(255, 255, 255, 0.98)' : 'rgba(0,0,0,0)',
+            backgroundColor: isHovered ? (colors.background || '#FFFFFF') : 'rgba(0,0,0,0)',
             borderColor: isHovered ? colors.primary || '#3B82F6' : colors.border,
             borderWidth: isHovered ? 2 : 1,
             overflow: 'visible',
-            zIndex: isHovered ? 99999 : 1,
+            zIndex: isHovered ? 999999 : 1,
           },
         ]}
       >

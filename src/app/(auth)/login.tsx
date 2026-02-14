@@ -95,22 +95,26 @@ export default function LoginScreen() {
             </View>
           </View>
 
-          {/* Forgot Password Link */}
-          <Link href="/(auth)/forgot-password" asChild>
-            <Pressable style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>
-                Mot de passe oublié ?
+          {/* Action Row */}
+          <View style={styles.actionRow}>
+            <Link href="/(auth)/forgot-password" asChild>
+              <Pressable>
+                <Text style={styles.forgotPasswordText}>
+                  Mot de passe oublié ?
+                </Text>
+              </Pressable>
+            </Link>
+            
+            <Pressable 
+              onPress={handleLogin}
+              disabled={loading}
+              style={styles.connectButton}
+            >
+              <Text style={styles.connectButtonText}>
+                {loading ? 'Connexion...' : 'Se connecter'}
               </Text>
             </Pressable>
-          </Link>
-
-          {/* Action Button */}
-          <AuthButton
-            title="Se connecter"
-            onPress={handleLogin}
-            loading={loading}
-            variant="primary"
-          />
+          </View>
 
           {/* Sign Up Link */}
           <View style={styles.signupContainer}>
@@ -188,17 +192,27 @@ const styles = StyleSheet.create({
   inputWrapper: {
     marginBottom: 20,
   },
-  actionsContainer: {
-    gap: 16,
-  },
-  forgotPassword: {
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 24,
   },
   forgotPasswordText: {
     color: '#2563EB',
     fontSize: 14,
     fontWeight: '600',
-    textAlign: 'right',
+  },
+  connectButton: {
+    backgroundColor: '#2563EB',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 12,
+  },
+  connectButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
   signupContainer: {
     flexDirection: 'row',
