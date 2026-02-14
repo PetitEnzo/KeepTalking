@@ -23,7 +23,7 @@ export function PasswordInput({ label, error, ...props }: PasswordInputProps) {
           onPress={() => setShowPassword(!showPassword)} 
           className="ml-3 p-1 active:opacity-50"
         >
-          <Text className="text-2xl">{showPassword ? '👁' : '•••'}</Text>
+          <Text className="text-2xl">{showPassword ? '👁' : '🙈'}</Text>
         </Pressable>
       </View>
       {error && (

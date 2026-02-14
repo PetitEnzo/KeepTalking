@@ -1,11 +1,16 @@
-import { View, Text, ScrollView, Pressable, Image, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Pressable, Image, StyleSheet, ImageBackground } from 'react-native';
 import { Link } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
 export default function AboutScreen() {
   return (
-    <ScrollView style={styles.container}>
-      <StatusBar style="light" />
+    <ImageBackground 
+      source={require('../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
+      <ScrollView style={styles.container}>
+        <StatusBar style="light" />
 
       {/* HERO SECTION */}
       <View style={styles.hero}>
@@ -24,12 +29,9 @@ export default function AboutScreen() {
             Plateforme d'apprentissage moderne pour maîtriser le Langage Français Parlé Complété
           </Text>
 
-          <View style={styles.heroIllustration}>
-            <Text style={styles.heroEmoji}>🤟👄</Text>
-            <Text style={styles.heroIllustrationText}>
-              Communication visuelle accessible
-            </Text>
-          </View>
+          <Text style={styles.heroIllustrationText}>
+            Communication visuelle accessible
+          </Text>
 
           <Link href="/" asChild>
             <Pressable style={({ pressed }) => [styles.ctaButton, pressed && styles.ctaButtonPressed]}>
@@ -191,10 +193,14 @@ export default function AboutScreen() {
         </Text>
       </View>
     </ScrollView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
