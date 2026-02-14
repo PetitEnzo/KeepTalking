@@ -1,13 +1,9 @@
-import { View, Text, Pressable, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 
 export default function HomeScreen() {
   return (
-    <ImageBackground 
-      source={require('../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
-      style={styles.container}
-      resizeMode="cover"
-    >
+    <View style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.title}>
           KeepTalking
@@ -42,16 +38,16 @@ export default function HomeScreen() {
           </Link>
         </View>
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F9FAFB',
     padding: 16,
   },
   card: {

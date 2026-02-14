@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, ImageBackground } from 'react-native';
 import { TamaguiProvider } from '@tamagui/core';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { ThemeProvider } from '../contexts/ThemeContext';
@@ -47,12 +47,21 @@ function RootLayoutNav() {
   return (
     <>
       <StatusBar style="auto" />
-      <Slot 
-        screenOptions={{
-          animation: 'none',
-          contentStyle: { backgroundColor: 'transparent' },
-        }}
-      />
+      <ImageBackground 
+        source={require('../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
+        style={{ flex: 1 }}
+        imageStyle={{ opacity: 0.95 }}
+        resizeMode="cover"
+      >
+        <Slot 
+          screenOptions={{
+            animation: 'none',
+            contentStyle: { backgroundColor: 'transparent' },
+            headerShown: false,
+            animationEnabled: false,
+          }}
+        />
+      </ImageBackground>
     </>
   );
 }

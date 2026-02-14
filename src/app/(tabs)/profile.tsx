@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, ScrollView, StyleSheet, Modal, Image, ImageBackground } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet, Modal, Image } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -212,12 +212,8 @@ export default function ProfileScreen() {
   }
 
   return (
-    <ImageBackground 
-      source={require('../../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
-      style={styles.backgroundImage}
-      resizeMode="cover"
-    >
-      <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={{ flex: 1, backgroundColor: 'transparent' }}>
+      <ScrollView style={[styles.container, { backgroundColor: 'transparent' }]}>
       <View style={[styles.content]}>
         {/* Header avec avatar */}
         <View style={styles.header}>
@@ -421,14 +417,11 @@ export default function ProfileScreen() {
         </Pressable>
       </Modal>
     </ScrollView>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-  },
   container: {
     flex: 1,
   },

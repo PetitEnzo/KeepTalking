@@ -1,14 +1,10 @@
-import { View, Text, ScrollView, Pressable, Image, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, ScrollView, Pressable, Image, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
 export default function AboutScreen() {
   return (
-    <ImageBackground 
-      source={require('../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
-      style={styles.backgroundImage}
-      resizeMode="cover"
-    >
+    <View style={styles.backgroundImage}>
       <ScrollView style={styles.container}>
         <StatusBar style="light" />
 
@@ -193,13 +189,14 @@ export default function AboutScreen() {
         </Text>
       </View>
     </ScrollView>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
+    backgroundColor: 'transparent',
   },
   container: {
     flex: 1,

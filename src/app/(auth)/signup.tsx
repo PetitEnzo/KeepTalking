@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Image, Pressable, KeyboardAvoidingView, Platform, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, ScrollView, Image, Pressable, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { Link, router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { TextInput } from '../../components/auth/TextInput';
@@ -71,11 +71,7 @@ export default function SignUpScreen() {
   };
 
   return (
-    <ImageBackground 
-      source={require('../../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
-      style={styles.backgroundImage}
-      resizeMode="cover"
-    >
+    <View style={styles.backgroundImage}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
@@ -219,13 +215,14 @@ export default function SignUpScreen() {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
+    backgroundColor: 'transparent',
   },
   container: {
     flex: 1,

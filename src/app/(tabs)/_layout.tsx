@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Stack, usePathname } from 'expo-router';
-import { View, Text, Pressable, ScrollView, Image, StyleSheet, useWindowDimensions, Modal, TouchableWithoutFeedback, ImageBackground } from 'react-native';
+import { View, Text, Pressable, ScrollView, Image, StyleSheet, useWindowDimensions, Modal, TouchableWithoutFeedback } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { router } from 'expo-router';
@@ -122,19 +122,16 @@ export default function TabsLayout() {
 
   // Sidebar visible en permanence sur desktop, en modal sur mobile/tablette
   const SidebarContent = () => (
-    <ImageBackground 
-      source={require('../../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
+    <View 
       style={[
         styles.sidebar, 
         (isMobile || isTablet) && styles.sidebarMobile,
         // @ts-ignore
         { 
           WebkitTapHighlightColor: 'transparent',
-          backgroundColor: 'transparent'
+          backgroundColor: 'rgba(15, 23, 42, 0.85)'
         }
       ]}
-      imageStyle={{ ...styles.sidebarBackgroundImage, opacity: 1 }}
-      resizeMode="cover"
     >
         {/* Logo - Desktop only */}
         {!isMobile && !isTablet && (
@@ -336,7 +333,7 @@ export default function TabsLayout() {
             <Text style={styles.signOutText}>Se déconnecter</Text>
           </Pressable>
         </View>
-      </ImageBackground>
+      </View>
   );
 
   return (
@@ -373,7 +370,9 @@ export default function TabsLayout() {
         <Stack
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: '#F8FAFC' },
+            contentStyle: { backgroundColor: 'transparent' },
+            animation: 'none',
+            animationEnabled: false,
           }}
         >
           <Stack.Screen name="index" />
@@ -403,9 +402,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     height: '100%',
     backgroundColor: 'rgba(15, 23, 42, 0.85)',
-  },
-  sidebarBackgroundImage: {
-    opacity: 1,
   },
   logoSection: {
     padding: 16,
