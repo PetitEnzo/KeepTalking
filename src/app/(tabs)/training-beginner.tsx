@@ -119,11 +119,12 @@ export default function TrainingBeginnerScreen() {
     setIsValidating(false);
   };
 
-  const handleModeSelection = (mode: TrainingMode, withImages: boolean) => {
+  const handleModeSelection = async (mode: TrainingMode, withImages: boolean) => {
     setSelectedMode(mode);
     setShowImageHelp(withImages);
     setShowModeSelection(false);
-    setStartTime(new Date());
+    // Ne pas démarrer le chrono ici, il démarrera à la première détection
+    setStartTime(null);
     setValidatedCount(0);
     setTimeLeft(120);
     selectRandomSign();
@@ -131,6 +132,11 @@ export default function TrainingBeginnerScreen() {
 
   const handleDetectionResults = useCallback((landmarks: any) => {
     if (!currentSign) return;
+    
+    // Démarrer le chrono dès la première détection si mode 2 minutes
+    if (selectedMode === 'timed' && !startTime) {
+      setStartTime(new Date());
+    }
     
     if (!landmarks || landmarks.length !== 21) {
       setIsDetecting(false);
@@ -214,7 +220,7 @@ export default function TrainingBeginnerScreen() {
       
       return newHistory;
     });
-  }, [currentSign, isValidating]);
+  }, [currentSign, isValidating, selectedMode, startTime]);
 
   const handleSignValidated = () => {
     const newCount = validatedCount + 1;

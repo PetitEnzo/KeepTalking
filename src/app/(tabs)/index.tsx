@@ -144,16 +144,6 @@ export default function HomeScreen() {
             </Text>
           </View>
           
-          {/* Streak */}
-          <View style={styles.streakCard}>
-            <Text style={styles.streakEmoji}>🔥</Text>
-            <View style={styles.streakContent}>
-              <Text style={styles.streakNumber}>{currentStreak}</Text>
-              <Text style={styles.streakLabel}>jour{currentStreak > 1 ? 's' : ''} de suite</Text>
-            </View>
-          </View>
-
-          {/* Badges */}
           {userId && (
             <View style={[styles.badgesSection, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <BadgeDisplay userId={userId} maxDisplay={5} showTitle={true} />

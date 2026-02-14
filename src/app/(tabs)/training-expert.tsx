@@ -126,6 +126,11 @@ export default function TrainingScreen() {
   const handleDetectionResults = useCallback((landmarks: any, face?: any) => {
     setIsDetecting(true);
     
+    // Démarrer le chrono dès la première détection si mode 2 minutes
+    if (selectedMode === 'timed' && !startTime) {
+      setStartTime(new Date());
+    }
+    
     if (currentWord && currentSyllableIndex < currentWord.syllables.length) {
       const targetSyllable = currentWord.syllables[currentSyllableIndex];
       const result = matchSyllable(landmarks, targetSyllable, face);
@@ -146,7 +151,7 @@ export default function TrainingScreen() {
         return newHistory;
       });
     }
-  }, [currentWord, currentSyllableIndex, isValidating]);
+  }, [currentWord, currentSyllableIndex, isValidating, selectedMode, startTime]);
 
   const loadData = async () => {
     try {
@@ -330,7 +335,8 @@ export default function TrainingScreen() {
     setSelectedMode(mode);
     setShowImageHelp(withImages);
     setShowModeSelection(false);
-    setStartTime(new Date());
+    // Ne pas démarrer le chrono ici, il démarrera à la première détection
+    setStartTime(null);
     setValidatedWordsCount(0);
     setTimeLeft(120);
     await selectRandomWord();
