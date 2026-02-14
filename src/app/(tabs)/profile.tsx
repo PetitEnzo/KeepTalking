@@ -423,6 +423,7 @@ export default function ProfileScreen() {
     </ScrollView>
     </ImageBackground>
   );
+}
 
 const styles = StyleSheet.create({
   backgroundImage: {
