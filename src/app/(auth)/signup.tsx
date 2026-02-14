@@ -154,30 +154,40 @@ export default function SignUpScreen() {
 
           {/* Terms Checkbox Group */}
           <View style={styles.termsContainer}>
-            <Pressable 
-              onPress={() => setAcceptTerms(!acceptTerms)}
-              style={({ pressed }) => [
-                styles.termsCheckbox,
-                pressed && styles.termsCheckboxPressed
-              ]}
-            >
-              <View style={[
-                styles.checkbox,
-                acceptTerms && styles.checkboxChecked
-              ]}>
-                {acceptTerms && <Text style={styles.checkboxCheck}>✓</Text>}
-              </View>
+            <View style={styles.termsCheckbox}>
+              <Pressable 
+                onPress={() => setAcceptTerms(!acceptTerms)}
+                style={({ pressed }) => [
+                  styles.checkboxPressable,
+                  pressed && styles.termsCheckboxPressed
+                ]}
+              >
+                <View style={[
+                  styles.checkbox,
+                  acceptTerms && styles.checkboxChecked
+                ]}>
+                  {acceptTerms && <Text style={styles.checkboxCheck}>✓</Text>}
+                </View>
+              </Pressable>
               <Text style={styles.termsText}>
                 J'accepte les{' '}
-                <Text style={styles.termsLink}>
-                  conditions d'utilisation
-                </Text>
+                <Link href="/terms" asChild>
+                  <Pressable>
+                    <Text style={styles.termsLink}>
+                      conditions d'utilisation
+                    </Text>
+                  </Pressable>
+                </Link>
                 {' '}et la{' '}
-                <Text style={styles.termsLink}>
-                  politique de confidentialité
-                </Text>
+                <Link href="/privacy" asChild>
+                  <Pressable>
+                    <Text style={styles.termsLink}>
+                      politique de confidentialité
+                    </Text>
+                  </Pressable>
+                </Link>
               </Text>
-            </Pressable>
+            </View>
           </View>
 
           {/* Action Buttons */}
@@ -291,6 +301,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
+  checkboxPressable: {
+    marginRight: 12,
+  },
   termsCheckboxPressed: {
     opacity: 0.7,
   },
@@ -301,10 +314,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#94A3B8',
     backgroundColor: '#FFFFFF',
-    marginRight: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 2,
   },
   checkboxChecked: {
     backgroundColor: '#2563EB',
