@@ -17,10 +17,10 @@ function RootLayoutNav() {
 
     const inAuthGroup = segments[0] === '(auth)';
     const inTabsGroup = segments[0] === '(tabs)';
-    const isIndexOrAbout = segments[0] === 'index' || segments[0] === 'about' || segments.length === 0;
+    const isPublicPage = segments[0] === 'index' || segments[0] === 'about' || segments[0] === 'privacy' || segments[0] === 'terms' || segments.length === 0;
 
-    // Permettre l'accès aux pages publiques (index, about)
-    if (isIndexOrAbout) {
+    // Permettre l'accès aux pages publiques (index, about, privacy, terms)
+    if (isPublicPage) {
       return;
     }
 
