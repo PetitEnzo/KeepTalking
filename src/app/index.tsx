@@ -1,9 +1,13 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, ImageBackground } from 'react-native';
 import { Link } from 'expo-router';
 
 export default function HomeScreen() {
   return (
-    <View style={styles.container}>
+    <ImageBackground 
+      source={require('../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
+      style={styles.container}
+      resizeMode="cover"
+    >
       <View style={styles.card}>
         <Text style={styles.title}>
           KeepTalking
@@ -38,7 +42,7 @@ export default function HomeScreen() {
           </Link>
         </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 

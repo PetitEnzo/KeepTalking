@@ -435,6 +435,7 @@ export default function WebcamFeedback({
                 height: 'auto',
                 display: 'block',
                 transform: isCameraFlipped ? 'scaleX(-1)' : 'scaleX(1)',
+                objectFit: 'cover',
               }}
               width={480}
               height={360}
@@ -477,9 +478,20 @@ export default function WebcamFeedback({
               </Pressable>
             )}
 
-            {/* Barre de confiance */}
-            <View style={styles.confidenceOverlay}>
-              <View style={styles.confidenceContainer}>
+            {/* Barre de confiance et statut - Côte à côte sur mobile */}
+            <View style={isMobileOrTablet ? styles.bottomOverlayMobile : styles.confidenceOverlay}>
+              {isMobileOrTablet && (
+                <View style={[
+                  styles.statusBadgeMobile,
+                  { backgroundColor: isDetecting ? '#10B981' : '#EF4444' }
+                ]}>
+                  <Text style={styles.statusDot}>●</Text>
+                  <Text style={styles.statusTextMobile}>
+                    {isDetecting ? 'Main' : 'Aucune'}
+                  </Text>
+                </View>
+              )}
+              <View style={isMobileOrTablet ? styles.confidenceContainerMobile : styles.confidenceContainer}>
                 <Text style={styles.confidenceLabel}>Précision</Text>
                 <View style={styles.confidenceBar}>
                   <View 
@@ -605,9 +617,7 @@ const styles = StyleSheet.create({
   canvasContainer: {
     position: 'relative',
     width: '100%',
-    maxWidth: 700,
-    alignSelf: 'center',
-    borderRadius: 12,
+    borderRadius: 0,
     overflow: 'hidden',
     backgroundColor: '#000',
     marginBottom: 16,
@@ -674,6 +684,41 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFF',
     minWidth: 70,
+  },
+  bottomOverlayMobile: {
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    right: 16,
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
+  statusBadgeMobile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  statusTextMobile: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFF',
+  },
+  confidenceContainerMobile: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    padding: 8,
+    borderRadius: 8,
   },
   confidenceBar: {
     flex: 1,

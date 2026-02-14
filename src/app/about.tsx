@@ -143,23 +143,6 @@ export default function AboutScreen() {
               "Rendre l'apprentissage du LfPC accessible à tous, partout, à tout moment"
             </Text>
           </View>
-
-          <View style={styles.statsRow}>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>500+</Text>
-              <Text style={styles.statLabel}>Utilisateurs actifs</Text>
-            </View>
-
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>10K+</Text>
-              <Text style={styles.statLabel}>Leçons complétées</Text>
-            </View>
-
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>2K+</Text>
-              <Text style={styles.statLabel}>Heures d'apprentissage</Text>
-            </View>
-          </View>
         </View>
       </View>
 

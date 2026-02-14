@@ -88,7 +88,11 @@ function BadgeCard({ badge, colors }: BadgeCardProps) {
       onHoverOut={handleMouseLeave}
       // @ts-ignore - onMouseMove is web-only
       onMouseMove={handleMouseMove}
-      style={{ zIndex: isHovered ? 9999 : 1 }} // Badge survolé passe au premier plan
+      style={{ 
+        zIndex: isHovered ? 9999 : 1,
+        position: isHovered ? 'relative' : 'relative',
+        elevation: isHovered ? 9999 : 1,
+      }}
     >
       <View
         style={[
@@ -98,6 +102,7 @@ function BadgeCard({ badge, colors }: BadgeCardProps) {
             borderColor: isHovered ? colors.primary || '#3B82F6' : colors.border,
             borderWidth: isHovered ? 2 : 1,
             overflow: 'visible', // Permet au badge de dépasser de la carte
+            zIndex: isHovered ? 9999 : 1,
           },
         ]}
       >
