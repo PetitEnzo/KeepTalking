@@ -48,7 +48,7 @@ function RootLayoutNav() {
     <>
       <StatusBar style="auto" />
       <ImageBackground 
-        source={require('../assets/images/photo-1615051179134-62696ea77ef9.avif')}
+        source={require('../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
         style={{ flex: 1 }}
         imageStyle={{ opacity: 0.95 }}
         resizeMode="cover"
