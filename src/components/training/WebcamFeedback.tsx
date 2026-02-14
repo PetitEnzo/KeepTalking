@@ -74,7 +74,7 @@ export default function WebcamFeedback({
 
         // Charger TensorFlow.js
         const tfScript = document.createElement('script');
-        tfScript.src = 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js';
+        tfScript.src = 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.2.0/dist/tf.min.js';
         
         // Charger HandPose
         const handposeScript = document.createElement('script');
