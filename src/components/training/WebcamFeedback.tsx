@@ -273,16 +273,29 @@ export default function WebcamFeedback({
         // Boucle de détection optimisée
         const detectHands = async () => {
           if (!isActive || !videoRef.current || !canvasRef.current || !handsRef.current) {
+            console.log('❌ detectHands arrêté:', { isActive, hasVideo: !!videoRef.current, hasCanvas: !!canvasRef.current, hasHands: !!handsRef.current });
             return;
           }
 
           try {
             const canvasCtx = canvasRef.current.getContext('2d');
-            if (!canvasCtx) return;
+            if (!canvasCtx) {
+              console.error('❌ Impossible d\'obtenir le contexte 2D du canvas');
+              return;
+            }
 
             // Dessiner la vidéo sur le canvas avec la taille réelle
             canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
             canvasCtx.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
+            
+            // Log uniquement toutes les 30 frames (~1 seconde)
+            if (Math.random() < 0.033) {
+              console.log('🎨 Canvas dessiné:', { 
+                canvasSize: `${canvasRef.current.width}x${canvasRef.current.height}`,
+                videoSize: `${videoRef.current.videoWidth}x${videoRef.current.videoHeight}`,
+                videoReadyState: videoRef.current.readyState
+              });
+            }
 
             // Détecter visage + main toutes les 100ms (throttle)
             const now = Date.now();
@@ -421,6 +434,7 @@ export default function WebcamFeedback({
         };
 
         // Démarrer la boucle de détection
+        console.log('🚀 Démarrage de la boucle detectHands...');
         detectHands();
         
         cameraRef.current = stream;
