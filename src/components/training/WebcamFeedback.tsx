@@ -215,32 +215,54 @@ export default function WebcamFeedback({
           }
         });
 
-        if (!videoRef.current) return;
+        console.log('✅ Stream obtenu', stream);
+
+        if (!videoRef.current) {
+          console.error('❌ videoRef.current est null');
+          setIsLoading(false);
+          return;
+        }
         
         videoRef.current.srcObject = stream;
         setLoadingProgress(85);
         setLoadingMessage('Démarrage de la webcam...');
+        
+        console.log('📹 Tentative de lecture de la vidéo...');
         await videoRef.current.play();
         
-        console.log('Webcam démarrée');
+        console.log('✅ Webcam démarrée');
         setLoadingProgress(95);
         setLoadingMessage('Finalisation...');
 
         // Attendre que la vidéo soit prête et ajuster la taille du canvas
         await new Promise<void>((resolve) => {
           if (videoRef.current) {
-            videoRef.current.onloadedmetadata = () => {
+            const handleMetadata = () => {
+              console.log('📐 Métadonnées vidéo chargées');
               if (videoRef.current && canvasRef.current) {
                 // Adapter la taille du canvas à la résolution réelle de la vidéo
                 canvasRef.current.width = videoRef.current.videoWidth;
                 canvasRef.current.height = videoRef.current.videoHeight;
-                console.log(`Canvas ajusté: ${canvasRef.current.width}x${canvasRef.current.height}`);
+                console.log(`✅ Canvas ajusté: ${canvasRef.current.width}x${canvasRef.current.height}`);
               }
               setLoadingProgress(100);
               setLoadingMessage('Prêt !');
+              console.log('🎉 Désactivation du loader...');
               setTimeout(() => setIsLoading(false), 500);
               resolve();
             };
+
+            // Si les métadonnées sont déjà chargées, appeler directement
+            if (videoRef.current.readyState >= 1) {
+              console.log('✅ Métadonnées déjà disponibles');
+              handleMetadata();
+            } else {
+              videoRef.current.onloadedmetadata = handleMetadata;
+            }
+          } else {
+            console.error('❌ videoRef.current est null dans la Promise');
+            setIsLoading(false);
+            resolve();
           }
         });
 
