@@ -301,47 +301,47 @@ export default function TabsLayout() {
               </Pressable>
             )}
           </View>
-        </View>
 
-        {/* Theme Toggle */}
-        <View style={styles.themeSection}>
-          <Pressable 
-            onPress={toggleTheme}
-            style={styles.themeToggleContainer}
-            android_ripple={{ color: 'transparent' }}
-          >
-            <View style={[
-              styles.themeToggle,
-              theme === 'dark' && styles.themeToggleDark
-            ]}>
+          {/* Theme Toggle */}
+          <View style={styles.themeSection}>
+            <Pressable 
+              onPress={toggleTheme}
+              style={styles.themeToggleContainer}
+              android_ripple={{ color: 'transparent' }}
+            >
               <View style={[
-                styles.themeToggleCircle,
-                theme === 'dark' && styles.themeToggleCircleDark
+                styles.themeToggle,
+                theme === 'dark' && styles.themeToggleDark
               ]}>
-                <Text style={styles.themeToggleIcon}>
-                  {theme === 'light' ? '☀️' : '🌙'}
+                <View style={[
+                  styles.themeToggleCircle,
+                  theme === 'dark' && styles.themeToggleCircleDark
+                ]}>
+                  <Text style={styles.themeToggleIcon}>
+                    {theme === 'light' ? '☀️' : '🌙'}
+                  </Text>
+                </View>
+                <Text style={[
+                  styles.themeToggleText,
+                  theme === 'dark' && styles.themeToggleTextDark
+                ]}>
+                  {theme === 'light' ? 'MODE CLAIR' : 'MODE SOMBRE'}
                 </Text>
               </View>
-              <Text style={[
-                styles.themeToggleText,
-                theme === 'dark' && styles.themeToggleTextDark
-              ]}>
-                {theme === 'light' ? 'MODE CLAIR' : 'MODE SOMBRE'}
-              </Text>
-            </View>
-          </Pressable>
-        </View>
+            </Pressable>
+          </View>
 
-        {/* Sign Out */}
-        <View style={styles.signOutSection}>
-          <Pressable 
-            onPress={handleSignOut}
-            style={styles.signOutButton}
-            android_ripple={{ color: 'transparent' }}
-          >
-            <Text style={styles.signOutIcon}>🚪</Text>
-            <Text style={styles.signOutText}>Se déconnecter</Text>
-          </Pressable>
+          {/* Sign Out */}
+          <View style={styles.signOutSection}>
+            <Pressable 
+              onPress={handleSignOut}
+              style={styles.signOutButton}
+              android_ripple={{ color: 'transparent' }}
+            >
+              <Text style={styles.signOutIcon}>🚪</Text>
+              <Text style={styles.signOutText}>Se déconnecter</Text>
+            </Pressable>
+          </View>
         </View>
       </ImageBackground>
   );

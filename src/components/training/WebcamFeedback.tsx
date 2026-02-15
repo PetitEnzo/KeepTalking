@@ -179,6 +179,21 @@ export default function WebcamFeedback({
         
         console.log('Webcam démarrée');
 
+        // Attendre que la vidéo soit prête et ajuster la taille du canvas
+        await new Promise<void>((resolve) => {
+          if (videoRef.current) {
+            videoRef.current.onloadedmetadata = () => {
+              if (videoRef.current && canvasRef.current) {
+                // Adapter la taille du canvas à la résolution réelle de la vidéo
+                canvasRef.current.width = videoRef.current.videoWidth;
+                canvasRef.current.height = videoRef.current.videoHeight;
+                console.log(`Canvas ajusté: ${canvasRef.current.width}x${canvasRef.current.height}`);
+              }
+              resolve();
+            };
+          }
+        });
+
         let lastDetectionTime = 0;
         const detectionInterval = 100; // Détecter toutes les 100ms (10 fois par seconde) pour barre très réactive
         let lastLandmarks: any = null; // Stocker les derniers landmarks détectés
@@ -193,7 +208,7 @@ export default function WebcamFeedback({
             const canvasCtx = canvasRef.current.getContext('2d');
             if (!canvasCtx) return;
 
-            // Dessiner la vidéo sur le canvas
+            // Dessiner la vidéo sur le canvas avec la taille réelle
             canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
             canvasCtx.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
