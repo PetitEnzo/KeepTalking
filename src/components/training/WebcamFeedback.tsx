@@ -515,6 +515,25 @@ export default function WebcamFeedback({
         </View>
       )}
 
+      {/* Video pour MediaPipe - toujours rendu mais caché */}
+      {isCameraEnabled && (
+        <video
+          ref={videoRef}
+          style={{ 
+            position: 'absolute' as const,
+            top: 0,
+            left: 0,
+            width: '1px',
+            height: '1px',
+            opacity: 0,
+            pointerEvents: 'none' as const
+          }}
+          autoPlay
+          playsInline
+          muted
+        />
+      )}
+
       {isLoading && (
         <View style={styles.loaderContainer}>
           <View style={styles.loaderSpinner}>
@@ -548,21 +567,6 @@ export default function WebcamFeedback({
 
       {isCameraEnabled && !isLoading ? (
         <>
-          {/* Video pour MediaPipe - visible pour debug */}
-          <video
-            ref={videoRef}
-            style={{ 
-              position: 'absolute' as const,
-              top: 0,
-              left: 0,
-              width: '1px',
-              height: '1px',
-              opacity: 0
-            }}
-            autoPlay
-            playsInline
-            muted
-          />
 
           {/* Canvas pour afficher la webcam + overlay */}
           <View style={styles.canvasContainer}>
