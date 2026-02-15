@@ -407,6 +407,10 @@ export default function WebcamFeedback({
 
             // Dessiner les derniers landmarks à CHAQUE frame (fluide)
             if (lastLandmarks) {
+              // Calculer le ratio de mise à l'échelle entre la vidéo source et le canvas
+              const scaleX = canvasRef.current.width / videoRef.current.videoWidth;
+              const scaleY = canvasRef.current.height / videoRef.current.videoHeight;
+              
               // Dessiner les connexions entre les points
               const connections = [
                 [0, 1], [1, 2], [2, 3], [3, 4], // Pouce
@@ -420,9 +424,13 @@ export default function WebcamFeedback({
               canvasCtx.strokeStyle = '#00FF00';
               canvasCtx.lineWidth = 2;
               for (const [start, end] of connections) {
-                // Les landmarks sont déjà en pixels absolus, pas besoin de mise à l'échelle
-                const [x1, y1] = lastLandmarks[start];
-                const [x2, y2] = lastLandmarks[end];
+                // Adapter les coordonnées de l'espace vidéo à l'espace canvas
+                const [x1Video, y1Video] = lastLandmarks[start];
+                const [x2Video, y2Video] = lastLandmarks[end];
+                const x1 = x1Video * scaleX;
+                const y1 = y1Video * scaleY;
+                const x2 = x2Video * scaleX;
+                const y2 = y2Video * scaleY;
                 
                 canvasCtx.beginPath();
                 canvasCtx.moveTo(x1, y1);
@@ -432,8 +440,10 @@ export default function WebcamFeedback({
 
               // Dessiner les points
               for (let i = 0; i < lastLandmarks.length; i++) {
-                // Les landmarks sont déjà en pixels absolus, pas besoin de mise à l'échelle
-                const [x, y] = lastLandmarks[i];
+                // Adapter les coordonnées de l'espace vidéo à l'espace canvas
+                const [xVideo, yVideo] = lastLandmarks[i];
+                const x = xVideo * scaleX;
+                const y = yVideo * scaleY;
                 
                 // Cercle avec contour
                 canvasCtx.beginPath();
