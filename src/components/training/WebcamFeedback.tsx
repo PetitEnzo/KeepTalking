@@ -37,6 +37,7 @@ export default function WebcamFeedback({
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingMessage, setLoadingMessage] = useState('');
+  const [infoMessageIndex, setInfoMessageIndex] = useState(0);
   const handsRef = useRef<any>(null);
   const faceRef = useRef<any>(null);
   const cameraRef = useRef<any>(null);
@@ -46,6 +47,23 @@ export default function WebcamFeedback({
   useEffect(() => {
     onDetectionRef.current = onDetection;
   }, [onDetection]);
+
+  // Rotation des messages informatifs toutes les 5 secondes pendant le chargement
+  useEffect(() => {
+    if (!isLoading) return;
+
+    const infoMessages = [
+      "Si nécessaire, autorisez l'accès à votre webcam dans votre navigateur via la pop-up",
+      "L'opération peut prendre quelques dizaines de secondes le temps d'initialiser les différents modules",
+      "Tout fonctionne en local dans votre navigateur, aucune donnée n'est envoyée !"
+    ];
+
+    const interval = setInterval(() => {
+      setInfoMessageIndex((prev) => (prev + 1) % infoMessages.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   // Initialiser et démarrer/arrêter MediaPipe
   useEffect(() => {
@@ -188,8 +206,7 @@ export default function WebcamFeedback({
         setLoadingProgress(70);
         setLoadingMessage('Demande d\'accès à la webcam...');
         
-        // Ajouter un timeout pour éviter le blocage
-        const streamPromise = navigator.mediaDevices.getUserMedia({
+        const stream = await navigator.mediaDevices.getUserMedia({
           video: { 
             width: { ideal: 1280 }, 
             height: { ideal: 720 },
@@ -197,12 +214,6 @@ export default function WebcamFeedback({
             facingMode: 'user' // Caméra frontale
           }
         });
-        
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout: La demande d\'accès à la webcam a pris trop de temps')), 30000)
-        );
-        
-        const stream = await Promise.race([streamPromise, timeoutPromise]) as MediaStream;
 
         if (!videoRef.current) return;
         
@@ -495,14 +506,15 @@ export default function WebcamFeedback({
           </View>
           <Text style={styles.progressText}>{loadingProgress}%</Text>
           
-          {loadingProgress >= 70 && loadingProgress < 85 && (
-            <View style={styles.permissionHint}>
-              <Text style={styles.permissionIcon}>🔒</Text>
-              <Text style={styles.permissionText}>
-                Si nécessaire, autorisez l'accès à votre webcam dans votre navigateur via la pop-up
-              </Text>
-            </View>
-          )}
+          {/* Message informatif rotatif */}
+          <View style={styles.infoHint}>
+            <Text style={styles.infoIcon}>ℹ️</Text>
+            <Text style={styles.infoText}>
+              {infoMessageIndex === 0 && "Si nécessaire, autorisez l'accès à votre webcam dans votre navigateur via la pop-up"}
+              {infoMessageIndex === 1 && "L'opération peut prendre quelques dizaines de secondes le temps d'initialiser les différents modules"}
+              {infoMessageIndex === 2 && "Tout fonctionne en local dans votre navigateur, aucune donnée n'est envoyée !"}
+            </Text>
+          </View>
           
           <Text style={styles.loaderSubtext}>
             {loadingProgress < 30 ? 'Chargement des bibliothèques...' :
@@ -977,25 +989,25 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
   },
-  permissionHint: {
+  infoHint: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FEF3C7',
+    backgroundColor: '#EFF6FF',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
     marginVertical: 16,
     maxWidth: 400,
   },
-  permissionIcon: {
+  infoIcon: {
     fontSize: 24,
     marginRight: 12,
   },
-  permissionText: {
+  infoText: {
     flex: 1,
     fontSize: 14,
     fontWeight: '500',
-    color: '#92400E',
+    color: '#1E40AF',
     textAlign: 'left',
   },
   loaderSubtext: {
