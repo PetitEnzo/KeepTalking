@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, Text, ActivityIndicator, PressableProps } from 'react-native';
+import { Pressable, Text, ActivityIndicator, PressableProps, StyleSheet } from 'react-native';
 
 interface AuthButtonProps extends PressableProps {
   title: string;
@@ -12,21 +12,58 @@ export function AuthButton({ title, loading, variant = 'primary', disabled, ...p
   
   return (
     <Pressable
-      className={`rounded-xl py-4 px-6 items-center justify-center shadow-md ${
-        isPrimary 
-          ? 'bg-blue-600 active:bg-blue-700 active:shadow-lg' 
-          : 'bg-slate-200 active:bg-slate-300 active:shadow-lg'
-      } ${disabled ? 'opacity-50' : ''}`}
+      style={[
+        styles.button,
+        isPrimary ? styles.primaryButton : styles.secondaryButton,
+        disabled && styles.disabledButton
+      ]}
       disabled={disabled || loading}
       {...props}
     >
       {loading ? (
         <ActivityIndicator color={isPrimary ? '#FFFFFF' : '#2563EB'} />
       ) : (
-        <Text className={`text-lg font-bold ${isPrimary ? 'text-white' : 'text-slate-700'}`}>
+        <Text style={[
+          styles.buttonText,
+          isPrimary ? styles.primaryButtonText : styles.secondaryButtonText
+        ]}>
           {title}
         </Text>
       )}
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  primaryButton: {
+    backgroundColor: '#2563EB',
+  },
+  secondaryButton: {
+    backgroundColor: '#E2E8F0',
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  primaryButtonText: {
+    color: '#FFFFFF',
+  },
+  secondaryButtonText: {
+    color: '#334155',
+  },
+});

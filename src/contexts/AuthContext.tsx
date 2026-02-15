@@ -115,6 +115,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       console.log('✅ Profil utilisateur créé avec succès');
+      
+      // Créer le profil users_profiles avec un avatar aléatoire
+      const avatarOptions = ['bunnyprfp', 'dogprfp', 'dog2prfp', 'koalaprfp', 'loutreprfp', 'paresseuxprfp', 'pdarouxprfp', 'soincprfp'];
+      const randomAvatar = avatarOptions[Math.floor(Math.random() * avatarOptions.length)];
+      
+      console.log('🔵 Création du profil users_profiles avec avatar:', randomAvatar);
+      
+      const { error: usersProfilesError } = await supabase
+        .from('users_profiles')
+        .insert({
+          id: data.user.id,
+          username,
+          avatar: randomAvatar,
+        });
+      
+      if (usersProfilesError) {
+        console.error('❌ Erreur création users_profiles:', usersProfilesError);
+        // Ne pas bloquer l'inscription si cette table échoue
+      } else {
+        console.log('✅ Profil users_profiles créé avec avatar aléatoire');
+      }
     }
   };
 

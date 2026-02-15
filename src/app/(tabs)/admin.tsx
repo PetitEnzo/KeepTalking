@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Alert, TextInput, Image } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Alert, TextInput, Image, Modal } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
@@ -54,6 +54,11 @@ export default function AdminScreen() {
   const [users, setUsers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   
+  // Modals de confirmation
+  const [showChangeRoleModal, setShowChangeRoleModal] = useState(false);
+  const [showDeleteUserModal, setShowDeleteUserModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  
   // Images
   const [handSigns, setHandSigns] = useState<HandSign[]>([]);
   const [handPositions, setHandPositions] = useState<HandPosition[]>([]);
@@ -65,13 +70,22 @@ export default function AdminScreen() {
   useEffect(() => {
     if (isAdmin) {
       loadImages();
+      // Charger les deux dès le début pour afficher les compteurs
+      loadContributions();
+      loadUsers();
+    }
+  }, [isAdmin, filterStatus]);
+
+  // Recharger les données quand on change d'onglet
+  useEffect(() => {
+    if (isAdmin) {
       if (activeTab === 'contributions') {
         loadContributions();
       } else {
         loadUsers();
       }
     }
-  }, [isAdmin, activeTab, filterStatus]);
+  }, [activeTab]);
 
   const loadImages = async () => {
     try {
@@ -253,6 +267,24 @@ export default function AdminScreen() {
     } catch (error: any) {
       console.error('Error updating user role:', error);
       Alert.alert('Erreur', error.message || 'Impossible de mettre à jour le rôle');
+    }
+  };
+
+  const deleteUser = async (userId: string, username: string) => {
+    try {
+      // Supprimer l'utilisateur de la table users
+      const { error } = await supabase
+        .from('users')
+        .delete()
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      Alert.alert('Succès', `L'utilisateur ${username} a été supprimé`);
+      loadUsers();
+    } catch (error: any) {
+      console.error('Error deleting user:', error);
+      Alert.alert('Erreur', error.message || 'Impossible de supprimer l\'utilisateur');
     }
   };
 
@@ -526,28 +558,28 @@ export default function AdminScreen() {
                         {u.role === 'admin' ? '🛡️ Admin' : '📚 Apprenant'}
                       </Text>
                     </View>
-                    <Pressable
-                      style={styles.roleButton}
-                      onPress={() =>
-                        Alert.alert(
-                          'Changer le rôle',
-                          `Voulez-vous changer le rôle de ${u.username} ?`,
-                          [
-                            { text: 'Annuler', style: 'cancel' },
-                            {
-                              text: u.role === 'admin' ? 'Apprenant' : 'Admin',
-                              onPress: () =>
-                                updateUserRole(
-                                  u.user_id,
-                                  u.role === 'admin' ? 'apprenant' : 'admin'
-                                ),
-                            },
-                          ]
-                        )
-                      }
-                    >
-                      <Text style={styles.roleButtonText}>🔄 Changer</Text>
-                    </Pressable>
+                    <View style={styles.userButtonsContainer}>
+                      <Pressable
+                        style={styles.roleButton}
+                        onPress={() => {
+                          console.log('🔵 Bouton Changer cliqué pour:', u.username);
+                          setSelectedUser(u);
+                          setShowChangeRoleModal(true);
+                        }}
+                      >
+                        <Text style={styles.roleButtonText}>🔄 Changer</Text>
+                      </Pressable>
+                      <Pressable
+                        style={styles.deleteUserButton}
+                        onPress={() => {
+                          console.log('🔴 Bouton Supprimer cliqué pour:', u.username);
+                          setSelectedUser(u);
+                          setShowDeleteUserModal(true);
+                        }}
+                      >
+                        <Text style={styles.deleteUserButtonText}>🗑️ Supprimer</Text>
+                      </Pressable>
+                    </View>
                   </View>
                 </View>
               ))
@@ -555,6 +587,88 @@ export default function AdminScreen() {
           </>
         )}
       </ScrollView>
+
+      {/* Modal de confirmation - Changer le rôle */}
+      <Modal
+        visible={showChangeRoleModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowChangeRoleModal(false)}
+      >
+        <Pressable 
+          style={styles.modalOverlay}
+          onPress={() => setShowChangeRoleModal(false)}
+        >
+          <Pressable style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Changer le rôle</Text>
+            <Text style={[styles.modalMessage, { color: colors.textSecondary }]}>
+              Voulez-vous changer le rôle de {selectedUser?.username} vers {selectedUser?.role === 'admin' ? 'Apprenant' : 'Admin'} ?
+            </Text>
+            <View style={styles.modalButtons}>
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonCancel]}
+                onPress={() => setShowChangeRoleModal(false)}
+              >
+                <Text style={styles.modalButtonTextCancel}>Annuler</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonConfirm]}
+                onPress={() => {
+                  if (selectedUser) {
+                    updateUserRole(
+                      selectedUser.user_id,
+                      selectedUser.role === 'admin' ? 'apprenant' : 'admin'
+                    );
+                  }
+                  setShowChangeRoleModal(false);
+                }}
+              >
+                <Text style={styles.modalButtonTextConfirm}>Confirmer</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      {/* Modal de confirmation - Supprimer l'utilisateur */}
+      <Modal
+        visible={showDeleteUserModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDeleteUserModal(false)}
+      >
+        <Pressable 
+          style={styles.modalOverlay}
+          onPress={() => setShowDeleteUserModal(false)}
+        >
+          <Pressable style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>⚠️ Supprimer l'utilisateur</Text>
+            <Text style={[styles.modalMessage, { color: colors.textSecondary }]}>
+              Êtes-vous sûr de vouloir supprimer {selectedUser?.username} ?{'\n\n'}
+              Cette action est irréversible et supprimera toutes les données de l'utilisateur.
+            </Text>
+            <View style={styles.modalButtons}>
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonCancel]}
+                onPress={() => setShowDeleteUserModal(false)}
+              >
+                <Text style={styles.modalButtonTextCancel}>Annuler</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonDelete]}
+                onPress={() => {
+                  if (selectedUser) {
+                    deleteUser(selectedUser.user_id, selectedUser.username);
+                  }
+                  setShowDeleteUserModal(false);
+                }}
+              >
+                <Text style={styles.modalButtonTextDelete}>Supprimer</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -824,16 +938,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  userButtonsContainer: {
+    flexDirection: 'row',
+    marginTop: 8,
+  },
   roleButton: {
     backgroundColor: '#3B82F6',
-    borderRadius: 6,
     paddingHorizontal: 12,
     paddingVertical: 6,
+    borderRadius: 6,
   },
   roleButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
     color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  deleteUserButton: {
+    backgroundColor: '#EF4444',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    marginLeft: 8,
+  },
+  deleteUserButtonText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
   },
   emptyState: {
     alignItems: 'center',
@@ -901,5 +1031,76 @@ const styles = StyleSheet.create({
   syllableImage: {
     width: 80,
     height: 80,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 24,
+    width: '100%',
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#111827',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  modalMessage: {
+    fontSize: 16,
+    color: '#6B7280',
+    marginBottom: 24,
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  modalButtonCancel: {
+    backgroundColor: '#F3F4F6',
+    marginRight: 8,
+  },
+  modalButtonConfirm: {
+    backgroundColor: '#3B82F6',
+    marginLeft: 8,
+  },
+  modalButtonDelete: {
+    backgroundColor: '#EF4444',
+    marginLeft: 8,
+  },
+  modalButtonTextCancel: {
+    color: '#374151',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modalButtonTextConfirm: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modalButtonTextDelete: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

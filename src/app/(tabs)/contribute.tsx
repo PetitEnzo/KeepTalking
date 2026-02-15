@@ -187,14 +187,15 @@ export default function ContributeScreen() {
     }
 
     // Vérifier que toutes les syllabes sont complètes
+    // Note: hand_position_config peut être null pour les consonnes seules
     const incompleteSyllable = syllables.find(
-      s => !s.text || !s.hand_sign_key || !s.consonne || !s.hand_position_config
+      s => !s.text || !s.hand_sign_key || !s.consonne
     );
     
     if (incompleteSyllable) {
       Alert.alert(
         'Erreur',
-        `La syllabe "${incompleteSyllable.text || 'vide'}" est incomplète. Toutes les syllabes doivent avoir :\n- Un texte\n- Une configuration de main\n- Une consonne\n- Une position du visage`
+        `La syllabe "${incompleteSyllable.text || 'vide'}" est incomplète. Toutes les syllabes doivent avoir :\n- Un texte\n- Une configuration de main\n- Une consonne`
       );
       return;
     }

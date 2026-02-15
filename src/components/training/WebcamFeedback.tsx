@@ -162,12 +162,13 @@ export default function WebcamFeedback({
           faceRef.current = null;
         }
 
-        // Démarrer la webcam avec résolution réduite pour meilleures performances
+        // Démarrer la webcam avec résolution HD pour une meilleure qualité
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { 
-            width: 480, 
-            height: 360,
-            frameRate: { ideal: 15, max: 20 } // Limiter le framerate
+            width: { ideal: 1280 }, 
+            height: { ideal: 720 },
+            frameRate: { ideal: 30, max: 30 },
+            facingMode: 'user' // Caméra frontale
           }
         });
 

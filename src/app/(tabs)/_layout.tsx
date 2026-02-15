@@ -55,6 +55,18 @@ export default function TabsLayout() {
   useEffect(() => {
     loadUserAvatar();
     checkAdminStatus();
+    
+    // Écouter les changements d'avatar
+    const handleAvatarChange = () => {
+      console.log('🔔 Événement avatarChanged reçu dans le sidebar');
+      loadUserAvatar();
+    };
+    
+    window.addEventListener('avatarChanged', handleAvatarChange);
+    
+    return () => {
+      window.removeEventListener('avatarChanged', handleAvatarChange);
+    };
   }, [user]);
 
   const loadUserAvatar = async () => {

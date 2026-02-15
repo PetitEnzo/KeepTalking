@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
 import BadgeDisplay from '../../components/BadgeDisplay';
+import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 
 interface LessonProgress {
   lesson_id: string;
@@ -72,7 +73,7 @@ const LESSON_NAMES: { [key: string]: string } = {
 };
 
 export default function ProfileScreen() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const { colors } = useTheme();
   const [completedLessons, setCompletedLessons] = useState<LessonProgress[]>([]);
   const [streak, setStreak] = useState(0);
@@ -89,6 +90,16 @@ export default function ProfileScreen() {
   useEffect(() => {
     loadUserProgress();
   }, [user]);
+
+  // Navigation au clavier
+  useKeyboardNavigation({
+    onEscape: () => {
+      if (showAvatarModal) {
+        setShowAvatarModal(false);
+      }
+    },
+    enabled: true,
+  });
 
   const loadUserProgress = async () => {
     if (!user) return;
@@ -108,7 +119,7 @@ export default function ProfileScreen() {
         
         setUserLevel(currentLevel);
         setCurrentXP(totalXP);
-        setStreak(userData.current_streak || 0);
+        // Ne pas définir le streak ici, il sera chargé depuis user_profiles plus bas
         
         // Calculer l'XP pour le niveau suivant
         // Formule : xp_needed = (level ^ 2) * 100
@@ -141,16 +152,32 @@ export default function ProfileScreen() {
         setTotalLessons(lessons.length);
       }
 
-      // Charger le streak
-      const { data: streakData, error: streakError } = await supabase
+      // Charger le streak depuis users_profiles avec id
+      console.log('🔍 Chargement streak pour user.id:', user.id);
+      const { data: profileData, error: profileError } = await supabase
         .from('users_profiles')
-        .select('current_streak, avatar')
+        .select('current_streak')
         .eq('id', user.id)
         .single();
 
-      if (!streakError && streakData) {
-        setStreak(streakData.current_streak || 0);
-        setSelectedAvatar(streakData.avatar || '👤');
+      console.log('📊 Résultat users_profiles:', { profileData, profileError });
+
+      if (!profileError && profileData) {
+        console.log('✅ Streak trouvée:', profileData.current_streak);
+        setStreak(profileData.current_streak || 0);
+      } else {
+        console.log('❌ Erreur ou pas de données streak');
+      }
+
+      // Charger l'avatar depuis users_profiles
+      const { data: avatarData, error: avatarError } = await supabase
+        .from('users_profiles')
+        .select('avatar')
+        .eq('id', user.id)
+        .single();
+
+      if (!avatarError && avatarData) {
+        setSelectedAvatar(avatarData.avatar || '👤');
       }
     } catch (error) {
       console.error('Erreur lors du chargement du profil:', error);
@@ -186,8 +213,14 @@ export default function ProfileScreen() {
 
       if (!error) {
         console.log('✅ Avatar changé avec succès');
-        setSelectedAvatar(avatar);
         setShowAvatarModal(false);
+        // Forcer le refresh complet de la page
+        console.log('🔄 Refresh de la page...');
+        setLoading(true);
+        await loadUserProgress();
+        // Notifier le sidebar de rafraîchir l'avatar
+        window.dispatchEvent(new CustomEvent('avatarChanged'));
+        console.log('✅ Refresh terminé');
       } else {
         console.error('❌ Erreur lors de la mise à jour:', error);
         alert(`Erreur: ${error.message}`);
@@ -198,10 +231,6 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    router.replace('/(auth)/login');
-  };
 
   if (loading) {
     return (
@@ -250,6 +279,11 @@ export default function ProfileScreen() {
           <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <Text style={[styles.statValue, { color: colors.text }]}>{totalLessons}</Text>
             <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Leçons terminées</Text>
+          </View>
+          
+          <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.statValue, { color: colors.text }]}>🔥 {streak}</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Jours de suite</Text>
           </View>
           
           <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -363,16 +397,6 @@ export default function ProfileScreen() {
           )}
         </View>
 
-        {/* Bouton de déconnexion */}
-        <Pressable 
-          onPress={handleSignOut}
-          style={({ pressed }) => [
-            styles.signOutButton,
-            pressed && styles.signOutButtonPressed
-          ]}
-        >
-          <Text style={styles.signOutButtonText}>Se déconnecter</Text>
-        </Pressable>
       </View>
 
       {/* Modal de sélection d'avatar */}
@@ -670,21 +694,6 @@ const styles = StyleSheet.create({
   lessonDate: {
     fontSize: 12,
     color: '#94A3B8',
-  },
-  signOutButton: {
-    backgroundColor: '#EF4444',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  signOutButtonPressed: {
-    backgroundColor: '#DC2626',
-  },
-  signOutButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
   },
   modalOverlay: {
     flex: 1,

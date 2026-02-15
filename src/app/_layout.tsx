@@ -6,6 +6,7 @@ import { TamaguiProvider } from '@tamagui/core';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import tamaguiConfig from '../../tamagui.config';
+import '../../global.css';
 
 function RootLayoutNav() {
   const { user, loading, checkEmailVerified } = useAuth();
