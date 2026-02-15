@@ -135,7 +135,7 @@ export default function HomeScreen() {
           </View>
 
           <Text style={[styles.welcomeTitle, { color: colors.text }]}>
-            Bienvenue {user?.user_metadata?.username || 'Utilisateur'} ! 👋
+            Bienvenue {user?.user_metadata?.username || ''} ! 👋
           </Text>
 
           {/* Description de l'application */}

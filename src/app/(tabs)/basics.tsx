@@ -30,14 +30,14 @@ const CONFIGURATIONS: Configuration[] = [
   },
   {
     number: 4,
-    label: 'CH OU L GN',
-    consonnes: ['CH', 'OU', 'L', 'GN'],
+    label: 'CH OUI L GN',
+    consonnes: ['CH', 'OUI', 'L', 'GN'],
     image_url: 'https://zpdnttetliljjpdtyofx.supabase.co/storage/v1/object/public/hand_signs/config4.jpg',
   },
   {
     number: 5,
-    label: 'K Z V',
-    consonnes: ['K', 'Z', 'V'],
+    label: 'K Z V Q',
+    consonnes: ['K', 'Z', 'V', 'Q'],
     image_url: 'https://zpdnttetliljjpdtyofx.supabase.co/storage/v1/object/public/hand_signs/config5.jpg',
   },
   {
@@ -54,8 +54,8 @@ const CONFIGURATIONS: Configuration[] = [
   },
   {
     number: 8,
-    label: 'ING LLE',
-    consonnes: ['ING', 'LLE'],
+    label: 'ING LLE Y',
+    consonnes: ['ING', 'LLE', 'Y'],
     image_url: 'https://zpdnttetliljjpdtyofx.supabase.co/storage/v1/object/public/hand_signs/config8.jpg',
   },
 ];
