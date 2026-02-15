@@ -402,6 +402,16 @@ export default function WebcamFeedback({
               const canvasWidth = canvasRef.current.width;
               const canvasHeight = canvasRef.current.height;
               
+              // Log de débogage (toutes les 30 frames)
+              if (Math.random() < 0.033) {
+                console.log('🖐️ Dessin landmarks:', {
+                  nbLandmarks: lastLandmarks.length,
+                  canvasSize: `${canvasWidth}x${canvasHeight}`,
+                  firstLandmark: lastLandmarks[0],
+                  scaled: `${lastLandmarks[0][0] * canvasWidth}, ${lastLandmarks[0][1] * canvasHeight}`
+                });
+              }
+              
               // Dessiner les connexions entre les points
               const connections = [
                 [0, 1], [1, 2], [2, 3], [3, 4], // Pouce
