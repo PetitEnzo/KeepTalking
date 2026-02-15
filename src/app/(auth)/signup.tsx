@@ -86,6 +86,13 @@ export default function SignUpScreen() {
           keyboardShouldPersistTaps="handled"
         >
         <View style={styles.card}>
+          {/* Bouton retour */}
+          <Link href="/" asChild>
+            <Pressable style={styles.backButton}>
+              <Text style={styles.backButtonText}>← Retour</Text>
+            </Pressable>
+          </Link>
+
           {/* Logo */}
           <View style={styles.logoContainer}>
             <Image
@@ -351,5 +358,15 @@ const styles = StyleSheet.create({
   loginLink: {
     color: '#2563EB',
     fontWeight: 'bold',
+    fontSize: 14,
+  },
+  backButton: {
+    marginBottom: 16,
+    alignSelf: 'flex-start',
+  },
+  backButtonText: {
+    color: '#2563EB',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
