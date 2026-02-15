@@ -407,20 +407,6 @@ export default function WebcamFeedback({
 
             // Dessiner les derniers landmarks à CHAQUE frame (fluide)
             if (lastLandmarks) {
-              // Dimensions du canvas pour mettre à l'échelle les landmarks
-              const canvasWidth = canvasRef.current.width;
-              const canvasHeight = canvasRef.current.height;
-              
-              // Log de débogage (toutes les 30 frames)
-              if (Math.random() < 0.033) {
-                console.log('🖐️ Dessin landmarks:', {
-                  nbLandmarks: lastLandmarks.length,
-                  canvasSize: `${canvasWidth}x${canvasHeight}`,
-                  firstLandmark: lastLandmarks[0],
-                  scaled: `${lastLandmarks[0][0] * canvasWidth}, ${lastLandmarks[0][1] * canvasHeight}`
-                });
-              }
-              
               // Dessiner les connexions entre les points
               const connections = [
                 [0, 1], [1, 2], [2, 3], [3, 4], // Pouce
@@ -434,13 +420,9 @@ export default function WebcamFeedback({
               canvasCtx.strokeStyle = '#00FF00';
               canvasCtx.lineWidth = 2;
               for (const [start, end] of connections) {
-                // Mettre à l'échelle les coordonnées avec les dimensions du canvas
-                const [x1Norm, y1Norm] = lastLandmarks[start];
-                const [x2Norm, y2Norm] = lastLandmarks[end];
-                const x1 = x1Norm * canvasWidth;
-                const y1 = y1Norm * canvasHeight;
-                const x2 = x2Norm * canvasWidth;
-                const y2 = y2Norm * canvasHeight;
+                // Les landmarks sont déjà en pixels absolus, pas besoin de mise à l'échelle
+                const [x1, y1] = lastLandmarks[start];
+                const [x2, y2] = lastLandmarks[end];
                 
                 canvasCtx.beginPath();
                 canvasCtx.moveTo(x1, y1);
@@ -450,10 +432,8 @@ export default function WebcamFeedback({
 
               // Dessiner les points
               for (let i = 0; i < lastLandmarks.length; i++) {
-                // Mettre à l'échelle les coordonnées avec les dimensions du canvas
-                const [xNorm, yNorm] = lastLandmarks[i];
-                const x = xNorm * canvasWidth;
-                const y = yNorm * canvasHeight;
+                // Les landmarks sont déjà en pixels absolus, pas besoin de mise à l'échelle
+                const [x, y] = lastLandmarks[i];
                 
                 // Cercle avec contour
                 canvasCtx.beginPath();
