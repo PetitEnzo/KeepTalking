@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, Alert, StyleSheet, Image } from 'react-native';
+import { router } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { supabase } from '../../services/supabase';
@@ -60,6 +61,13 @@ export default function ContributeScreen() {
   const [handConfigs, setHandConfigs] = useState<HandConfig[]>([]);
   const [facePositions, setFacePositions] = useState<FacePosition[]>([]);
   const [imagesLoading, setImagesLoading] = useState(true);
+
+  // Rediriger les utilisateurs non connectés vers la page de création de compte
+  useEffect(() => {
+    if (!user) {
+      router.replace('/(auth)/signup');
+    }
+  }, [user]);
 
   useEffect(() => {
     if (user) {

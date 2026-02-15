@@ -1,7 +1,12 @@
 import { View, Text, Pressable, StyleSheet, ImageBackground } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 
 export default function HomeScreen() {
+  const handleGuestMode = () => {
+    // Rediriger vers les tabs en mode invité
+    router.replace('/(tabs)');
+  };
+
   return (
     <ImageBackground 
       source={require('../../assets/images/photo-1615051179134-62696ea77ef9.avif')}
@@ -33,6 +38,15 @@ export default function HomeScreen() {
               </Text>
             </Pressable>
           </Link>
+
+          <Pressable 
+            onPress={handleGuestMode}
+            style={({ pressed }) => [styles.guestButton, pressed && styles.guestButtonPressed]}
+          >
+            <Text style={styles.guestButtonText}>
+              Tester sans compte
+            </Text>
+          </Pressable>
 
           <Link href="/about" asChild>
             <Pressable style={({ pressed }) => [styles.tertiaryButton, pressed && styles.tertiaryButtonPressed]}>
@@ -132,5 +146,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
     fontSize: 18,
+  },
+  guestButton: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#9CA3AF',
+    borderRadius: 12,
+    padding: 16,
+  },
+  guestButtonPressed: {
+    backgroundColor: '#F9FAFB',
+  },
+  guestButtonText: {
+    color: '#6B7280',
+    textAlign: 'center',
+    fontWeight: '500',
+    fontSize: 16,
   },
 });

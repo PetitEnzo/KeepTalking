@@ -87,6 +87,13 @@ export default function ProfileScreen() {
   const [userStats, setUserStats] = useState<any>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
+  // Rediriger les utilisateurs non connectés vers la page de création de compte
+  useEffect(() => {
+    if (!user) {
+      router.replace('/(auth)/signup');
+    }
+  }, [user]);
+
   useEffect(() => {
     loadUserProgress();
   }, [user]);
