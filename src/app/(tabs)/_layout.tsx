@@ -190,7 +190,7 @@ export default function TabsLayout() {
         )}
 
         {/* Navigation */}
-        <View style={styles.navScroll}>
+        <ScrollView style={styles.navScroll} showsVerticalScrollIndicator={false}>
           {/* Groupe: Navigation principale */}
           <View style={styles.navGroup}>
             <Text style={styles.groupTitle}>NAVIGATION</Text>
@@ -342,7 +342,7 @@ export default function TabsLayout() {
               <Text style={styles.signOutText}>Se déconnecter</Text>
             </Pressable>
           </View>
-        </View>
+        </ScrollView>
       </ImageBackground>
   );
 

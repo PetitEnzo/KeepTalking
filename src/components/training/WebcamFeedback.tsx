@@ -34,6 +34,7 @@ export default function WebcamFeedback({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isCameraEnabled, setIsCameraEnabled] = useState(false);
   const [isCameraFlipped, setIsCameraFlipped] = useState(true); // Effet miroir par défaut
+  const [isLoading, setIsLoading] = useState(false);
   const handsRef = useRef<any>(null);
   const faceRef = useRef<any>(null);
   const cameraRef = useRef<any>(null);
@@ -49,6 +50,7 @@ export default function WebcamFeedback({
     if (!isCameraEnabled || !videoRef.current || !canvasRef.current) {
       // Arrêter la caméra si elle est désactivée
       if (!isCameraEnabled) {
+        setIsLoading(false);
         if (cameraRef.current && cameraRef.current.getTracks) {
           cameraRef.current.getTracks().forEach((track: any) => track.stop());
           cameraRef.current = null;
@@ -63,6 +65,7 @@ export default function WebcamFeedback({
     }
 
     let isActive = true;
+    setIsLoading(true);
 
     const loadTensorFlowScripts = () => {
       return new Promise((resolve) => {
@@ -178,6 +181,7 @@ export default function WebcamFeedback({
         await videoRef.current.play();
         
         console.log('Webcam démarrée');
+        setIsLoading(false);
 
         // Attendre que la vidéo soit prête et ajuster la taille du canvas
         await new Promise<void>((resolve) => {
@@ -443,7 +447,17 @@ export default function WebcamFeedback({
         </View>
       )}
 
-      {isCameraEnabled ? (
+      {isLoading && (
+        <View style={styles.loaderContainer}>
+          <View style={styles.loaderSpinner}>
+            <Text style={styles.loaderIcon}>⏳</Text>
+          </View>
+          <Text style={styles.loaderText}>Chargement de la caméra...</Text>
+          <Text style={styles.loaderSubtext}>Initialisation des modèles de détection</Text>
+        </View>
+      )}
+
+      {isCameraEnabled && !isLoading ? (
         <>
           {/* Video pour MediaPipe - visible pour debug */}
           <video
@@ -862,5 +876,33 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    minHeight: 300,
+  },
+  loaderSpinner: {
+    marginBottom: 20,
+  },
+  loaderIcon: {
+    fontSize: 64,
+    textAlign: 'center',
+  },
+  loaderText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  loaderSubtext: {
+    fontSize: 14,
+    color: '#6B7280',
+    textAlign: 'center',
   },
 });
