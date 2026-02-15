@@ -35,6 +35,8 @@ export default function WebcamFeedback({
   const [isCameraEnabled, setIsCameraEnabled] = useState(false);
   const [isCameraFlipped, setIsCameraFlipped] = useState(true); // Effet miroir par défaut
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingMessage, setLoadingMessage] = useState('');
   const handsRef = useRef<any>(null);
   const faceRef = useRef<any>(null);
   const cameraRef = useRef<any>(null);
@@ -66,14 +68,21 @@ export default function WebcamFeedback({
 
     let isActive = true;
     setIsLoading(true);
+    setLoadingProgress(0);
+    setLoadingMessage('Initialisation...');
 
     const loadTensorFlowScripts = () => {
       return new Promise((resolve) => {
         // Vérifier si déjà chargé
         if (window.tf && window.handpose && window.blazeface) {
+          setLoadingProgress(30);
+          setLoadingMessage('Modèles déjà chargés');
           resolve(true);
           return;
         }
+        
+        setLoadingProgress(10);
+        setLoadingMessage('Chargement de TensorFlow.js...');
 
         // Charger TensorFlow.js
         const tfScript = document.createElement('script');
@@ -101,6 +110,8 @@ export default function WebcamFeedback({
         tfScript.onload = () => {
           console.log('✅ TensorFlow.js chargé');
           tfLoaded = true;
+          setLoadingProgress(20);
+          setLoadingMessage('TensorFlow.js chargé');
           // Charger HandPose et BlazeFace seulement après TensorFlow
           document.head.appendChild(handposeScript);
           document.head.appendChild(blazefaceScript);
@@ -109,12 +120,16 @@ export default function WebcamFeedback({
         handposeScript.onload = () => {
           console.log('✅ HandPose chargé');
           handposeLoaded = true;
+          setLoadingProgress(25);
+          setLoadingMessage('HandPose chargé');
           checkAllLoaded();
         };
 
         blazefaceScript.onload = () => {
           console.log('✅ BlazeFace chargé');
           blazefaceLoaded = true;
+          setLoadingProgress(30);
+          setLoadingMessage('BlazeFace chargé');
           checkAllLoaded();
         };
 
@@ -158,14 +173,20 @@ export default function WebcamFeedback({
             throw new Error('Modèle HandPose non disponible');
           }
           
+          setLoadingProgress(40);
+          setLoadingMessage('Chargement du modèle de détection...');
           const handModel = await window.handpose.load();
           console.log('✅ Modèle chargé');
+          setLoadingProgress(60);
+          setLoadingMessage('Modèle de détection chargé');
           
           handsRef.current = handModel;
           faceRef.current = null;
         }
 
         // Démarrer la webcam avec résolution HD pour une meilleure qualité
+        setLoadingProgress(70);
+        setLoadingMessage('Demande d\'accès à la webcam...');
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { 
             width: { ideal: 1280 }, 
@@ -178,10 +199,13 @@ export default function WebcamFeedback({
         if (!videoRef.current) return;
         
         videoRef.current.srcObject = stream;
+        setLoadingProgress(85);
+        setLoadingMessage('Démarrage de la webcam...');
         await videoRef.current.play();
         
         console.log('Webcam démarrée');
-        setIsLoading(false);
+        setLoadingProgress(95);
+        setLoadingMessage('Finalisation...');
 
         // Attendre que la vidéo soit prête et ajuster la taille du canvas
         await new Promise<void>((resolve) => {
@@ -193,6 +217,9 @@ export default function WebcamFeedback({
                 canvasRef.current.height = videoRef.current.videoHeight;
                 console.log(`Canvas ajusté: ${canvasRef.current.width}x${canvasRef.current.height}`);
               }
+              setLoadingProgress(100);
+              setLoadingMessage('Prêt !');
+              setTimeout(() => setIsLoading(false), 500);
               resolve();
             };
           }
@@ -452,8 +479,29 @@ export default function WebcamFeedback({
           <View style={styles.loaderSpinner}>
             <Text style={styles.loaderIcon}>⏳</Text>
           </View>
-          <Text style={styles.loaderText}>Chargement de la caméra...</Text>
-          <Text style={styles.loaderSubtext}>Initialisation des modèles de détection</Text>
+          <Text style={styles.loaderText}>{loadingMessage}</Text>
+          
+          {/* Barre de progression */}
+          <View style={styles.progressBarContainer}>
+            <View style={[styles.progressBarFill, { width: `${loadingProgress}%` }]} />
+          </View>
+          <Text style={styles.progressText}>{loadingProgress}%</Text>
+          
+          {loadingProgress >= 70 && loadingProgress < 85 && (
+            <View style={styles.permissionHint}>
+              <Text style={styles.permissionIcon}>🔒</Text>
+              <Text style={styles.permissionText}>
+                Veuillez autoriser l'accès à votre webcam dans votre navigateur
+              </Text>
+            </View>
+          )}
+          
+          <Text style={styles.loaderSubtext}>
+            {loadingProgress < 30 ? 'Chargement des bibliothèques...' :
+             loadingProgress < 70 ? 'Initialisation des modèles de détection...' :
+             loadingProgress < 85 ? 'En attente de l\'autorisation webcam...' :
+             'Démarrage de la caméra...'}
+          </Text>
         </View>
       )}
 
@@ -897,12 +945,55 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#111827',
-    marginBottom: 8,
+    marginBottom: 16,
     textAlign: 'center',
+  },
+  progressBarContainer: {
+    width: '100%',
+    maxWidth: 400,
+    height: 12,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 6,
+    overflow: 'hidden',
+    marginBottom: 8,
+  },
+  progressBarFill: {
+    height: '100%',
+    backgroundColor: '#3B82F6',
+    borderRadius: 6,
+  },
+  progressText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#3B82F6',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  permissionHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF3C7',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginVertical: 16,
+    maxWidth: 400,
+  },
+  permissionIcon: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  permissionText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#92400E',
+    textAlign: 'left',
   },
   loaderSubtext: {
     fontSize: 14,
     color: '#6B7280',
     textAlign: 'center',
+    marginTop: 8,
   },
 });
