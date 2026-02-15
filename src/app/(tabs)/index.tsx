@@ -28,8 +28,14 @@ export default function HomeScreen() {
   const [goal, setGoal] = useState<UserGoal>(null);
 
   useEffect(() => {
-    checkOnboardingStatus();
-    loadStreak();
+    if (user) {
+      checkOnboardingStatus();
+      loadStreak();
+    } else {
+      // Mode invité : pas d'onboarding requis
+      setHasCompletedOnboarding(true);
+      setLoading(false);
+    }
   }, [user]);
 
   const checkOnboardingStatus = async () => {

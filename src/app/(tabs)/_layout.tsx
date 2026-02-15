@@ -240,14 +240,16 @@ export default function TabsLayout() {
               <Text style={[styles.navText, isActive('/training-expert') && styles.navTextActive]}>Entraînement Expert</Text>
             </Pressable>
 
-            <Pressable 
-              onPress={() => navigateTo('/(tabs)/contribute')}
-              style={[styles.navItem, isActive('/contribute') && styles.navItemActive]}
-              android_ripple={{ color: 'transparent' }}
-            >
-              <Text style={styles.navIcon}>✍️</Text>
-              <Text style={[styles.navText, isActive('/contribute') && styles.navTextActive]}>Ajouter un mot</Text>
-            </Pressable>
+            {user && (
+              <Pressable 
+                onPress={() => navigateTo('/(tabs)/contribute')}
+                style={[styles.navItem, isActive('/contribute') && styles.navItemActive]}
+                android_ripple={{ color: 'transparent' }}
+              >
+                <Text style={styles.navIcon}>✍️</Text>
+                <Text style={[styles.navText, isActive('/contribute') && styles.navTextActive]}>Ajouter un mot</Text>
+              </Pressable>
+            )}
 
             <Pressable 
               onPress={() => navigateTo('/(tabs)/game')}
@@ -267,14 +269,16 @@ export default function TabsLayout() {
               <Text style={[styles.navText, isActive('/basics') && styles.navTextActive]}>Les bases du code</Text>
             </Pressable>
 
-            <Pressable 
-              onPress={() => navigateTo('/(tabs)/profile')}
-              style={[styles.navItem, isActive('/profile') && styles.navItemActive]}
-              android_ripple={{ color: 'transparent' }}
-            >
-              <Text style={styles.navIcon}>👤</Text>
-              <Text style={[styles.navText, isActive('/profile') && styles.navTextActive]}>Profil</Text>
-            </Pressable>
+            {user && (
+              <Pressable 
+                onPress={() => navigateTo('/(tabs)/profile')}
+                style={[styles.navItem, isActive('/profile') && styles.navItemActive]}
+                android_ripple={{ color: 'transparent' }}
+              >
+                <Text style={styles.navIcon}>👤</Text>
+                <Text style={[styles.navText, isActive('/profile') && styles.navTextActive]}>Profil</Text>
+              </Pressable>
+            )}
           </View>
 
           {/* Groupe: Informations */}
