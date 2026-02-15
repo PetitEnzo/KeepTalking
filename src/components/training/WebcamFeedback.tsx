@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, Pressable, useWindowDimensions, ActivityIndicator } from 'react-native';
 
 // Déclarer les types globaux pour TensorFlow.js
 declare global {
@@ -187,7 +187,9 @@ export default function WebcamFeedback({
         // Démarrer la webcam avec résolution HD pour une meilleure qualité
         setLoadingProgress(70);
         setLoadingMessage('Demande d\'accès à la webcam...');
-        const stream = await navigator.mediaDevices.getUserMedia({
+        
+        // Ajouter un timeout pour éviter le blocage
+        const streamPromise = navigator.mediaDevices.getUserMedia({
           video: { 
             width: { ideal: 1280 }, 
             height: { ideal: 720 },
@@ -195,6 +197,12 @@ export default function WebcamFeedback({
             facingMode: 'user' // Caméra frontale
           }
         });
+        
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout: La demande d\'accès à la webcam a pris trop de temps')), 30000)
+        );
+        
+        const stream = await Promise.race([streamPromise, timeoutPromise]) as MediaStream;
 
         if (!videoRef.current) return;
         
@@ -477,7 +485,7 @@ export default function WebcamFeedback({
       {isLoading && (
         <View style={styles.loaderContainer}>
           <View style={styles.loaderSpinner}>
-            <Text style={styles.loaderIcon}>⏳</Text>
+            <ActivityIndicator size="large" color="#3B82F6" />
           </View>
           <Text style={styles.loaderText}>{loadingMessage}</Text>
           
@@ -491,7 +499,7 @@ export default function WebcamFeedback({
             <View style={styles.permissionHint}>
               <Text style={styles.permissionIcon}>🔒</Text>
               <Text style={styles.permissionText}>
-                Veuillez autoriser l'accès à votre webcam dans votre navigateur
+                Si nécessaire, autorisez l'accès à votre webcam dans votre navigateur via la pop-up
               </Text>
             </View>
           )}
