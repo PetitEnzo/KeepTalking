@@ -248,7 +248,17 @@ export default function WebcamFeedback({
               setLoadingProgress(100);
               setLoadingMessage('Prêt !');
               console.log('🎉 Désactivation du loader...');
-              setTimeout(() => setIsLoading(false), 500);
+              
+              // Attendre que le loader se masque et que le canvas soit rendu avant de démarrer detectHands
+              setTimeout(() => {
+                setIsLoading(false);
+                // Démarrer detectHands après que le canvas soit rendu
+                setTimeout(() => {
+                  console.log('🚀 Démarrage de la boucle detectHands...');
+                  detectHands();
+                }, 100);
+              }, 500);
+              
               resolve();
             };
 
@@ -433,10 +443,6 @@ export default function WebcamFeedback({
           }
         };
 
-        // Démarrer la boucle de détection
-        console.log('🚀 Démarrage de la boucle detectHands...');
-        detectHands();
-        
         cameraRef.current = stream;
       } catch (err) {
         console.error('Erreur initialisation:', err);
