@@ -18,10 +18,10 @@ function RootLayoutNav() {
 
     const inAuthGroup = segments[0] === '(auth)';
     const inTabsGroup = segments[0] === '(tabs)';
-    const isPublicPage = segments[0] === 'index' || segments[0] === 'about' || segments[0] === 'privacy' || segments[0] === 'terms' || segments.length === 0;
+    const isPublicPage = segments.length === 0 || segments[0] === 'about' || segments[0] === 'privacy' || segments[0] === 'terms';
 
-    // Permettre l'accès aux pages publiques (index, about, privacy, terms)
-    if (isPublicPage) {
+    // Permettre l'accès aux pages publiques (index, about, privacy, terms) et aux tabs (mode invité)
+    if (isPublicPage || inTabsGroup) {
       return;
     }
 

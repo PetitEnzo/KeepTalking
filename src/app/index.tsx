@@ -41,10 +41,14 @@ export default function HomeScreen() {
 
           <Pressable 
             onPress={handleGuestMode}
-            style={({ pressed }) => [styles.guestButton, pressed && styles.guestButtonPressed]}
+            style={({ pressed, hovered }) => [
+              styles.guestButton, 
+              pressed && styles.guestButtonPressed,
+              hovered && styles.guestButtonHovered
+            ]}
           >
             <Text style={styles.guestButtonText}>
-              Tester sans compte
+              Mode invité
             </Text>
           </Pressable>
 
@@ -156,6 +160,10 @@ const styles = StyleSheet.create({
   },
   guestButtonPressed: {
     backgroundColor: '#F9FAFB',
+  },
+  guestButtonHovered: {
+    backgroundColor: '#F3F4F6',
+    borderColor: '#6B7280',
   },
   guestButtonText: {
     color: '#6B7280',
