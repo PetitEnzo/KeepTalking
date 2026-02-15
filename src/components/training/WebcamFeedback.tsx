@@ -60,7 +60,7 @@ export default function WebcamFeedback({
 
     const interval = setInterval(() => {
       setInfoMessageIndex((prev) => (prev + 1) % infoMessages.length);
-    }, 5000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, [isLoading]);
@@ -204,7 +204,7 @@ export default function WebcamFeedback({
 
         // Démarrer la webcam avec résolution HD pour une meilleure qualité
         setLoadingProgress(70);
-        setLoadingMessage('Demande d\'accès à la webcam...');
+        setLoadingMessage('Connexion à la webcam...');
         
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { 
@@ -519,8 +519,7 @@ export default function WebcamFeedback({
           <Text style={styles.loaderSubtext}>
             {loadingProgress < 30 ? 'Chargement des bibliothèques...' :
              loadingProgress < 70 ? 'Initialisation des modèles de détection...' :
-             loadingProgress < 85 ? 'En attente de l\'autorisation webcam...' :
-             'Démarrage de la caméra...'}
+             'Prêt dans quelques instants...'}
           </Text>
         </View>
       )}
