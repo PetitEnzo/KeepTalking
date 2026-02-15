@@ -327,6 +327,14 @@ export default function WebcamFeedback({
                 handPredictions = await handsRef.current.estimateHands(videoRef.current);
               }
 
+              // Log de débogage pour la détection (toutes les 30 frames)
+              if (Math.random() < 0.033) {
+                console.log('👋 Détection mains:', {
+                  nbPredictions: handPredictions ? handPredictions.length : 0,
+                  hasLandmarks: handPredictions && handPredictions[0] ? !!handPredictions[0].landmarks : false
+                });
+              }
+
               const hand = handPredictions && handPredictions.length > 0 ? handPredictions[0] : null;
 
               if (hand && hand.landmarks) {
