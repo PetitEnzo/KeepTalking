@@ -327,17 +327,18 @@ export default function WebcamFeedback({
                 handPredictions = await handsRef.current.estimateHands(videoRef.current);
               }
 
-              // Log de débogage pour la détection (toutes les 30 frames)
-              if (Math.random() < 0.033) {
-                console.log('👋 Détection mains:', {
-                  nbPredictions: handPredictions ? handPredictions.length : 0,
-                  hasLandmarks: handPredictions && handPredictions[0] ? !!handPredictions[0].landmarks : false
-                });
-              }
-
               const hand = handPredictions && handPredictions.length > 0 ? handPredictions[0] : null;
 
+              // Log de débogage TOUJOURS pour comprendre le problème
+              console.log('👋 Détection mains:', {
+                nbPredictions: handPredictions ? handPredictions.length : 0,
+                hasHand: !!hand,
+                hasLandmarks: hand ? !!hand.landmarks : false,
+                landmarksLength: hand && hand.landmarks ? hand.landmarks.length : 0
+              });
+
               if (hand && hand.landmarks) {
+                console.log('✅ Stockage landmarks dans lastLandmarks');
                 lastLandmarks = hand.landmarks; // Stocker les landmarks
                 
                 // Appeler le callback UNIQUEMENT si la caméra est activée
