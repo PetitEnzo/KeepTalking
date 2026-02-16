@@ -249,8 +249,12 @@ export default function TrainingScreen() {
 
       setConfidenceHistory(prev => {
         const newHistory = [...prev, result.confidence].slice(-20);
+        const isStable = isValidationStable(newHistory, 60, 8);
         
-        if (!isValidating && isValidationStable(newHistory, 60, 8)) {
+        console.log(`📊 Confiance: ${result.confidence}% | isValidating: ${isValidating} | isStable: ${isStable} | History length: ${newHistory.length}`);
+        
+        if (!isValidating && isStable) {
+          console.log('🎯 DÉCLENCHEMENT DE LA VALIDATION !');
           setIsValidating(true);
           setTimeout(() => handleSyllableValidated(), 0);
         }
