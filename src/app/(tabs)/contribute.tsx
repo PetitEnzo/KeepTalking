@@ -39,8 +39,9 @@ const CONSONNES_BY_CONFIG: { [key: string]: string[] } = {
   'K': ['K', 'V', 'Z'],
   'S': ['S', 'R'],
   'G': ['G'],
-  'ING': ['ING', 'LLE'], // Config 8 - clé peut être ING ou LLE
-  'LLE': ['ING', 'LLE'], // Config 8 - clé peut être ING ou LLE
+  'ING': ['ING', 'LLE', 'Y'], // Config 8 - clé peut être ING, LLE ou Y
+  'LLE': ['ING', 'LLE', 'Y'], // Config 8 - clé peut être ING, LLE ou Y
+  'Y': ['ING', 'LLE', 'Y'], // Config 8 - clé peut être ING, LLE ou Y
 };
 
 export default function ContributeScreen() {
