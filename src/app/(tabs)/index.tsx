@@ -789,7 +789,7 @@ const styles = StyleSheet.create({
   },
   gridCard: {
     width: '48%',
-    minWidth: 150,
+    minWidth: 140,
     borderRadius: 16,
     padding: 24,
     borderWidth: 2,

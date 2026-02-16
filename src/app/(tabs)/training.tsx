@@ -244,16 +244,20 @@ export default function TrainingScreen() {
     setScore(prev => prev + 1);
     setConfidenceHistory([]);
 
-    if (currentSyllableIndex + 1 < currentWord.syllables.length) {
-      setTimeout(() => {
-        setCurrentSyllableIndex(currentSyllableIndex + 1);
-        setIsValidating(false);
-      }, 1000);
-    } else {
-      setTimeout(() => {
-        handleWordCompleted();
-      }, 800);
-    }
+    // Utiliser setCurrentSyllableIndex avec callback pour avoir la valeur à jour
+    setCurrentSyllableIndex(prevIndex => {
+      if (prevIndex + 1 < currentWord.syllables.length) {
+        setTimeout(() => {
+          setIsValidating(false);
+        }, 1000);
+        return prevIndex + 1;
+      } else {
+        setTimeout(() => {
+          handleWordCompleted();
+        }, 800);
+        return prevIndex;
+      }
+    });
   }, [currentWord, currentSyllableIndex]);
 
   const handleWordCompleted = async () => {

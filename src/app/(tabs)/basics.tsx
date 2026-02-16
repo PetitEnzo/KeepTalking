@@ -169,6 +169,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#334155',
     width: '48%',
+    minWidth: 140,
     marginBottom: 8,
   },
   cardHeader: {
