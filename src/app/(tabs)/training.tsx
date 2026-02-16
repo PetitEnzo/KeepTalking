@@ -132,9 +132,9 @@ export default function TrainingScreen() {
   }, []);
 
   const handleWordCompleted = useCallback(async () => {
-    console.log('\ud83c\udf89 handleWordCompleted APPEL\u00c9 !', { currentWord: currentWord?.word, user: !!user });
-    if (!currentWord || !user) {
-      console.log('\u274c handleWordCompleted bloqu\u00e9 : currentWord ou user manquant');
+    console.log('🎉 handleWordCompleted APPELÉ !', { currentWord: currentWord?.word, user: !!user });
+    if (!currentWord) {
+      console.log('❌ handleWordCompleted bloqué : currentWord manquant');
       return;
     }
     
@@ -144,37 +144,40 @@ export default function TrainingScreen() {
     const newWordsCount = validatedWordsCount + 1;
     setValidatedWordsCount(newWordsCount);
 
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      const { data: profileData } = await supabase
-        .from('users_profiles')
-        .select('last_activity_date, current_streak')
-        .eq('id', user.id)
-        .maybeSingle();
+    // Sauvegarder les stats uniquement si l'utilisateur est connecté
+    if (user) {
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const { data: profileData } = await supabase
+          .from('users_profiles')
+          .select('last_activity_date, current_streak')
+          .eq('id', user.id)
+          .maybeSingle();
 
-      const lastActivity = profileData?.last_activity_date;
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = yesterday.toISOString().split('T')[0];
+        const lastActivity = profileData?.last_activity_date;
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
 
-      let newStreak = profileData?.current_streak || 0;
-      
-      if (lastActivity === yesterdayStr) {
-        newStreak += 1;
-      } else if (lastActivity !== today) {
-        newStreak = 1;
+        let newStreak = profileData?.current_streak || 0;
+        
+        if (lastActivity === yesterdayStr) {
+          newStreak += 1;
+        } else if (lastActivity !== today) {
+          newStreak = 1;
+        }
+
+        await supabase
+          .from('users_profiles')
+          .upsert({
+            id: user.id,
+            username: user.user_metadata?.username || user.email?.split('@')[0] || 'user',
+            last_activity_date: today,
+            current_streak: newStreak,
+          });
+      } catch (error) {
+        console.error('Erreur lors de l\'incrémentation de la streak:', error);
       }
-
-      await supabase
-        .from('users_profiles')
-        .upsert({
-          id: user.id,
-          username: user.user_metadata?.username || user.email?.split('@')[0] || 'user',
-          last_activity_date: today,
-          current_streak: newStreak,
-        });
-    } catch (error) {
-      console.error('Erreur lors de l\'incrémentation de la streak:', error);
     }
 
     if (selectedMode === 'thirty' && newWordsCount >= 30) {
