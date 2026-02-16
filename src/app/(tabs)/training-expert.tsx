@@ -161,15 +161,20 @@ export default function TrainingScreen() {
         .order('configuration_number', { ascending: true });
 
       if (signsData) {
-        // Mapper pour garder la compatibilité avec l'interface existante
-        const mappedSigns = signsData.map((sign: any) => {
+        // Créer une entrée pour chaque consonne de chaque configuration
+        const mappedSigns: any[] = [];
+        signsData.forEach((sign: any) => {
           const consonnes: string[] = Array.isArray(sign.consonnes) 
             ? sign.consonnes 
             : sign.consonnes.split(', ').map((c: string) => c.trim());
-          return {
-            key: consonnes[0],
-            image_url: sign.image_url,
-          };
+          
+          // Créer une entrée pour chaque consonne
+          consonnes.forEach((consonne: string) => {
+            mappedSigns.push({
+              key: consonne,
+              image_url: sign.image_url,
+            });
+          });
         });
         setHandSigns(mappedSigns);
       }
