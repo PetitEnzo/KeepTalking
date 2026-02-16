@@ -132,7 +132,11 @@ export default function TrainingScreen() {
   }, []);
 
   const handleWordCompleted = useCallback(async () => {
-    if (!currentWord || !user) return;
+    console.log('🎉 handleWordCompleted APPELÉ !', { currentWord: currentWord?.word, user: !!user });
+    if (!currentWord || !user) {
+      console.log('❌ handleWordCompleted bloqué : currentWord ou user manquant');
+      return;
+    }
     
     setCompletedWord(currentWord.word);
     setShowSuccessBanner(true);
@@ -187,10 +191,15 @@ export default function TrainingScreen() {
   }, [currentWord, user, validatedWordsCount, selectedMode, handleNextWord]);
 
   const handleSyllableValidated = useCallback(() => {
-    if (!currentWord) return;
+    console.log('👍 handleSyllableValidated APPELÉ');
+    if (!currentWord) {
+      console.log('❌ Pas de currentWord, sortie');
+      return;
+    }
 
     const wordToComplete = currentWord;
     const syllableIndex = currentSyllableIndex;
+    console.log(`📝 Syllabe ${syllableIndex + 1}/${wordToComplete.syllables.length} validée`);
 
     setValidatedSyllables(prev => {
       if (prev.includes(syllableIndex)) {
@@ -203,15 +212,19 @@ export default function TrainingScreen() {
     setConfidenceHistory([]);
 
     const isLastSyllable = syllableIndex + 1 >= wordToComplete.syllables.length;
+    console.log(`🎯 isLastSyllable: ${isLastSyllable}`);
 
     if (!isLastSyllable) {
+      console.log('➡️ Passage à la syllabe suivante dans 1s');
       setTimeout(() => {
         setCurrentSyllableIndex(syllableIndex + 1);
         setIsValidating(false);
       }, 1000);
     } else {
+      console.log('🏆 Dernière syllabe ! Appel de handleWordCompleted dans 800ms');
       setTimeout(() => {
         setIsValidating(false);
+        console.log('🚀 APPEL handleWordCompleted MAINTENANT');
         handleWordCompleted();
       }, 800);
     }
