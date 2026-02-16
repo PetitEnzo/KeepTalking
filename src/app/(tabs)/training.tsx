@@ -231,36 +231,7 @@ export default function TrainingScreen() {
     }
   };
 
-  const handleSyllableValidated = useCallback(() => {
-    if (!currentWord) return;
-
-    setValidatedSyllables(prev => {
-      if (prev.includes(currentSyllableIndex)) {
-        return prev;
-      }
-      return [...prev, currentSyllableIndex];
-    });
-    
-    setScore(prev => prev + 1);
-    setConfidenceHistory([]);
-
-    // Utiliser setCurrentSyllableIndex avec callback pour avoir la valeur à jour
-    setCurrentSyllableIndex(prevIndex => {
-      if (prevIndex + 1 < currentWord.syllables.length) {
-        setTimeout(() => {
-          setIsValidating(false);
-        }, 1000);
-        return prevIndex + 1;
-      } else {
-        setTimeout(() => {
-          handleWordCompleted();
-        }, 800);
-        return prevIndex;
-      }
-    });
-  }, [currentWord, currentSyllableIndex]);
-
-  const handleWordCompleted = async () => {
+  const handleWordCompleted = useCallback(async () => {
     if (!currentWord || !user) return;
     
     setCompletedWord(currentWord.word);
@@ -313,7 +284,41 @@ export default function TrainingScreen() {
         handleNextWord();
       }, 800);
     }
-  };
+  }, [currentWord, user, validatedWordsCount, selectedMode]);
+
+  const handleSyllableValidated = useCallback(() => {
+    if (!currentWord) return;
+
+    const wordToComplete = currentWord; // Capturer la valeur actuelle
+    const syllableIndex = currentSyllableIndex; // Capturer l'index actuel
+
+    setValidatedSyllables(prev => {
+      if (prev.includes(syllableIndex)) {
+        return prev;
+      }
+      return [...prev, syllableIndex];
+    });
+    
+    setScore(prev => prev + 1);
+    setConfidenceHistory([]);
+
+    // Vérifier si c'est la dernière syllabe
+    const isLastSyllable = syllableIndex + 1 >= wordToComplete.syllables.length;
+
+    if (!isLastSyllable) {
+      // Passer à la syllabe suivante
+      setTimeout(() => {
+        setCurrentSyllableIndex(syllableIndex + 1);
+        setIsValidating(false);
+      }, 1000);
+    } else {
+      // Dernière syllabe validée, passer au mot suivant
+      setTimeout(() => {
+        setIsValidating(false);
+        handleWordCompleted();
+      }, 800);
+    }
+  }, [currentWord, currentSyllableIndex, handleWordCompleted]);
 
   const handleNextWord = () => {
     setValidatedSyllables([]);

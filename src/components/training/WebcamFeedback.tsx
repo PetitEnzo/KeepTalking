@@ -279,6 +279,7 @@ export default function WebcamFeedback({
         let lastDetectionTime = 0;
         const detectionInterval = 100; // Détecter toutes les 100ms (10 fois par seconde) pour barre très réactive
         let lastLandmarks: any = null; // Stocker les derniers landmarks détectés
+        let lastLandmarksTime = 0; // Timestamp des derniers landmarks pour persistance
 
         // Boucle de détection optimisée
         const detectHands = async () => {
@@ -340,6 +341,7 @@ export default function WebcamFeedback({
               if (hand && hand.landmarks) {
                 console.log('✅ Stockage landmarks dans lastLandmarks');
                 lastLandmarks = hand.landmarks; // Stocker les landmarks
+                lastLandmarksTime = now; // Mettre à jour le timestamp
                 
                 // Appeler le callback UNIQUEMENT si la caméra est activée
                 if (onDetectionRef.current && isCameraEnabled) {
@@ -350,7 +352,12 @@ export default function WebcamFeedback({
                   }
                 }
               } else {
-                lastLandmarks = null; // Pas de main détectée - effacer les landmarks
+                // Sur mobile, garder les landmarks pendant 300ms pour plus de fluidité
+                const landmarksPersistenceDuration = isMobileOrTablet ? 300 : 100;
+                if (!lastLandmarks || (now - lastLandmarksTime > landmarksPersistenceDuration)) {
+                  lastLandmarks = null; // Effacer les landmarks après le délai
+                }
+                
                 // Appeler le callback UNIQUEMENT si la caméra est activée
                 if (onDetectionRef.current && isCameraEnabled) {
                   try {
