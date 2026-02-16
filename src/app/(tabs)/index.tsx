@@ -16,6 +16,7 @@ export default function HomeScreen() {
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
+  const isVerySmallScreen = width < 424;
   const [step, setStep] = useState(1);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -159,7 +160,11 @@ export default function HomeScreen() {
           {/* Grille de cartes */}
           <View style={styles.cardsGrid}>
             <HoverableCard 
-              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+              style={[
+                styles.gridCard, 
+                { backgroundColor: colors.card, borderColor: colors.border },
+                isVerySmallScreen && { padding: 12 }
+              ]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/lessons')}
             >
@@ -171,7 +176,11 @@ export default function HomeScreen() {
             </HoverableCard>
 
             <HoverableCard 
-              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+              style={[
+                styles.gridCard, 
+                { backgroundColor: colors.card, borderColor: colors.border },
+                isVerySmallScreen && { padding: 12 }
+              ]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/training-beginner')}
             >
@@ -183,7 +192,11 @@ export default function HomeScreen() {
             </HoverableCard>
 
             <HoverableCard 
-              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+              style={[
+                styles.gridCard, 
+                { backgroundColor: colors.card, borderColor: colors.border },
+                isVerySmallScreen && { padding: 12 }
+              ]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/training')}
             >
@@ -195,7 +208,11 @@ export default function HomeScreen() {
             </HoverableCard>
 
             <HoverableCard 
-              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+              style={[
+                styles.gridCard, 
+                { backgroundColor: colors.card, borderColor: colors.border },
+                isVerySmallScreen && { padding: 12 }
+              ]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/training-expert')}
             >
@@ -207,7 +224,11 @@ export default function HomeScreen() {
             </HoverableCard>
 
             <HoverableCard 
-              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+              style={[
+                styles.gridCard, 
+                { backgroundColor: colors.card, borderColor: colors.border },
+                isVerySmallScreen && { padding: 12 }
+              ]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/contribute')}
             >
@@ -219,7 +240,11 @@ export default function HomeScreen() {
             </HoverableCard>
 
             <HoverableCard 
-              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+              style={[
+                styles.gridCard, 
+                { backgroundColor: colors.card, borderColor: colors.border },
+                isVerySmallScreen && { padding: 12 }
+              ]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/basics')}
             >
@@ -231,7 +256,11 @@ export default function HomeScreen() {
             </HoverableCard>
 
             <HoverableCard 
-              style={[styles.gridCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+              style={[
+                styles.gridCard, 
+                { backgroundColor: colors.card, borderColor: colors.border },
+                isVerySmallScreen && { padding: 12 }
+              ]}
               hoverStyle={styles.gridCardHovered}
               onPress={() => router.push('/(tabs)/game')}
             >
@@ -789,7 +818,7 @@ const styles = StyleSheet.create({
   },
   gridCard: {
     width: '48%',
-    minWidth: 140,
+    minWidth: 120,
     borderRadius: 16,
     padding: 24,
     borderWidth: 2,

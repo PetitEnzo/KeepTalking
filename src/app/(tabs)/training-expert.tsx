@@ -123,13 +123,102 @@ export default function TrainingScreen() {
     }
   };
 
+  const handleNextWord = () => {
+    setValidatedSyllables([]);
+    setCurrentSyllableIndex(0);
+    setConfidenceHistory([]);
+    setIsValidating(false);
+    selectRandomWord();
+  };
+
+  const handleWordCompleted = useCallback(async () => {
+    if (!currentWord || !user) return;
+    
+    setCompletedWord(currentWord.word);
+    setShowSuccessBanner(true);
+    
+    const newWordsCount = validatedWordsCount + 1;
+    setValidatedWordsCount(newWordsCount);
+
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const { data: profileData } = await supabase
+        .from('users_profiles')
+        .select('last_activity_date, current_streak')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      const lastActivity = profileData?.last_activity_date;
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+      let newStreak = profileData?.current_streak || 0;
+      
+      if (lastActivity === yesterdayStr) {
+        newStreak += 1;
+      } else if (lastActivity !== today) {
+        newStreak = 1;
+      }
+
+      await supabase
+        .from('users_profiles')
+        .upsert({
+          id: user.id,
+          username: user.user_metadata?.username || user.email?.split('@')[0] || 'user',
+          last_activity_date: today,
+          current_streak: newStreak,
+        });
+    } catch (error) {
+      console.error('Erreur lors de l\'incrémentation de la streak:', error);
+    }
+
+    if (selectedMode === 'thirty' && newWordsCount >= 30) {
+      setTimeout(() => {
+        handleSessionEnd();
+      }, 800);
+    } else {
+      setTimeout(() => {
+        setCompletedWord('');
+        setShowSuccessBanner(false);
+        handleNextWord();
+      }, 800);
+    }
+  }, [currentWord, user, validatedWordsCount, selectedMode]);
+
+  const handleSyllableValidated = useCallback(() => {
+    if (!currentWord) return;
+
+    const wordToComplete = currentWord;
+    const syllableIndex = currentSyllableIndex;
+
+    setValidatedSyllables(prev => {
+      if (prev.includes(syllableIndex)) {
+        return prev;
+      }
+      return [...prev, syllableIndex];
+    });
+    
+    setScore(prev => prev + 1);
+    setConfidenceHistory([]);
+
+    const isLastSyllable = syllableIndex + 1 >= wordToComplete.syllables.length;
+
+    if (!isLastSyllable) {
+      setTimeout(() => {
+        setCurrentSyllableIndex(syllableIndex + 1);
+        setIsValidating(false);
+      }, 1000);
+    } else {
+      setTimeout(() => {
+        setIsValidating(false);
+        handleWordCompleted();
+      }, 800);
+    }
+  }, [currentWord, currentSyllableIndex, handleWordCompleted]);
+
   const handleDetectionResults = useCallback((landmarks: any, face?: any) => {
     setIsDetecting(true);
-    
-    // Démarrer le chrono dès la première détection si mode 2 minutes
-    if (selectedMode === 'timed' && !startTime) {
-      setStartTime(new Date());
-    }
     
     if (currentWord && currentSyllableIndex < currentWord.syllables.length) {
       const targetSyllable = currentWord.syllables[currentSyllableIndex];
@@ -151,7 +240,7 @@ export default function TrainingScreen() {
         return newHistory;
       });
     }
-  }, [currentWord, currentSyllableIndex, isValidating, selectedMode, startTime]);
+  }, [currentWord, currentSyllableIndex, isValidating, selectedMode, startTime, handleSyllableValidated]);
 
   const loadData = async () => {
     try {
@@ -228,103 +317,6 @@ export default function TrainingScreen() {
       setValidatedSyllables([]);
       setConfidenceHistory([]);
     }
-  };
-
-  const handleWordCompleted = useCallback(async () => {
-    if (!currentWord || !user) return;
-    
-    setCompletedWord(currentWord.word);
-    setShowSuccessBanner(true);
-    
-    const newWordsCount = validatedWordsCount + 1;
-    setValidatedWordsCount(newWordsCount);
-
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      const { data: profileData } = await supabase
-        .from('users_profiles')
-        .select('last_activity_date, current_streak')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      const lastActivity = profileData?.last_activity_date;
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = yesterday.toISOString().split('T')[0];
-
-      let newStreak = profileData?.current_streak || 0;
-      
-      if (lastActivity === yesterdayStr) {
-        newStreak += 1;
-      } else if (lastActivity !== today) {
-        newStreak = 1;
-      }
-
-      await supabase
-        .from('users_profiles')
-        .upsert({
-          id: user.id,
-          username: user.user_metadata?.username || user.email?.split('@')[0] || 'user',
-          last_activity_date: today,
-          current_streak: newStreak,
-        });
-    } catch (error) {
-      console.error('Erreur lors de l\'incrémentation de la streak:', error);
-    }
-
-    if (selectedMode === 'thirty' && newWordsCount >= 30) {
-      setTimeout(() => {
-        handleSessionEnd();
-      }, 800);
-    } else {
-      setTimeout(() => {
-        setCompletedWord('');
-        setShowSuccessBanner(false);
-        handleNextWord();
-      }, 800);
-    }
-  }, [currentWord, user, validatedWordsCount, selectedMode]);
-
-  const handleSyllableValidated = useCallback(() => {
-    if (!currentWord) return;
-
-    const wordToComplete = currentWord; // Capturer la valeur actuelle
-    const syllableIndex = currentSyllableIndex; // Capturer l'index actuel
-
-    setValidatedSyllables(prev => {
-      if (prev.includes(syllableIndex)) {
-        return prev;
-      }
-      return [...prev, syllableIndex];
-    });
-    
-    setScore(prev => prev + 1);
-    setConfidenceHistory([]);
-
-    // Vérifier si c'est la dernière syllabe
-    const isLastSyllable = syllableIndex + 1 >= wordToComplete.syllables.length;
-
-    if (!isLastSyllable) {
-      // Passer à la syllabe suivante
-      setTimeout(() => {
-        setCurrentSyllableIndex(syllableIndex + 1);
-        setIsValidating(false);
-      }, 1000);
-    } else {
-      // Dernière syllabe validée, passer au mot suivant
-      setTimeout(() => {
-        setIsValidating(false);
-        handleWordCompleted();
-      }, 800);
-    }
-  }, [currentWord, currentSyllableIndex, handleWordCompleted]);
-
-  const handleNextWord = () => {
-    setValidatedSyllables([]);
-    setCurrentSyllableIndex(0);
-    setConfidenceHistory([]);
-    setIsValidating(false);
-    selectRandomWord();
   };
 
   const handleSkipWord = () => {
