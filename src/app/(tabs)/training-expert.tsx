@@ -365,10 +365,10 @@ export default function TrainingScreen() {
     'P': 'P', 'D': 'P', 'J': 'P',
     'B': 'B', 'N': 'B', 'UI': 'B',
     'L': 'L', 'CH': 'L', 'GN': 'L', 'OUI': 'L', 'OU': 'L',
-    'K': 'K', 'V': 'K', 'Z': 'K', 'C': 'K',
+    'K': 'K', 'V': 'K', 'Z': 'K', 'C': 'K', 'Q': 'K',
     'S': 'S', 'R': 'S',
     'G': 'G',
-    'ING': 'ING', 'LLE': 'ING', 'ILLE': 'ING',
+    'ING': 'ING', 'LLE': 'ING', 'ILLE': 'ING', 'Y': 'ING',
   };
 
   const getHandSignImage = (key: string | null) => {
