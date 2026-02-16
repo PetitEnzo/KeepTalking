@@ -123,13 +123,13 @@ export default function TrainingScreen() {
     }
   };
 
-  const handleNextWord = () => {
+  const handleNextWord = useCallback(() => {
     setValidatedSyllables([]);
     setCurrentSyllableIndex(0);
     setConfidenceHistory([]);
     setIsValidating(false);
     selectRandomWord();
-  };
+  }, []);
 
   const handleWordCompleted = useCallback(async () => {
     if (!currentWord || !user) return;
@@ -184,7 +184,7 @@ export default function TrainingScreen() {
         handleNextWord();
       }, 800);
     }
-  }, [currentWord, user, validatedWordsCount, selectedMode]);
+  }, [currentWord, user, validatedWordsCount, selectedMode, handleNextWord]);
 
   const handleSyllableValidated = useCallback(() => {
     if (!currentWord) return;

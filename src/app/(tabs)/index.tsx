@@ -813,12 +813,12 @@ const styles = StyleSheet.create({
   cardsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16,
+    gap: 8,
     marginTop: 20,
   },
   gridCard: {
     width: '48%',
-    minWidth: 120,
+    minWidth: 100,
     borderRadius: 16,
     padding: 24,
     borderWidth: 2,
