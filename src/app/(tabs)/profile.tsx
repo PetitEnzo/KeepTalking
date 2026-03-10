@@ -86,6 +86,7 @@ export default function ProfileScreen() {
   const [xpForNextLevel, setXpForNextLevel] = useState(100);
   const [userStats, setUserStats] = useState<any>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
 
   // Rediriger les utilisateurs non connectés vers la page de création de compte
   useEffect(() => {
@@ -195,7 +196,7 @@ export default function ProfileScreen() {
 
   const handleAvatarChange = async (avatar: string) => {
     if (!user) {
-      console.log('❌ Pas d\'utilisateur connecté');
+      console.error('❌ Pas d\'utilisateur connecté');
       return;
     }
 
@@ -238,6 +239,39 @@ export default function ProfileScreen() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    if (!user) {
+      console.error('❌ Pas d\'utilisateur connecté');
+      return;
+    }
+
+    try {
+      console.log('🗑️ Suppression du compte utilisateur:', user.id);
+
+      // Appeler la fonction RPC Supabase pour supprimer le compte
+      const { error } = await supabase.rpc('delete_user_account');
+
+      if (error) {
+        console.error('❌ Erreur lors de la suppression:', error);
+        alert(`Erreur: ${error.message || 'Impossible de supprimer le compte'}`);
+        return;
+      }
+
+      // Suppression réussie
+      console.log('✅ Compte supprimé avec succès');
+      
+      // Se déconnecter (l'utilisateur est déjà supprimé côté serveur)
+      await supabase.auth.signOut();
+      
+      alert('Votre compte a été supprimé avec succès.');
+      
+      // Rediriger vers la page d'accueil
+      router.replace('/');
+    } catch (error: any) {
+      console.error('❌ Erreur lors de la suppression du compte:', error);
+      alert(`Erreur: ${error.message || 'Impossible de supprimer le compte'}`);
+    }
+  };
 
   if (loading) {
     return (
@@ -404,6 +438,19 @@ export default function ProfileScreen() {
           )}
         </View>
 
+        {/* Bouton de suppression de compte */}
+        <View style={styles.dangerZone}>
+          <Pressable
+            style={styles.deleteAccountButton}
+            onPress={() => setShowDeleteAccountModal(true)}
+          >
+            <Text style={styles.deleteAccountButtonText}>🗑️ Supprimer mon compte</Text>
+          </Pressable>
+          <Text style={[styles.dangerZoneWarning, { color: colors.textSecondary }]}>
+            Cette action est irréversible et supprimera toutes vos données.
+          </Text>
+        </View>
+
       </View>
 
       {/* Modal de sélection d'avatar */}
@@ -450,6 +497,49 @@ export default function ProfileScreen() {
               <Text style={styles.modalCloseButtonText}>Fermer</Text>
             </Pressable>
           </View>
+        </Pressable>
+      </Modal>
+
+      {/* Modal de confirmation - Supprimer le compte */}
+      <Modal
+        visible={showDeleteAccountModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDeleteAccountModal(false)}
+      >
+        <Pressable 
+          style={styles.modalOverlay}
+          onPress={() => setShowDeleteAccountModal(false)}
+        >
+          <Pressable style={[styles.modalContent, { backgroundColor: colors.card }]} onPress={(e) => e.stopPropagation()}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>⚠️ Supprimer votre compte</Text>
+            <Text style={[styles.modalMessage, { color: colors.textSecondary }]}>
+              Êtes-vous sûr de vouloir supprimer votre compte ?{"\n\n"}
+              Cette action est <Text style={{ fontWeight: 'bold', color: '#EF4444' }}>irréversible</Text> et supprimera :{"\n\n"}
+              • Toutes vos données personnelles{"\n"}
+              • Votre progression et statistiques{"\n"}
+              • Vos badges et récompenses{"\n"}
+              • Vos contributions de mots{"\n\n"}
+              Vous serez déconnecté et ne pourrez plus accéder à votre compte.
+            </Text>
+            <View style={styles.modalButtons}>
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonCancel]}
+                onPress={() => setShowDeleteAccountModal(false)}
+              >
+                <Text style={styles.modalButtonTextCancel}>Annuler</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.modalButton, styles.modalButtonDelete]}
+                onPress={() => {
+                  handleDeleteAccount();
+                  setShowDeleteAccountModal(false);
+                }}
+              >
+                <Text style={styles.modalButtonTextDelete}>Supprimer définitivement</Text>
+              </Pressable>
+            </View>
+          </Pressable>
         </Pressable>
       </Modal>
     </ScrollView>
@@ -769,6 +859,73 @@ const styles = StyleSheet.create({
   },
   modalCloseButtonText: {
     color: '#64748B',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  dangerZone: {
+    backgroundColor: '#FEF2F2',
+    borderRadius: 16,
+    padding: 20,
+    marginTop: 32,
+    marginBottom: 24,
+    borderWidth: 2,
+    borderColor: '#FCA5A5',
+  },
+  dangerZoneTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#DC2626',
+    marginBottom: 12,
+  },
+  deleteAccountButton: {
+    backgroundColor: '#EF4444',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  deleteAccountButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  dangerZoneWarning: {
+    fontSize: 13,
+    color: '#DC2626',
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  modalMessage: {
+    fontSize: 15,
+    color: '#64748B',
+    lineHeight: 24,
+    marginBottom: 24,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalButtonCancel: {
+    backgroundColor: '#F1F5F9',
+  },
+  modalButtonTextCancel: {
+    color: '#64748B',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modalButtonDelete: {
+    backgroundColor: '#EF4444',
+  },
+  modalButtonTextDelete: {
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
