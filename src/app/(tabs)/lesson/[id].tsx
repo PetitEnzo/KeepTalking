@@ -1802,8 +1802,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   optionImage: {
-    width: 340,
-    height: 340,
+    width: 136,
+    height: 136,
   },
   optionImageLabel: {
     fontSize: 18,
