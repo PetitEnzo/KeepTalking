@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import tamaguiConfig from '../../tamagui.config';
 import '../../global.css';
+import { Analytics } from '@vercel/analytics/react';
 
 function RootLayoutNav() {
   const { user, loading, checkEmailVerified } = useAuth();
@@ -61,6 +62,7 @@ export default function RootLayout() {
       <ThemeProvider>
         <AuthProvider>
           <RootLayoutNav />
+          <Analytics />
         </AuthProvider>
       </ThemeProvider>
     </TamaguiProvider>
