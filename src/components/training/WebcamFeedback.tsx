@@ -297,6 +297,7 @@ export default function WebcamFeedback({
 
             // Dessiner la vidéo sur le canvas avec la taille réelle
             canvasCtx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+            
             canvasCtx.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
             
             // Log uniquement toutes les 30 frames (~1 seconde)
@@ -548,18 +549,20 @@ export default function WebcamFeedback({
           </Pressable>
 
           {isCameraEnabled && (
-            <Pressable 
-              style={({ pressed }) => [
-                styles.flipButton,
-                pressed && styles.toggleButtonPressed
-              ]}
-              onPress={toggleFlip}
-            >
-              <Text style={styles.toggleIcon}>🔄</Text>
-              <Text style={styles.toggleText}>
-                {isCameraFlipped ? 'Vue normale' : 'Effet miroir'}
-              </Text>
-            </Pressable>
+            <>
+              <Pressable 
+                style={({ pressed }) => [
+                  styles.flipButton,
+                  pressed && styles.toggleButtonPressed
+                ]}
+                onPress={toggleFlip}
+              >
+                <Text style={styles.toggleIcon}>🔄</Text>
+                <Text style={styles.toggleText}>
+                  {isCameraFlipped ? 'Vue normale' : 'Effet miroir'}
+                </Text>
+              </Pressable>
+            </>
           )}
         </View>
       )}

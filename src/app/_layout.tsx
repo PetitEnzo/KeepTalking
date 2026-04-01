@@ -18,7 +18,9 @@ function RootLayoutNav() {
 
     const inAuthGroup = segments[0] === '(auth)';
     const inTabsGroup = segments[0] === '(tabs)';
-    const isPublicPage = segments.length === 0 || segments[0] === 'about' || segments[0] === 'privacy' || segments[0] === 'terms';
+    const publicPages = ['about', 'privacy', 'terms', 'mentions-legales', 'politique-de-confidentialite'];
+    const isRoot = segments[0] == null;
+    const isPublicPage = isRoot || publicPages.includes(String(segments[0]));
 
     // Permettre l'accès aux pages publiques (index, about, privacy, terms) et aux tabs (mode invité)
     if (isPublicPage || inTabsGroup) {

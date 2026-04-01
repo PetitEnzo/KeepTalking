@@ -345,6 +345,24 @@ export default function TabsLayout() {
               <Text style={styles.signOutIcon}>🚪</Text>
               <Text style={styles.signOutText}>Se déconnecter</Text>
             </Pressable>
+
+            <View style={styles.legalLinksContainer}>
+              <Pressable
+                onPress={() => navigateTo('/mentions-legales')}
+                style={styles.legalLink}
+                android_ripple={{ color: 'transparent' }}
+              >
+                <Text style={styles.legalLinkText}>Mentions légales</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() => navigateTo('/politique-de-confidentialite')}
+                style={styles.legalLink}
+                android_ripple={{ color: 'transparent' }}
+              >
+                <Text style={styles.legalLinkText}>Politique de confidentialité</Text>
+              </Pressable>
+            </View>
           </View>
         </ScrollView>
       </ImageBackground>
@@ -627,6 +645,24 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '600',
     fontSize: 16,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  legalLinksContainer: {
+    marginTop: 12,
+    gap: 8,
+    alignItems: 'center',
+  },
+  legalLink: {
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+  },
+  legalLinkText: {
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontWeight: '600',
+    fontSize: 13,
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
